@@ -99,7 +99,13 @@
     }
   },
   "timeline": {
-    "title": "Professional Journey"
+    "title": "Professional Journey",
+    "professionalExperience": "PROFESSIONAL EXPERIENCE",
+    "clickToSeeProjects": "Click on an experience to see projects",
+    "today": "Today",
+    "permanent": "PERM",
+    "freelancer": "FREELANCE",
+    "scrollForMoreProjects": "↓ Scroll to see more projects ↓"
   },
   "stack": {
     "title": "Stack & Tools",
@@ -159,5 +165,135 @@
     "unexpected": "An unexpected error occurred.",
     "404": "404",
     "notFound": "The requested page could not be found."
+  },
+  "sections": {
+    "introduction": "Introduction",
+    "interface": "Interface",
+    "server": "Server",
+    "data": "Data",
+    "mobile": "Mobile",
+    "administration": "Administration",
+    "pipeline": "Pipeline",
+    "hosting": "Hosting",
+    "quality": "Quality",
+    "overview": "Overview",
+    "timelineSection": "Timeline",
+    "phase": "PHASE",
+    "back": "Back",
+    "scrollToExplore": "Scroll to explore",
+    "scrollToSeeProjects": "Scroll to see projects",
+    "letsGoReal": "Let's make it real"
+  },
+  "content": {
+    "intro": {
+      "passionateDev": "Passionate Full-Stack Developer",
+      "customSolutions": "Custom web solutions",
+      "fromConceptToDeployment": "From concept to deployment"
+    },
+    "frontend": {
+      "title": "Frontend",
+      "subtitle": "Modern Web Applications",
+      "items": [
+        "React, Next.js, Remix for reactive interfaces",
+        "TypeScript for robust and maintainable code",
+        "Smooth animations with Framer Motion & Three.js",
+        "Responsive and accessible design (WCAG)",
+        "Optimized performance (Core Web Vitals)"
+      ]
+    },
+    "backend": {
+      "title": "Backend",
+      "subtitle": "High-Performance Node.js Servers",
+      "items": [
+        "Scalable REST & GraphQL APIs",
+        "Secure authentication (JWT, OAuth2)",
+        "Modular microservices architecture",
+        "Session management and middleware",
+        "Data validation and OWASP security"
+      ]
+    },
+    "database": {
+      "title": "Database",
+      "subtitle": "Data Management",
+      "items": [
+        "PostgreSQL for relational data",
+        "MongoDB for flexible structures",
+        "Redis for high-performance caching",
+        "Versioned migrations and rollback",
+        "Query optimization and indexing"
+      ]
+    },
+    "mobile": {
+      "title": "Mobile",
+      "subtitle": "Cross-Platform Applications",
+      "items": [
+        "React Native for iOS and Android",
+        "Optimized native performance",
+        "Push notifications and deep linking",
+        "Offline-first with synchronization",
+        "App Store & Play Store publishing"
+      ]
+    },
+    "backoffice": {
+      "title": "Backoffice",
+      "subtitle": "Business Dashboards",
+      "items": [
+        "Custom administration interfaces",
+        "Real-time analytics dashboards",
+        "User and permission management",
+        "Data export and reports",
+        "CRM and business tools integration"
+      ]
+    },
+    "cicd": {
+      "title": "CI/CD",
+      "subtitle": "DevOps Automation",
+      "items": [
+        "GitHub Actions & GitLab CI configured",
+        "Automated tests on every commit",
+        "Continuous build and deployment",
+        "Staging and production environments",
+        "Automatic rollback on error"
+      ]
+    },
+    "cloud": {
+      "title": "Cloud",
+      "subtitle": "Scalable Infrastructure",
+      "items": [
+        "AWS, GCP, Vercel deployment",
+        "Global CDN for optimal performance",
+        "Auto-scaling based on load",
+        "Secure S3/Cloud Storage",
+        "24/7 monitoring and alerts"
+      ]
+    },
+    "testing": {
+      "title": "Testing",
+      "subtitle": "Guaranteed Quality",
+      "items": [
+        "Unit tests with Jest/Vitest",
+        "API integration tests",
+        "E2E tests with Playwright/Cypress",
+        "Coverage maintained above 80%",
+        "Code review and quality standards"
+      ]
+    },
+    "fullstack": {
+      "title": "Full-Stack",
+      "subtitle": "Complete Solutions",
+      "items": [
+        "End-to-end architecture",
+        "Modern and scalable tech stack",
+        "Full project support from A to Z",
+        "Continuous maintenance and evolution"
+      ]
+    },
+    "experience": {
+      "title": "Experience",
+      "subtitle": "My Professional Journey",
+      "items": [
+        "Click on a block to see completed projects"
+      ]
+    }
   }
 }

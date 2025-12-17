@@ -240,9 +240,7 @@ function AnimatedStars() {
         <bufferGeometry>
           <bufferAttribute
             attach="attributes-position"
-            count={500}
-            array={positions}
-            itemSize={3}
+            args={[positions, 3]}
           />
         </bufferGeometry>
         <pointsMaterial
@@ -259,9 +257,7 @@ function AnimatedStars() {
         <bufferGeometry>
           <bufferAttribute
             attach="attributes-position"
-            count={50}
-            array={bigPositions}
-            itemSize={3}
+            args={[bigPositions, 3]}
           />
         </bufferGeometry>
         <pointsMaterial
@@ -368,14 +364,7 @@ function ShootingStar({ delay }: { delay: number }) {
   });
 
   return (
-    <line ref={lineRef as any} geometry={geometry}>
-      <lineBasicMaterial
-        color="#ffffff"
-        transparent
-        opacity={0.9}
-        linewidth={1}
-      />
-    </line>
+    <primitive object={new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0.9 }))} ref={lineRef} />
   );
 }
 
@@ -548,9 +537,7 @@ function SpaceDust() {
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
-          count={200}
-          array={positions}
-          itemSize={3}
+          args={[positions, 3]}
         />
       </bufferGeometry>
       <pointsMaterial

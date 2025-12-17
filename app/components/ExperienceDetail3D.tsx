@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Text, RoundedBox, Float, Line } from '@react-three/drei';
 import * as THREE from 'three';
+import { useTranslation } from 'react-i18next';
 import type { Experience } from './Timeline3D';
 
 interface ProjectBlock3DProps {
@@ -148,6 +149,7 @@ interface ExperienceDetail3DProps {
 
 export default function ExperienceDetail3D({ experience, scrollOffset }: ExperienceDetail3DProps) {
   const groupRef = useRef<THREE.Group>(null);
+  const { t } = useTranslation('common');
 
   // Calculate vertical offset based on scroll
   const projectSpacing = 3;
@@ -244,7 +246,7 @@ export default function ExperienceDetail3D({ experience, scrollOffset }: Experie
               anchorX="center"
               anchorY="middle"
             >
-              ↓ Scrollez pour voir plus de projets ↓
+              {t('timeline.scrollForMoreProjects')}
             </Text>
           </group>
         </Float>

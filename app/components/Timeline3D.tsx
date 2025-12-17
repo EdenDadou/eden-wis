@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Text, RoundedBox, Float } from '@react-three/drei';
 import * as THREE from 'three';
+import { useTranslation } from 'react-i18next';
 
 export interface Project {
   name: string;
@@ -168,7 +169,7 @@ function ExperienceBlock({ experience, isSelected, onSelect }: ExperienceBlockPr
 }
 
 // Timeline title
-function TimelineTitle({ position }: { position: [number, number, number] }) {
+function TimelineTitle({ position, title, subtitle }: { position: [number, number, number]; title: string; subtitle: string }) {
   return (
     <Float rotationIntensity={0.02} floatIntensity={0.05} speed={2}>
       <group position={position}>
@@ -178,7 +179,7 @@ function TimelineTitle({ position }: { position: [number, number, number] }) {
           anchorX="center"
           anchorY="middle"
         >
-          EXPÉRIENCE PROFESSIONNELLE
+          {title}
         </Text>
         <Text
           position={[0, -0.45, 0]}
@@ -187,7 +188,7 @@ function TimelineTitle({ position }: { position: [number, number, number] }) {
           anchorX="center"
           anchorY="middle"
         >
-          Cliquez sur une expérience pour voir les projets
+          {subtitle}
         </Text>
       </group>
     </Float>
@@ -232,6 +233,8 @@ interface Timeline3DProps {
 }
 
 export default function Timeline3D({ onExperienceSelect, selectedId }: Timeline3DProps) {
+  const { t } = useTranslation('common');
+
   const handleSelect = (id: string | null) => {
     if (id) {
       const exp = experienceData.find(e => e.id === id);
@@ -244,7 +247,11 @@ export default function Timeline3D({ onExperienceSelect, selectedId }: Timeline3
   return (
     <group position={[0, -12, 0]}>
       {/* Title */}
-      <TimelineTitle position={[0, 3, 0]} />
+      <TimelineTitle
+        position={[0, 3, 0]}
+        title={t('timeline.professionalExperience')}
+        subtitle={t('timeline.clickToSeeProjects')}
+      />
 
       {/* Main horizontal timeline line */}
       <mesh position={[0, 0, -0.1]}>
@@ -275,7 +282,7 @@ export default function Timeline3D({ onExperienceSelect, selectedId }: Timeline3
         anchorX="right"
         anchorY="middle"
       >
-        CDI
+        {t('timeline.permanent')}
       </Text>
       <Text
         position={[-TIMELINE_WIDTH / 2 - 0.8, -1.2, 0]}
@@ -284,7 +291,7 @@ export default function Timeline3D({ onExperienceSelect, selectedId }: Timeline3
         anchorX="right"
         anchorY="middle"
       >
-        INDÉP.
+        {t('timeline.freelancer')}
       </Text>
 
       {/* Experience blocks */}
@@ -297,7 +304,7 @@ export default function Timeline3D({ onExperienceSelect, selectedId }: Timeline3
         />
       ))}
 
-      {/* "Aujourd'hui" marker */}
+      {/* "Today" marker */}
       <group position={[yearToX(2025), 0, 0]}>
         <Text
           position={[0.3, 0.5, 0]}
@@ -306,7 +313,7 @@ export default function Timeline3D({ onExperienceSelect, selectedId }: Timeline3
           anchorX="left"
           anchorY="middle"
         >
-          Aujourd'hui
+          {t('timeline.today')}
         </Text>
         <mesh position={[0, 0, 0]}>
           <boxGeometry args={[0.02, 2.8, 0.02]} />

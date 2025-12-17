@@ -99,7 +99,13 @@
     }
   },
   "timeline": {
-    "title": "Parcours Professionnel"
+    "title": "Parcours Professionnel",
+    "professionalExperience": "EXPÉRIENCE PROFESSIONNELLE",
+    "clickToSeeProjects": "Cliquez sur une expérience pour voir les projets",
+    "today": "Aujourd'hui",
+    "permanent": "CDI",
+    "freelancer": "INDÉP.",
+    "scrollForMoreProjects": "↓ Scrollez pour voir plus de projets ↓"
   },
   "stack": {
     "title": "Stack & Outils",
@@ -159,5 +165,135 @@
     "unexpected": "Une erreur inattendue s'est produite.",
     "404": "404",
     "notFound": "La page demandée est introuvable."
+  },
+  "sections": {
+    "introduction": "Introduction",
+    "interface": "Interface",
+    "server": "Serveur",
+    "data": "Données",
+    "mobile": "Mobile",
+    "administration": "Administration",
+    "pipeline": "Pipeline",
+    "hosting": "Hébergement",
+    "quality": "Qualité",
+    "overview": "Vue d'ensemble",
+    "timelineSection": "Timeline",
+    "phase": "PHASE",
+    "back": "Retour",
+    "scrollToExplore": "Scroll pour explorer",
+    "scrollToSeeProjects": "Scrollez pour voir les projets",
+    "letsGoReal": "Let's make it real"
+  },
+  "content": {
+    "intro": {
+      "passionateDev": "Développeur Full-Stack passionné",
+      "customSolutions": "Solutions web sur mesure",
+      "fromConceptToDeployment": "De la conception au déploiement"
+    },
+    "frontend": {
+      "title": "Frontend",
+      "subtitle": "Applications Web Modernes",
+      "items": [
+        "React, Next.js, Remix pour des interfaces réactives",
+        "TypeScript pour un code robuste et maintenable",
+        "Animations fluides avec Framer Motion & Three.js",
+        "Design responsive et accessible (WCAG)",
+        "Performance optimisée (Core Web Vitals)"
+      ]
+    },
+    "backend": {
+      "title": "Backend",
+      "subtitle": "Serveurs Node.js Performants",
+      "items": [
+        "API REST & GraphQL scalables",
+        "Authentification sécurisée (JWT, OAuth2)",
+        "Architecture microservices modulaire",
+        "Gestion des sessions et middleware",
+        "Validation des données et sécurité OWASP"
+      ]
+    },
+    "database": {
+      "title": "Database",
+      "subtitle": "Gestion des Données",
+      "items": [
+        "PostgreSQL pour les données relationnelles",
+        "MongoDB pour les structures flexibles",
+        "Redis pour le cache haute performance",
+        "Migrations versionnées et rollback",
+        "Optimisation des requêtes et indexation"
+      ]
+    },
+    "mobile": {
+      "title": "Mobile",
+      "subtitle": "Applications Cross-Platform",
+      "items": [
+        "React Native pour iOS et Android",
+        "Performances natives optimisées",
+        "Push notifications et deep linking",
+        "Offline-first avec synchronisation",
+        "Publication App Store & Play Store"
+      ]
+    },
+    "backoffice": {
+      "title": "Backoffice",
+      "subtitle": "Tableaux de Bord Métier",
+      "items": [
+        "Interfaces d'administration sur mesure",
+        "Dashboards analytiques en temps réel",
+        "Gestion des utilisateurs et permissions",
+        "Export de données et rapports",
+        "Intégration CRM et outils métier"
+      ]
+    },
+    "cicd": {
+      "title": "CI/CD",
+      "subtitle": "Automatisation DevOps",
+      "items": [
+        "GitHub Actions & GitLab CI configurés",
+        "Tests automatisés à chaque commit",
+        "Build et déploiement continu",
+        "Environnements staging et production",
+        "Rollback automatique en cas d'erreur"
+      ]
+    },
+    "cloud": {
+      "title": "Cloud",
+      "subtitle": "Infrastructure Scalable",
+      "items": [
+        "Déploiement AWS, GCP, Vercel",
+        "CDN global pour performances optimales",
+        "Auto-scaling selon la charge",
+        "Stockage sécurisé S3/Cloud Storage",
+        "Monitoring et alertes 24/7"
+      ]
+    },
+    "testing": {
+      "title": "Testing",
+      "subtitle": "Qualité Garantie",
+      "items": [
+        "Tests unitaires avec Jest/Vitest",
+        "Tests d'intégration API",
+        "Tests E2E avec Playwright/Cypress",
+        "Coverage maintenu au-dessus de 80%",
+        "Revue de code et standards qualité"
+      ]
+    },
+    "fullstack": {
+      "title": "Full-Stack",
+      "subtitle": "Solutions Complètes",
+      "items": [
+        "Architecture de bout en bout",
+        "Stack technique moderne et évolutive",
+        "Accompagnement projet de A à Z",
+        "Maintenance et évolutions continues"
+      ]
+    },
+    "experience": {
+      "title": "Expérience",
+      "subtitle": "Mon Parcours Professionnel",
+      "items": [
+        "Cliquez sur un bloc pour voir les projets réalisés"
+      ]
+    }
   }
 }

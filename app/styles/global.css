@@ -7,10 +7,10 @@
     --font-heading: 'Outfit', sans-serif;
 }
 
-* {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
 }
 
 /* Hide scrollbar */
