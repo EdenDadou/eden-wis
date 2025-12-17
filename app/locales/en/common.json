@@ -1,0 +1,163 @@
+{
+  "nav": {
+    "home": "Home",
+    "expertise": "Expertise",
+    "experience": "Experience",
+    "portfolio": "Portfolio",
+    "contact": "Contact"
+  },
+  "home": {
+    "greeting": "Hello, I'm",
+    "title": "Full-Stack Developer",
+    "subtitle": "Passionate about creating exceptional web and mobile experiences",
+    "cta": "See my projects",
+    "name": "Eden Wisniewski",
+    "role": "FullStack - DevOps",
+    "whatICanDo": "What I can do for you",
+    "since": "Since 2018"
+  },
+  "expertise": {
+    "title": "Expertise",
+    "webApps": {
+      "title": "Web Applications",
+      "description": "Development of modern and high-performance web applications with React"
+    },
+    "mobileApps": {
+      "title": "Mobile Apps",
+      "description": "Creation of native mobile applications with React Native"
+    },
+    "ecommerce": {
+      "title": "E-commerce",
+      "description": "High-performance e-commerce sites optimized for conversion"
+    },
+    "seo": {
+      "title": "SEO",
+      "description": "Search engine optimization and online visibility"
+    },
+    "backend": {
+      "title": "Node.js Backend",
+      "description": "Robust and scalable APIs with Node.js and databases"
+    },
+    "animations": {
+      "title": "Animations",
+      "description": "Dynamic interfaces with smooth animations and interactions"
+    }
+  },
+  "cards": {
+    "hero": {
+      "title": "Freelance Developer",
+      "subtitle": "Tailored Web & Mobile Solutions",
+      "description": "I build performant and elegant applications, designed to support your project from idea to production. Modern, reliable, and scalable solutions."
+    },
+    "multiplatform": {
+      "title": "Multi-platform Development",
+      "bullets": [
+        "Modern, fast, and fully responsive websites",
+        "Cross-platform mobile applications",
+        "Web apps, back-offices, and professional dashboards"
+      ]
+    },
+    "fullchain": {
+      "title": "Full Chain Mastery",
+      "bullets": [
+        "Complete support: from concept to final product",
+        "Technical design, ergonomics, and UX/UI",
+        "Front-end and back-end development",
+        "Integration, testing, deployment, and CI/CD",
+        "Continuous maintenance and long-term evolution"
+      ]
+    },
+    "quality": {
+      "title": "Quality & Performance",
+      "bullets": [
+        "Clean, robust, and scalable architecture",
+        "SEO, accessibility, and best practices",
+        "Speed, fluidity, and controlled animations",
+        "Modern user experience",
+        "Rapid MVP to test and validate ideas"
+      ]
+    },
+    "approach": {
+      "title": "Professional Approach",
+      "bullets": [
+        "Expertise in the latest web & mobile technologies",
+        "Active technology watch (frameworks, AI, performance…)",
+        "Clean, documented, and sustainable code",
+        "Clear communication, rigorous organization, and total transparency"
+      ]
+    }
+  },
+  "technic": {
+    "title": "Technical Expertise",
+    "expertises": {
+      "webApps": "Management Web Apps, Dashboards, Backoffice & Statistics",
+      "ecommerce": "E-commerce, Intuitive UX/UI, Complex Product Filtering (Elastic Search, Sensfuel, ...)",
+      "geolocation": "Geolocation & Route Calculation (Google Maps API)",
+      "payment": "Payment Systems (Stripe, Crypto, Mobile Money)",
+      "crypto": "Crypto, Smart Accounts, Delegation & Wallet Authentication",
+      "seo": "SEO, Google Analytics, Google Tag Manager, Bing Index"
+    }
+  },
+  "timeline": {
+    "title": "Professional Journey"
+  },
+  "stack": {
+    "title": "Stack & Tools",
+    "frontend": "Frontend",
+    "backend": "Backend",
+    "tools": "Tools & DevOps"
+  },
+  "experienceCard": {
+    "technologies": "Technologies",
+    "achievements": "Key Achievements"
+  },
+  "experiences": {
+    "title": "Experience",
+    "e4ia": {
+      "company": "E4IA",
+      "period": "2019 - 2020",
+      "role": "Junior Full-Stack Developer",
+      "description": "Career start in an innovative startup specializing in artificial intelligence and web development.",
+      "achievements": {
+        "learning": "Learning the fundamentals of modern web development",
+        "teamwork": "Active contribution to team projects and collaborative development",
+        "components": "Development of reusable and maintainable React components",
+        "architecture": "Participation in the architecture of complete web solutions"
+      }
+    },
+    "atecna": {
+      "company": "Atecna",
+      "period": "2020 - 2022",
+      "role": "Full-Stack Developer",
+      "description": "Skill development in a digital agency, building web and mobile solutions for various clients.",
+      "achievements": {
+        "mobile": "Development of cross-platform mobile applications with React Native",
+        "geolocation": "Integration of geolocation and route calculation with Google Maps API",
+        "payment": "Implementation of secure multi-platform payment systems",
+        "seo": "SEO optimization and analytics integration (Google Analytics, Tag Manager)"
+      }
+    },
+    "freelance": {
+      "company": "Freelance",
+      "period": "2022 - Present",
+      "role": "Lead Developer Full-Stack",
+      "description": "Autonomous development of complete solutions for national and international clients, expertise in e-commerce and web apps.",
+      "achievements": {
+        "ecommerce": "Architecture and development of complete e-commerce solutions",
+        "payment": "Integration of advanced payment systems (Stripe, Crypto, Mobile Money)",
+        "blockchain": "Development of smart accounts and blockchain solutions",
+        "dashboards": "Creation of complex dashboards with PDF generation and statistics"
+      }
+    }
+  },
+  "projects": {
+    "title": "Projects",
+    "cta": "See full portfolio"
+  },
+  "errors": {
+    "oops": "Oops!",
+    "unexpected": "An unexpected error occurred.",
+    "404": "404",
+    "notFound": "The requested page could not be found."
+  }
+}

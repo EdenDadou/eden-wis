@@ -1,0 +1,163 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "expertise": "Expertise",
+    "experience": "Expérience",
+    "portfolio": "Portfolio",
+    "contact": "Contact"
+  },
+  "home": {
+    "greeting": "Bonjour, je suis",
+    "title": "Développeur Full-Stack",
+    "subtitle": "Passionné par la création d'expériences web et mobiles exceptionnelles",
+    "cta": "Voir mes projets",
+    "name": "Eden Wisniewski",
+    "role": "FullStack - DevOps",
+    "whatICanDo": "Ce que je peux faire pour vous",
+    "since": "Depuis 2018"
+  },
+  "expertise": {
+    "title": "Expertise",
+    "webApps": {
+      "title": "Web Applications",
+      "description": "Développement d'applications web modernes et performantes avec React"
+    },
+    "mobileApps": {
+      "title": "Applications Mobiles",
+      "description": "Création d'applications mobiles natives avec React Native"
+    },
+    "ecommerce": {
+      "title": "E-commerce",
+      "description": "Sites e-commerce performants et optimisés pour la conversion"
+    },
+    "seo": {
+      "title": "SEO",
+      "description": "Optimisation pour les moteurs de recherche et visibilité en ligne"
+    },
+    "backend": {
+      "title": "Backend Node.js",
+      "description": "APIs robustes et scalables avec Node.js et bases de données"
+    },
+    "animations": {
+      "title": "Animations",
+      "description": "Interfaces dynamiques avec animations et interactions fluides"
+    }
+  },
+  "cards": {
+    "hero": {
+      "title": "Développeur Freelance",
+      "subtitle": "Solutions web & mobiles sur-mesure",
+      "description": "Je construis des applications performantes et élégantes, pensées pour accompagner votre projet de l'idée jusqu'à la mise en production. Des solutions modernes, fiables et évolutives."
+    },
+    "multiplatform": {
+      "title": "Développement multi-plateforme",
+      "bullets": [
+        "Sites web modernes, rapides et entièrement responsives",
+        "Applications mobiles cross-platform",
+        "Web apps, back-offices et dashboards professionnels"
+      ]
+    },
+    "fullchain": {
+      "title": "Maîtrise de toute la chaîne",
+      "bullets": [
+        "Accompagnement complet : du concept au produit final",
+        "Conception technique, ergonomie et UX/UI",
+        "Développement front-end et back-end",
+        "Intégration, tests, déploiement et CI/CD",
+        "Maintenance continue et évolutions à long terme"
+      ]
+    },
+    "quality": {
+      "title": "Qualité & performance",
+      "bullets": [
+        "Architecture propre, robuste et évolutive",
+        "SEO, accessibilité et bonnes pratiques",
+        "Vitesse, fluidité et animations maîtrisées",
+        "Expérience utilisateur moderne",
+        "MVP rapide pour tester et valider les idées"
+      ]
+    },
+    "approach": {
+      "title": "Approche Professionnelle",
+      "bullets": [
+        "Expertise des technologies web & mobile les plus récentes",
+        "Veille technologique active (frameworks, IA, performance…)",
+        "Code propre, documenté et durable",
+        "Communication claire, organisation rigoureuse et transparence totale"
+      ]
+    }
+  },
+  "technic": {
+    "title": "Expertises Techniques",
+    "expertises": {
+      "webApps": "Web app de gestion, Dashboards, Backoffice & Statistiques",
+      "ecommerce": "E-commerce, UX/UI intuitive, filtre et tri complexe de produits (Elastic search, sensfuel, ...)",
+      "geolocation": "Géolocalisation & Calcul de trajets (Google Maps API)",
+      "payment": "Systèmes de paiement (Stripe, Crypto, Mobile Money)",
+      "crypto": "Crypto, Smart Accounts, Délégation & Wallet authentification",
+      "seo": "Référencement, SEO, Google Analytics, Google Tag Manager, Bing Index"
+    }
+  },
+  "timeline": {
+    "title": "Parcours Professionnel"
+  },
+  "stack": {
+    "title": "Stack & Outils",
+    "frontend": "Frontend",
+    "backend": "Backend",
+    "tools": "Outils & DevOps"
+  },
+  "experienceCard": {
+    "technologies": "Technologies",
+    "achievements": "Réalisations clés"
+  },
+  "experiences": {
+    "title": "Expériences",
+    "e4ia": {
+      "company": "E4IA",
+      "period": "2019 - 2020",
+      "role": "Développeur Junior Full-Stack",
+      "description": "Début de carrière dans une startup innovante spécialisée dans l'intelligence artificielle et le développement web.",
+      "achievements": {
+        "learning": "Apprentissage des fondamentaux du développement web moderne",
+        "teamwork": "Contribution active aux projets d'équipe et développement collaboratif",
+        "components": "Développement de composants React réutilisables et maintenables",
+        "architecture": "Participation à l'architecture de solutions web complètes"
+      }
+    },
+    "atecna": {
+      "company": "Atecna",
+      "period": "2020 - 2022",
+      "role": "Développeur Full-Stack",
+      "description": "Montée en compétences dans une agence digitale, développement de solutions web et mobile pour divers clients.",
+      "achievements": {
+        "mobile": "Développement d'applications mobiles cross-platform avec React Native",
+        "geolocation": "Intégration de géolocalisation et calcul de trajets avec Google Maps API",
+        "payment": "Mise en place de systèmes de paiement sécurisés multi-plateformes",
+        "seo": "Optimisation SEO et intégration d'analytics (Google Analytics, Tag Manager)"
+      }
+    },
+    "freelance": {
+      "company": "Freelance",
+      "period": "2022 - Présent",
+      "role": "Lead Developer Full-Stack",
+      "description": "Développement en autonomie de solutions complètes pour clients nationaux et internationaux, expertise en e-commerce et web apps.",
+      "achievements": {
+        "ecommerce": "Architecture et développement de solutions e-commerce complètes",
+        "payment": "Intégration de systèmes de paiement avancés (Stripe, Crypto, Mobile Money)",
+        "blockchain": "Développement de smart accounts et solutions blockchain",
+        "dashboards": "Création de dashboards complexes avec génération de PDF et statistiques"
+      }
+    }
+  },
+  "projects": {
+    "title": "Projets",
+    "cta": "Voir le portfolio complet"
+  },
+  "errors": {
+    "oops": "Oups !",
+    "unexpected": "Une erreur inattendue s'est produite.",
+    "404": "404",
+    "notFound": "La page demandée est introuvable."
+  }
+}
