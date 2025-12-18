@@ -1,6 +1,7 @@
 {
   "nav": {
     "home": "Home",
+    "skills": "Skills",
     "expertise": "Expertise",
     "experience": "Experience",
     "portfolio": "Portfolio",
@@ -159,6 +160,69 @@
   "projects": {
     "title": "Projects",
     "cta": "See full portfolio"
+  },
+  "portfolio": {
+    "title": "Portfolio",
+    "subtitle": "Selected Works",
+    "heading": "My Projects",
+    "description": "A curated showcase of innovative digital experiences, from luxury e-commerce platforms to real-time analytics dashboards and cutting-edge mobile applications.",
+    "features": "Key Features",
+    "viewProject": "View Live Project",
+    "viewCode": "View Source Code",
+    "projectInfo": "Project Info",
+    "footer": "All rights reserved.",
+    "cta": {
+      "title": "Have a project in mind?",
+      "description": "Let's discuss how I can help bring your ideas to life with modern, performant solutions.",
+      "button": "Get in Touch"
+    },
+    "projects": {
+      "novaFashion": {
+        "title": "Nova Fashion",
+        "description": "A premium luxury e-commerce platform revolutionizing online fashion retail with AI-powered recommendations and immersive shopping experiences.",
+        "longDescription": "Nova Fashion represents the pinnacle of luxury e-commerce development. This project involved creating a complete digital ecosystem for a high-end fashion brand, integrating advanced search capabilities with Elasticsearch, real-time inventory management across 50+ warehouses, and a seamless multi-currency checkout experience supporting 15+ payment methods. The platform achieved a 340% increase in conversion rates and handles over 50,000 active users daily.",
+        "features": [
+          "AI-powered product recommendations with 95% accuracy",
+          "Real-time inventory sync across 50+ warehouses",
+          "Multi-currency checkout with 15+ payment methods",
+          "Advanced filtering with Elasticsearch (sub-100ms queries)",
+          "3D product visualization and AR try-on",
+          "Admin dashboard with predictive analytics",
+          "SEO-optimized with 98/100 Lighthouse score",
+          "Fully responsive design with 60fps animations"
+        ]
+      },
+      "pulseAnalytics": {
+        "title": "Pulse Analytics",
+        "description": "Enterprise-grade real-time analytics platform processing millions of data points per second with stunning visualizations and actionable insights.",
+        "longDescription": "Pulse Analytics is a next-generation B2B SaaS platform that transforms raw data into actionable business intelligence. Built to handle massive data streams in real-time, the platform processes over 10,000 events per second with 99.99% uptime. Features include customizable dashboards, AI-driven anomaly detection, automated reporting, and seamless integrations with 50+ third-party services. Currently serving 120+ enterprise clients worldwide.",
+        "features": [
+          "Real-time data processing (10K+ events/second)",
+          "Custom drag-and-drop dashboard builder",
+          "AI-powered anomaly detection and alerts",
+          "50+ third-party integrations (Slack, Salesforce, etc.)",
+          "Automated PDF report generation",
+          "Role-based access control with SSO",
+          "WebSocket-powered live updates",
+          "Kubernetes-orchestrated microservices architecture"
+        ]
+      },
+      "swiftDelivery": {
+        "title": "Swift Delivery",
+        "description": "Revolutionary last-mile delivery app with real-time tracking, AI route optimization, and seamless driver-customer communication.",
+        "longDescription": "Swift Delivery is a comprehensive logistics solution that has transformed last-mile delivery operations for a major logistics company. The mobile application features real-time GPS tracking accurate to 3 meters, AI-powered route optimization reducing delivery times by 35%, and instant push notifications keeping customers informed at every step. With over 1 million successful deliveries and a 4.9-star rating, the app has become the industry benchmark for delivery excellence.",
+        "features": [
+          "Real-time GPS tracking (3-meter accuracy)",
+          "AI route optimization (35% faster deliveries)",
+          "Instant push notifications for delivery updates",
+          "In-app chat between drivers and customers",
+          "Offline mode with automatic sync",
+          "Driver performance analytics dashboard",
+          "Photo proof of delivery with geotag",
+          "Multi-language support (12 languages)"
+        ]
+      }
+    }
   },
   "errors": {
     "oops": "Oops!",

@@ -152,9 +152,13 @@ export default function ExperienceDetail3D({ experience, scrollOffset }: Experie
   const { t } = useTranslation('common');
 
   // Calculate vertical offset based on scroll
+  // Each scrollOffset unit = 1 project, snapping to center each project
   const projectSpacing = 3;
-  const totalHeight = (experience.projects.length - 1) * projectSpacing;
-  const scrollY = scrollOffset * totalHeight;
+
+  // Projects are positioned at y = baseY - i * projectSpacing
+  // To center project i at y=0, we need to offset by: i * projectSpacing - baseY
+  // Since baseY = 0 (we position relative to center), scrollY = scrollOffset * projectSpacing
+  const scrollY = scrollOffset * projectSpacing;
 
   useFrame(() => {
     if (!groupRef.current) return;
@@ -202,23 +206,23 @@ export default function ExperienceDetail3D({ experience, scrollOffset }: Experie
         </group>
       </Float>
 
-      {/* Vertical arrow */}
-      <VerticalArrow color={experience.color} height={arrowHeight} />
-
-      {/* Projects container - scrollable */}
+      {/* Vertical arrow - moves with scroll */}
       <group ref={groupRef} position={[0, 0, 0]}>
+        <VerticalArrow color={experience.color} height={arrowHeight} />
+
+        {/* Projects container */}
         {experience.projects.map((project, i) => (
           <group key={i}>
-            {/* Project block */}
+            {/* Project block - centered at y=0 for first project, then -projectSpacing for each subsequent */}
             <ProjectBlock3D
               project={project}
-              position={[0, 1.5 - i * projectSpacing, 0]}
+              position={[0, -i * projectSpacing, 0]}
               color={experience.color}
               index={i}
             />
 
             {/* Connector dot on arrow */}
-            <mesh position={[0, 1.5 - i * projectSpacing, -0.3]}>
+            <mesh position={[0, -i * projectSpacing, -0.3]}>
               <sphereGeometry args={[0.12, 16, 16]} />
               <meshStandardMaterial
                 color={experience.color}
@@ -228,7 +232,7 @@ export default function ExperienceDetail3D({ experience, scrollOffset }: Experie
             </mesh>
 
             {/* Horizontal connector line */}
-            <mesh position={[-1.2, 1.5 - i * projectSpacing, -0.3]}>
+            <mesh position={[-1.2, -i * projectSpacing, -0.3]}>
               <boxGeometry args={[2.2, 0.03, 0.03]} />
               <meshBasicMaterial color={experience.color} opacity={0.5} transparent />
             </mesh>

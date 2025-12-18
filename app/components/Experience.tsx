@@ -1,24 +1,198 @@
 import { ScrollControls, useScroll, Float, Environment, GradientTexture, Sphere } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { useRef, useMemo } from 'react';
 import * as THREE from 'three';
 import { easing } from 'maath';
 import WebsiteBuilder from './WebsiteBuilder';
 import Timeline3D, { type Experience as ExperienceType, experienceData } from './Timeline3D';
 import ExperienceDetail3D from './ExperienceDetail3D';
+import Portfolio3D from './Portfolio3D';
 import '../styles/global.css';
 
 interface CameraRigProps {
   selectedExperience: ExperienceType | null;
   detailScrollOffset: number;
+  targetSection?: number | null;
+  onNavigationComplete?: () => void;
 }
 
-function CameraRig({ selectedExperience, detailScrollOffset }: CameraRigProps) {
+// Map section number to scroll offset - must match ScrollUpdater thresholds
+function getSectionOffset(section: number): number {
+  switch (section) {
+    case 0: return 0;      // Intro
+    case 1: return 0.10;   // Frontend (Skills start)
+    case 2: return 0.24;   // Backend
+    case 3: return 0.35;   // Database
+    case 4: return 0.46;   // Mobile
+    case 5: return 0.57;   // Backoffice
+    case 6: return 0.68;   // CI/CD
+    case 7: return 0.78;   // Cloud
+    case 8: return 0.88;   // Testing
+    case 9: return 0.93;   // Overview
+    case 10: return 0.97;  // Timeline Experience
+    case 11: return 0.995; // Portfolio
+    default: return 0;
+  }
+}
+
+// Calculate camera position for a given scroll offset
+function getCameraPositionForOffset(offset: number, GRID_X: number, GRID_Y: number) {
+  let x = 0, y = 0, z = 5;
+  let lookX = 0, lookY = 0;
+
+  const S1 = 0.16;
+  const STEP = 0.11;
+
+  if (offset < S1) {
+    const t = offset / S1;
+    x = THREE.MathUtils.lerp(0, -GRID_X, easeInOutCubic(t));
+    y = THREE.MathUtils.lerp(0, -GRID_Y, easeInOutCubic(t));
+    z = THREE.MathUtils.lerp(5, 2.8, easeOutCubic(t));
+    lookX = x; lookY = y;
+  } else if (offset < S1 + STEP) {
+    x = 0; y = 0; z = 2.8; lookX = 0; lookY = 0;
+  } else if (offset < S1 + STEP * 2) {
+    x = 0; y = GRID_Y; z = 2.8; lookX = 0; lookY = GRID_Y;
+  } else if (offset < S1 + STEP * 3) {
+    x = 0; y = -GRID_Y; z = 2.8; lookX = 0; lookY = -GRID_Y;
+  } else if (offset < S1 + STEP * 4) {
+    x = GRID_X; y = -GRID_Y; z = 2.8; lookX = GRID_X; lookY = -GRID_Y;
+  } else if (offset < S1 + STEP * 5) {
+    x = -GRID_X; y = 0; z = 2.8; lookX = -GRID_X; lookY = 0;
+  } else if (offset < S1 + STEP * 6) {
+    x = -GRID_X; y = GRID_Y; z = 2.8; lookX = -GRID_X; lookY = GRID_Y;
+  } else if (offset < 0.90) {
+    x = GRID_X; y = 0; z = 2.8; lookX = GRID_X; lookY = 0;
+  } else if (offset < 0.95) {
+    x = 0; y = 0; z = 9; lookX = 0; lookY = 0;
+  } else if (offset < 0.98) {
+    x = 0; y = -12; z = 8; lookX = 0; lookY = -12;
+  } else {
+    // Portfolio section
+    x = 0; y = -24; z = 8; lookX = 0; lookY = -24;
+  }
+
+  return { x, y, z, lookX, lookY };
+}
+
+function CameraRig({ selectedExperience, detailScrollOffset, targetSection, onNavigationComplete }: CameraRigProps) {
   const scroll = useScroll();
   const isInDetailView = selectedExperience !== null;
+  const lastTargetSection = useRef<number | null>(null);
+  const forcedOffset = useRef<number | null>(null);
+  const forceFramesRemaining = useRef(0);
+  const navigationCompleted = useRef(true);
+
+  // Animation state for menu navigation
+  const navAnimationProgress = useRef(0);
+  const navAnimationActive = useRef(false);
+  const navStartPos = useRef(new THREE.Vector3());
+  const navTargetPos = useRef(new THREE.Vector3());
+  const navTargetLookAt = useRef(new THREE.Vector3());
+  const navStartLookAt = useRef(new THREE.Vector3());
+  const navAnimationDuration = useRef(1.2); // seconds - will be adjusted based on distance
 
   useFrame((state, delta) => {
-    const offset = scroll.offset;
+    // Handle direct navigation - start animation
+    if (targetSection !== null && targetSection !== undefined && targetSection !== lastTargetSection.current) {
+      lastTargetSection.current = targetSection;
+      const targetOffset = getSectionOffset(targetSection);
+
+      // Force the offset for many frames to let scroll catch up
+      forcedOffset.current = targetOffset;
+      forceFramesRemaining.current = 120; // Force for ~2 seconds at 60fps
+      navigationCompleted.current = false;
+
+      // Start camera animation
+      const GRID_X = 3.2;
+      const GRID_Y = 2.5;
+      const pos = getCameraPositionForOffset(targetOffset, GRID_X, GRID_Y);
+
+      navStartPos.current.copy(state.camera.position);
+      navTargetPos.current.set(pos.x, pos.y, pos.z);
+      navTargetLookAt.current.set(pos.lookX, pos.lookY, 0);
+      // Use current position as start lookAt (camera is looking at what it's positioned over)
+      // This prevents the jarring rotation at the start
+      navStartLookAt.current.set(
+        state.camera.position.x,
+        state.camera.position.y,
+        0
+      );
+
+      // Calculate distance and adjust animation duration
+      const distance = navStartPos.current.distanceTo(navTargetPos.current);
+      // Longer duration for longer distances (1.2s base, up to 2s for very long)
+      navAnimationDuration.current = Math.min(2.0, Math.max(1.0, 1.0 + distance * 0.08));
+
+      navAnimationProgress.current = 0;
+      navAnimationActive.current = true;
+    }
+
+    // Keep forcing scroll position while forcedOffset is active
+    if (forcedOffset.current !== null && scroll.el) {
+      scroll.el.scrollTop = forcedOffset.current * (scroll.el.scrollHeight - scroll.el.clientHeight);
+
+      forceFramesRemaining.current--;
+
+      // Release when frames run out AND scroll has caught up AND animation is done
+      const diff = Math.abs(scroll.offset - forcedOffset.current);
+      if (forceFramesRemaining.current <= 0 && diff < 0.01 && !navAnimationActive.current) {
+        forcedOffset.current = null;
+        // Only call onNavigationComplete when scroll is truly stable
+        if (!navigationCompleted.current && onNavigationComplete) {
+          navigationCompleted.current = true;
+          onNavigationComplete();
+        }
+      }
+    }
+
+    // Animate camera during navigation - skip all other camera logic while animating
+    if (navAnimationActive.current) {
+      navAnimationProgress.current += delta / navAnimationDuration.current;
+
+      if (navAnimationProgress.current >= 1) {
+        navAnimationProgress.current = 1;
+        navAnimationActive.current = false;
+      }
+
+      const t = navAnimationProgress.current;
+
+      // Custom easing: slow start, smooth middle, gentle end
+      // Using a combination of ease-in-out with extra smoothness
+      const easeInOutQuart = t < 0.5
+        ? 8 * t * t * t * t
+        : 1 - Math.pow(-2 * t + 2, 4) / 2;
+
+      // Calculate distance for adaptive zoom
+      const distance = navStartPos.current.distanceTo(navTargetPos.current);
+      // More zoom for longer distances, less for short ones
+      const zoomOutAmount = Math.min(5, Math.max(2, distance * 0.3));
+
+      // Use a smoother bell curve for zoom
+      const zoomCurve = Math.sin(t * Math.PI) * Math.sin(t * Math.PI * 0.5);
+
+      const x = THREE.MathUtils.lerp(navStartPos.current.x, navTargetPos.current.x, easeInOutQuart);
+      const y = THREE.MathUtils.lerp(navStartPos.current.y, navTargetPos.current.y, easeInOutQuart);
+      const baseZ = THREE.MathUtils.lerp(navStartPos.current.z, navTargetPos.current.z, easeInOutQuart);
+      const z = baseZ + zoomCurve * zoomOutAmount;
+
+      // Smooth lookAt interpolation
+      const lookAtX = THREE.MathUtils.lerp(navStartLookAt.current.x, navTargetLookAt.current.x, easeInOutQuart);
+      const lookAtY = THREE.MathUtils.lerp(navStartLookAt.current.y, navTargetLookAt.current.y, easeInOutQuart);
+      const lookAtZ = THREE.MathUtils.lerp(navStartLookAt.current.z, navTargetLookAt.current.z, easeInOutQuart);
+
+      state.camera.position.set(x, y, z);
+      state.camera.lookAt(lookAtX, lookAtY, lookAtZ);
+      return; // Skip normal camera logic during animation
+    }
+
+    // Reset when targetSection becomes null
+    if (targetSection === null && lastTargetSection.current !== null) {
+      lastTargetSection.current = null;
+    }
+
+    // Use forced offset during navigation, otherwise use scroll offset
+    const offset = forcedOffset.current !== null ? forcedOffset.current : scroll.offset;
     
     // === 8-STEP CAMERA SEQUENCE (User Request) ===
     // 1. Frontend (Bot Left)
@@ -32,13 +206,12 @@ function CameraRig({ selectedExperience, detailScrollOffset }: CameraRigProps) {
     
     const GRID_X = 3.2;
     const GRID_Y = 2.5;
-    
+
     let x = 0, y = 0, z = 5; // Default far
     let lookX = 0, lookY = 0;
-    
-    // Total phases = 8 + 1 (Overview) = 9 segments approx
-    // Customized timings to give more space between elements
-    
+
+    // Total phases = 8 + 1 (Overview) + Timeline + Portfolio = 11 segments
+
     // TIMING MAP (0.0 - 1.0)
     // 1. Frontend: 0.00 - 0.16 (Extended)
     // 2. Server:   0.16 - 0.27
@@ -47,12 +220,14 @@ function CameraRig({ selectedExperience, detailScrollOffset }: CameraRigProps) {
     // 5. Back:     0.49 - 0.60
     // 6. CICD:     0.60 - 0.71
     // 7. Cloud:    0.71 - 0.82
-    // 8. Test:     0.82 - 0.93
-    // 9. Overview: 0.93 - 1.00
+    // 8. Test:     0.82 - 0.90
+    // 9. Overview: 0.90 - 0.95
+    // 10. Timeline: 0.95 - 0.98
+    // 11. Portfolio: 0.98 - 1.00
 
     const S1 = 0.16; // Frontend end
     const STEP = 0.11; // Standard step size for others
-    
+
     // 1. Frontend (-3.2, -2.5) [0.0 - 0.16]
     if (offset < S1) {
        const t = offset / S1;
@@ -116,19 +291,18 @@ function CameraRig({ selectedExperience, detailScrollOffset }: CameraRigProps) {
        z = 2.8;
        lookX = x; lookY = y;
     }
-    // 8. Testing (3.2, 0) [0.82 - 0.93] - LONG DIAGONAL
-    else if (offset < S1 + STEP * 7) {
-       const t = (offset - (S1 + STEP * 6)) / STEP;
+    // 8. Testing (3.2, 0) [0.82 - 0.90] - LONG DIAGONAL
+    else if (offset < 0.90) {
+       const t = (offset - (S1 + STEP * 6)) / (0.90 - (S1 + STEP * 6));
        x = THREE.MathUtils.lerp(-GRID_X, GRID_X, easeInOutCubic(t));
        y = THREE.MathUtils.lerp(GRID_Y, 0, easeInOutCubic(t));
        // Smooth arc that ends at 2.8 for seamless transition to overview
        z = 2.8 + Math.sin(t * Math.PI) * 1.2;
        lookX = x; lookY = y;
     }
-    // 9. Overview [0.93 - 0.97] - Smooth dezoom to see full architecture
-    else if (offset < 0.97) {
-       const S_LAST = S1 + STEP * 7;
-       const t = Math.min((offset - S_LAST) / (0.97 - S_LAST), 1);
+    // 9. Overview [0.90 - 0.95] - Smooth dezoom to see full architecture
+    else if (offset < 0.95) {
+       const t = Math.min((offset - 0.90) / 0.05, 1);
        const smoothT = easeOutCubic(t);
        x = THREE.MathUtils.lerp(GRID_X, 0, smoothT);
        y = THREE.MathUtils.lerp(0, 0, smoothT);
@@ -136,9 +310,9 @@ function CameraRig({ selectedExperience, detailScrollOffset }: CameraRigProps) {
        lookX = THREE.MathUtils.lerp(GRID_X, 0, smoothT);
        lookY = 0;
     }
-    // 10. Timeline Experience [0.97 - 1.0] - Architecture rises up, camera descends to timeline
-    else {
-       const t = Math.min((offset - 0.97) / 0.03, 1);
+    // 10. Timeline Experience [0.95 - 0.98] - Architecture rises up, camera descends to timeline
+    else if (offset < 0.98) {
+       const t = Math.min((offset - 0.95) / 0.03, 1);
        const smoothT = easeInOutCubic(t);
        x = 0;
        // Camera stays centered horizontally, moves down to face timeline
@@ -147,6 +321,16 @@ function CameraRig({ selectedExperience, detailScrollOffset }: CameraRigProps) {
        z = THREE.MathUtils.lerp(9, 8, smoothT);
        lookX = 0;
        lookY = THREE.MathUtils.lerp(0, -12, smoothT);
+    }
+    // 11. Portfolio [0.98 - 1.0] - Continue down to portfolio section
+    else {
+       const t = Math.min((offset - 0.98) / 0.02, 1);
+       const smoothT = easeInOutCubic(t);
+       x = 0;
+       y = THREE.MathUtils.lerp(-12, -24, smoothT);
+       z = 8;
+       lookX = 0;
+       lookY = THREE.MathUtils.lerp(-12, -24, smoothT);
     }
 
     // Override camera position when in detail view (experience selected)
@@ -160,8 +344,8 @@ function CameraRig({ selectedExperience, detailScrollOffset }: CameraRigProps) {
        lookY = 0;
     }
 
-    // Add subtle slight drift for life (only when not in detail view)
-    if (!isInDetailView) {
+    // Add subtle slight drift for life (only when not in detail view and not during forced navigation)
+    if (!isInDetailView && forcedOffset.current === null) {
       const time = state.clock.getElapsedTime();
       x += Math.sin(time * 0.2) * 0.1;
       y += Math.cos(time * 0.3) * 0.1;
@@ -170,7 +354,12 @@ function CameraRig({ selectedExperience, detailScrollOffset }: CameraRigProps) {
     const targetPos = new THREE.Vector3(x, y, z);
     const lookAt = new THREE.Vector3(lookX, lookY, 0);
 
-    easing.damp3(state.camera.position, targetPos, 0.15, delta);
+    // Skip interpolation during direct navigation - jump immediately
+    if (forcedOffset.current !== null) {
+      state.camera.position.copy(targetPos);
+    } else {
+      easing.damp3(state.camera.position, targetPos, 0.15, delta);
+    }
     state.camera.lookAt(lookAt);
   });
 
@@ -551,41 +740,48 @@ function SpaceDust() {
   );
 }
 
-function ScrollUpdater({ onSectionChange }: { onSectionChange?: (s: number) => void }) {
+function ScrollUpdater({ onSectionChange, targetSection }: { onSectionChange?: (s: number) => void; targetSection?: number | null }) {
     const scroll = useScroll();
     const lastSection = useRef(-1);
+    const lastTargetSection = useRef<number | null>(null);
 
     useFrame(() => {
+        // If we have a target section from navigation, use it directly
+        if (targetSection !== null && targetSection !== undefined && targetSection !== lastTargetSection.current) {
+            lastTargetSection.current = targetSection;
+            lastSection.current = targetSection;
+            if (onSectionChange) onSectionChange(targetSection);
+            return;
+        }
+
+        // Reset when navigation is complete
+        if (targetSection === null && lastTargetSection.current !== null) {
+            lastTargetSection.current = null;
+        }
+
+        // Don't update section from scroll while navigating
+        if (targetSection !== null) {
+            return;
+        }
+
         const offset = scroll.offset;
 
-        // Camera timings from CameraRig:
-        // S1 = 0.16, STEP = 0.11
-        // 1. Frontend: 0.00 - 0.16 (arrives at element ~0.12-0.14)
-        // 2. Backend:  0.16 - 0.27 (arrives at element ~0.23-0.25)
-        // 3. Database: 0.27 - 0.38 (arrives at element ~0.34-0.36)
-        // 4. Mobile:   0.38 - 0.49 (arrives at element ~0.46-0.48)
-        // 5. Backoffice: 0.49 - 0.60 (arrives at element ~0.56-0.58)
-        // 6. CI/CD:    0.60 - 0.71 (arrives at element ~0.67-0.69)
-        // 7. Cloud:    0.71 - 0.82 (arrives at element ~0.78-0.80)
-        // 8. Testing:  0.82 - 0.93 (arrives at element ~0.89-0.91)
-        // 9. Overview: 0.93 - 1.00
-
-        // Text appears ONLY when camera has arrived on element
-        // Show text at ~80% of transition, hide when next transition starts
+        // Thresholds aligned with getSectionOffset and CameraRig timings
 
         let newSection = 0;
 
-        if (offset < 0.08) newSection = 0;         // Intro - camera still far
-        else if (offset < 0.22) newSection = 1;    // Frontend - show after camera arrives (~0.12)
-        else if (offset < 0.33) newSection = 2;    // Backend - show after camera arrives (~0.23)
-        else if (offset < 0.44) newSection = 3;    // Database - show after camera arrives (~0.34)
-        else if (offset < 0.55) newSection = 4;    // Mobile - show after camera arrives (~0.46)
-        else if (offset < 0.66) newSection = 5;    // Backoffice - show after camera arrives (~0.56)
-        else if (offset < 0.77) newSection = 6;    // CI/CD - show after camera arrives (~0.67)
-        else if (offset < 0.88) newSection = 7;    // Cloud - show after camera arrives (~0.78)
-        else if (offset < 0.94) newSection = 8;    // Testing - show after camera arrives (~0.89)
-        else if (offset < 0.98) newSection = 9;    // Overview (dezoom)
-        else newSection = 10;                       // Timeline Experience
+        if (offset < 0.08) newSection = 0;         // Intro
+        else if (offset < 0.22) newSection = 1;    // Frontend
+        else if (offset < 0.33) newSection = 2;    // Backend
+        else if (offset < 0.44) newSection = 3;    // Database
+        else if (offset < 0.55) newSection = 4;    // Mobile
+        else if (offset < 0.66) newSection = 5;    // Backoffice
+        else if (offset < 0.77) newSection = 6;    // CI/CD
+        else if (offset < 0.86) newSection = 7;    // Cloud
+        else if (offset < 0.91) newSection = 8;    // Testing
+        else if (offset < 0.96) newSection = 9;    // Overview
+        else if (offset < 0.99) newSection = 10;   // Timeline Experience
+        else newSection = 11;                       // Portfolio
 
         if (newSection !== lastSection.current) {
             lastSection.current = newSection;
@@ -601,9 +797,11 @@ interface ExperienceProps {
     onExperienceSelect?: (experience: ExperienceType | null) => void;
     selectedExperienceId?: string | null;
     detailScrollOffset?: number;
+    targetSection?: number | null;
+    onNavigationComplete?: () => void;
 }
 
-export default function Experience({ onSectionChange, onExperienceSelect, selectedExperienceId, detailScrollOffset = 0 }: ExperienceProps) {
+export default function Experience({ onSectionChange, onExperienceSelect, selectedExperienceId, detailScrollOffset = 0, targetSection, onNavigationComplete }: ExperienceProps) {
   const selectedExperience = selectedExperienceId
     ? experienceData.find((e: ExperienceType) => e.id === selectedExperienceId) || null
     : null;
@@ -648,12 +846,14 @@ export default function Experience({ onSectionChange, onExperienceSelect, select
       <directionalLight position={[0, 5, 0]} intensity={0.5} color="#ffffff" />
       <Environment preset="city" />
 
-      <ScrollControls pages={15} damping={0.4}>
+      <ScrollControls pages={18} damping={0.4}>
         <CameraRig
           selectedExperience={selectedExperience}
           detailScrollOffset={detailScrollOffset}
+          targetSection={targetSection}
+          onNavigationComplete={onNavigationComplete}
         />
-        <ScrollUpdater onSectionChange={onSectionChange} />
+        <ScrollUpdater onSectionChange={onSectionChange} targetSection={targetSection} />
 
         {/* Main content - hidden when in detail view */}
         {!selectedExperience && (
@@ -667,6 +867,9 @@ export default function Experience({ onSectionChange, onExperienceSelect, select
               onExperienceSelect={onExperienceSelect || (() => {})}
               selectedId={selectedExperienceId || null}
             />
+
+            {/* Portfolio 3D */}
+            <Portfolio3D />
           </>
         )}
 

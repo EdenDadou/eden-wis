@@ -132,6 +132,9 @@ export default function WebsiteBuilder() {
   const mobileRef = useRef<THREE.Group>(null);
   const frontendRef = useRef<THREE.Group>(null);
   const cicdRef = useRef<THREE.Group>(null);
+
+  // Skills container ref for dezoom offset
+  const skillsContainerRef = useRef<THREE.Group>(null);
   
   // Server Blade Refs
   const bladeRefs = useRef<(THREE.Group | null)[]>([]);
@@ -405,11 +408,29 @@ export default function WebsiteBuilder() {
             const delay = i * 0.2;
             const timeProgress = Math.max(0, Math.min((now - startTime - delay) / 0.4, 1));
             const eased = easeOutCubic(timeProgress);
-            
+
             item.scale.setScalar(eased);
             // Fly in from right? or just Z? Z for consistency
             item.position.z = THREE.MathUtils.lerp(2, 0.03, eased); // 0.03 was original z
         });
+    }
+
+    // --- DEZOOM LAYOUT SHIFT (Skills to right) ---
+    const DEZOOM_START = 0.93;
+    const DEZOOM_END = 0.97;
+    if (offset > DEZOOM_START) {
+        const dezoomProgress = Math.min((offset - DEZOOM_START) / (DEZOOM_END - DEZOOM_START), 1);
+        const easedDezoom = easeOutCubic(dezoomProgress);
+
+        // Shift skills container to the right
+        if (skillsContainerRef.current) {
+            skillsContainerRef.current.position.x = THREE.MathUtils.lerp(0, 3, easedDezoom);
+        }
+    } else {
+        // Reset position when not in dezoom
+        if (skillsContainerRef.current) {
+            skillsContainerRef.current.position.x = 0;
+        }
     }
 
   });
@@ -501,9 +522,12 @@ export default function WebsiteBuilder() {
 
   return (
     <group ref={sceneRef}>
-      
+
+      {/* ========== SKILLS CONTAINER (shifts right on dezoom) ========== */}
+      <group ref={skillsContainerRef}>
+
       {/* ========== TOP ROW ========== */}
-      
+
       {/* CLOUD (-3.2, 2.5) */}
       {showCloud && (
         <group ref={cloudRef} position={POS_CLOUD} scale={0}>
@@ -1297,49 +1321,53 @@ export default function WebsiteBuilder() {
       {/* Lines always visible, Particles only on final dezoom (> 88%) */}
       
       {/* 1. Cloud <-> BDD (Top Horiz) */}
-      {showCloud && showDatabase && <ParticleStream start={P_CLOUD} end={P_DB} startColor={C_CLOUD} endColor={C_DB} showParticles={offset > 0.88} opacity={getLinkOpacity(Math.max(T_CLOUD, T_DB))} />}
-      
+      {showCloud && showDatabase && <ParticleStream start={P_CLOUD} end={P_DB} startColor={C_CLOUD} endColor={C_DB} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_CLOUD, T_DB))} />}
+
       {/* 2. Cloud <-> CI/CD (Vertical Left) */}
-      {showCloud && showCICD && <ParticleStream start={P_CLOUD} end={P_CICD} startColor={C_CLOUD} endColor={C_SAAS} showParticles={offset > 0.88} opacity={getLinkOpacity(Math.max(T_CLOUD, T_CICD))} />}
-      
+      {showCloud && showCICD && <ParticleStream start={P_CLOUD} end={P_CICD} startColor={C_CLOUD} endColor={C_SAAS} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_CLOUD, T_CICD))} />}
+
       {/* 3. BDD <-> Testing (Diagonal from Top Mid to Mid Right) */}
-      {showDatabase && showTesting && <ParticleStream start={P_DB} end={P_TEST} startColor={C_DB} endColor={C_TEST} showParticles={offset > 0.88} opacity={getLinkOpacity(Math.max(T_DB, T_TEST))} />}
-      
+      {showDatabase && showTesting && <ParticleStream start={P_DB} end={P_TEST} startColor={C_DB} endColor={C_TEST} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_DB, T_TEST))} />}
+
       {/* 4. CI/CD <-> Server (Mid Horizontal) */}
-      {showCICD && showServer && <ParticleStream start={P_CICD} end={P_SERVER} startColor={C_SAAS} endColor={C_SERVER} showParticles={offset > 0.88} opacity={getLinkOpacity(Math.max(T_CICD, T_SERVER))} />}
-      
+      {showCICD && showServer && <ParticleStream start={P_CICD} end={P_SERVER} startColor={C_SAAS} endColor={C_SERVER} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_CICD, T_SERVER))} />}
+
       {/* 5. Server <-> Testing (Mid Horizontal) */}
-      {showServer && showTesting && <ParticleStream start={P_SERVER} end={P_TEST} startColor={C_SERVER} endColor={C_TEST} showParticles={offset > 0.88} opacity={getLinkOpacity(Math.max(T_SERVER, T_TEST))} />}
-      
+      {showServer && showTesting && <ParticleStream start={P_SERVER} end={P_TEST} startColor={C_SERVER} endColor={C_TEST} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_SERVER, T_TEST))} />}
+
       {/* 6. CI/CD <-> Frontend (Vertical Left) */}
-      {showCICD && showFrontend && <ParticleStream start={P_CICD} end={P_FRONT} startColor={C_SAAS} endColor={C_FRONT} showParticles={offset > 0.88} opacity={getLinkOpacity(Math.max(T_CICD, T_FRONT))} />}
-      
+      {showCICD && showFrontend && <ParticleStream start={P_CICD} end={P_FRONT} startColor={C_SAAS} endColor={C_FRONT} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_CICD, T_FRONT))} />}
+
       {/* 7. Frontend <-> Mobile (REMOVED) */}
        {/* {showFrontend && showMobile && <ParticleStream start={P_FRONT} end={P_MOBILE} color="#00f0ff" />} */}
-      
+
       {/* 8. Mobile <-> Backoffice (Bot Horizontal) */}
-      {showMobile && showBackoffice && <ParticleStream start={P_MOBILE} end={P_BACK} startColor={C_MOBILE} endColor={C_BACK} showParticles={offset > 0.88} opacity={getLinkOpacity(Math.max(T_MOBILE, T_BACK))} />}
-      
+      {showMobile && showBackoffice && <ParticleStream start={P_MOBILE} end={P_BACK} startColor={C_MOBILE} endColor={C_BACK} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_MOBILE, T_BACK))} />}
+
       {/* 9. Testing <-> Backoffice (Vertical Right) */}
-      {showTesting && showBackoffice && <ParticleStream start={P_TEST} end={P_BACK} startColor={C_TEST} endColor={C_BACK} showParticles={offset > 0.88} opacity={getLinkOpacity(Math.max(T_TEST, T_BACK))} />}
-      
+      {showTesting && showBackoffice && <ParticleStream start={P_TEST} end={P_BACK} startColor={C_TEST} endColor={C_BACK} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_TEST, T_BACK))} />}
+
       {/* 10. Frontend <-> Server (Diagonal) - User Request */}
-      {showFrontend && showServer && <ParticleStream start={P_FRONT} end={P_SERVER} startColor={C_FRONT} endColor={C_SERVER} showParticles={offset > 0.88} opacity={getLinkOpacity(Math.max(T_FRONT, T_SERVER))} />}
-      
+      {showFrontend && showServer && <ParticleStream start={P_FRONT} end={P_SERVER} startColor={C_FRONT} endColor={C_SERVER} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_FRONT, T_SERVER))} />}
+
       {/* 11. CI/CD <-> Mobile (Diagonal) - User Request */}
-      {showCICD && showMobile && <ParticleStream start={P_CICD} end={P_MOBILE} startColor={C_SAAS} endColor={C_MOBILE} showParticles={offset > 0.88} opacity={getLinkOpacity(Math.max(T_CICD, T_MOBILE))} />}
+      {showCICD && showMobile && <ParticleStream start={P_CICD} end={P_MOBILE} startColor={C_SAAS} endColor={C_MOBILE} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_CICD, T_MOBILE))} />}
 
       {/* 12. Database <-> Server (Vertical Center) - NEW Request */}
-      {showDatabase && showServer && <ParticleStream start={P_DB} end={P_SERVER} startColor={C_DB} endColor={C_SERVER} showParticles={offset > 0.88} opacity={getLinkOpacity(Math.max(T_DB, T_SERVER))} />}
+      {showDatabase && showServer && <ParticleStream start={P_DB} end={P_SERVER} startColor={C_DB} endColor={C_SERVER} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_DB, T_SERVER))} />}
 
       {/* 13. Server <-> Mobile (Vertical Center) - NEW Request */}
-      {showServer && showMobile && <ParticleStream start={P_SERVER} end={P_MOBILE} startColor={C_SERVER} endColor={C_MOBILE} showParticles={offset > 0.88} opacity={getLinkOpacity(Math.max(T_SERVER, T_MOBILE))} />}
+      {showServer && showMobile && <ParticleStream start={P_SERVER} end={P_MOBILE} startColor={C_SERVER} endColor={C_MOBILE} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_SERVER, T_MOBILE))} />}
 
       {/* 14. Server <-> Backoffice (Diagonal) - NEW Request */}
-      {showServer && showBackoffice && <ParticleStream start={P_SERVER} end={P_BACK} startColor={C_SERVER} endColor={C_BACK} showParticles={offset > 0.88} opacity={getLinkOpacity(Math.max(T_SERVER, T_BACK))} />}
+      {showServer && showBackoffice && <ParticleStream start={P_SERVER} end={P_BACK} startColor={C_SERVER} endColor={C_BACK} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_SERVER, T_BACK))} />}
 
       {/* 15. Server <-> Cloud (Vertical Center to Top) - NEW Request */}
-      {showServer && showCloud && <ParticleStream start={P_SERVER} end={P_CLOUD} startColor={C_SERVER} endColor={C_CLOUD} showParticles={offset > 0.88} opacity={getLinkOpacity(Math.max(T_SERVER, T_CLOUD))} />}
+      {showServer && showCloud && <ParticleStream start={P_SERVER} end={P_CLOUD} startColor={C_SERVER} endColor={C_CLOUD} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_SERVER, T_CLOUD))} />}
+
+      </group>
+      {/* ========== END SKILLS CONTAINER ========== */}
+
     </group>
   );
 }

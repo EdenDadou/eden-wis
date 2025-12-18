@@ -1,6 +1,7 @@
 {
   "nav": {
     "home": "Accueil",
+    "skills": "Compétences",
     "expertise": "Expertise",
     "experience": "Expérience",
     "portfolio": "Portfolio",
@@ -159,6 +160,69 @@
   "projects": {
     "title": "Projets",
     "cta": "Voir le portfolio complet"
+  },
+  "portfolio": {
+    "title": "Portfolio",
+    "subtitle": "Travaux Sélectionnés",
+    "heading": "Mes Projets",
+    "description": "Une vitrine d'expériences digitales innovantes, des plateformes e-commerce luxe aux dashboards analytics temps réel et applications mobiles de pointe.",
+    "features": "Fonctionnalités Clés",
+    "viewProject": "Voir le Projet",
+    "viewCode": "Voir le Code Source",
+    "projectInfo": "Infos Projet",
+    "footer": "Tous droits réservés.",
+    "cta": {
+      "title": "Un projet en tête ?",
+      "description": "Discutons de comment je peux vous aider à concrétiser vos idées avec des solutions modernes et performantes.",
+      "button": "Me Contacter"
+    },
+    "projects": {
+      "novaFashion": {
+        "title": "Nova Fashion",
+        "description": "Une plateforme e-commerce luxe révolutionnant le retail de mode en ligne avec recommandations IA et expériences shopping immersives.",
+        "longDescription": "Nova Fashion représente l'apogée du développement e-commerce luxe. Ce projet a impliqué la création d'un écosystème digital complet pour une marque de mode haut de gamme, intégrant des capacités de recherche avancées avec Elasticsearch, une gestion d'inventaire temps réel sur 50+ entrepôts, et une expérience de paiement multi-devises fluide supportant 15+ méthodes de paiement. La plateforme a atteint une augmentation de 340% du taux de conversion et gère plus de 50 000 utilisateurs actifs quotidiennement.",
+        "features": [
+          "Recommandations produits IA avec 95% de précision",
+          "Sync inventaire temps réel sur 50+ entrepôts",
+          "Checkout multi-devises avec 15+ méthodes de paiement",
+          "Filtrage avancé Elasticsearch (requêtes < 100ms)",
+          "Visualisation 3D des produits et essayage AR",
+          "Dashboard admin avec analytics prédictifs",
+          "SEO optimisé avec score Lighthouse 98/100",
+          "Design responsive avec animations 60fps"
+        ]
+      },
+      "pulseAnalytics": {
+        "title": "Pulse Analytics",
+        "description": "Plateforme analytics temps réel enterprise traitant des millions de points de données par seconde avec visualisations époustouflantes.",
+        "longDescription": "Pulse Analytics est une plateforme SaaS B2B nouvelle génération qui transforme les données brutes en intelligence business actionnable. Conçue pour gérer des flux de données massifs en temps réel, la plateforme traite plus de 10 000 événements par seconde avec un uptime de 99.99%. Les fonctionnalités incluent des tableaux de bord personnalisables, une détection d'anomalies par IA, des rapports automatisés et des intégrations seamless avec 50+ services tiers. Actuellement au service de 120+ clients enterprise dans le monde.",
+        "features": [
+          "Traitement données temps réel (10K+ événements/sec)",
+          "Builder de dashboard drag-and-drop personnalisé",
+          "Détection d'anomalies et alertes par IA",
+          "50+ intégrations tierces (Slack, Salesforce, etc.)",
+          "Génération automatique de rapports PDF",
+          "Contrôle d'accès basé sur les rôles avec SSO",
+          "Mises à jour live via WebSocket",
+          "Architecture microservices orchestrée par Kubernetes"
+        ]
+      },
+      "swiftDelivery": {
+        "title": "Swift Delivery",
+        "description": "Application de livraison révolutionnaire avec suivi temps réel, optimisation de trajets IA et communication livreur-client seamless.",
+        "longDescription": "Swift Delivery est une solution logistique complète qui a transformé les opérations de livraison dernier kilomètre pour une grande entreprise de logistique. L'application mobile propose un suivi GPS temps réel précis à 3 mètres, une optimisation de trajets par IA réduisant les temps de livraison de 35%, et des notifications push instantanées tenant les clients informés à chaque étape. Avec plus d'1 million de livraisons réussies et une note de 4.9 étoiles, l'app est devenue la référence du secteur.",
+        "features": [
+          "Suivi GPS temps réel (précision 3 mètres)",
+          "Optimisation de trajets IA (livraisons 35% plus rapides)",
+          "Notifications push instantanées pour les updates",
+          "Chat in-app entre livreurs et clients",
+          "Mode hors-ligne avec sync automatique",
+          "Dashboard analytics performance livreurs",
+          "Preuve de livraison photo avec géotag",
+          "Support multi-langues (12 langues)"
+        ]
+      }
+    }
   },
   "errors": {
     "oops": "Oups !",
