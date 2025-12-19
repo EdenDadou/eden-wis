@@ -1,5 +1,5 @@
 import { ScrollControls, useScroll, Float, Environment, GradientTexture, Sphere } from '@react-three/drei';
-import { useFrame, useThree } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import { useRef, useMemo } from 'react';
 import * as THREE from 'three';
 import { easing } from 'maath';
@@ -19,56 +19,75 @@ interface CameraRigProps {
 // Map section number to scroll offset - must match ScrollUpdater thresholds
 function getSectionOffset(section: number): number {
   switch (section) {
-    case 0: return 0;      // Intro
-    case 1: return 0.10;   // Frontend (Skills start)
-    case 2: return 0.24;   // Backend
-    case 3: return 0.35;   // Database
-    case 4: return 0.46;   // Mobile
-    case 5: return 0.57;   // Backoffice
-    case 6: return 0.68;   // CI/CD
-    case 7: return 0.78;   // Cloud
-    case 8: return 0.88;   // Testing
-    case 9: return 0.93;   // Overview
-    case 10: return 0.97;  // Timeline Experience
-    case 11: return 0.995; // Portfolio
+    case 0: return 0;       // Intro
+    case 1: return 0.07;    // FullStack Overview
+    case 2: return 0.14;    // Frontend Slide
+    case 3: return 0.19;    // Site Web
+    case 4: return 0.24;    // Mobile
+    case 5: return 0.29;    // Backoffice
+    case 6: return 0.34;    // Backend Slide
+    case 7: return 0.39;    // Server
+    case 8: return 0.44;    // Database
+    case 9: return 0.49;    // DevOps Slide
+    case 10: return 0.54;   // CI/CD
+    case 11: return 0.59;   // Cloud
+    case 12: return 0.64;   // Architecture
+    case 13: return 0.74;   // Timeline
+    case 14: return 0.90;   // Portfolio
     default: return 0;
   }
 }
 
-// Calculate camera position for a given scroll offset
+// Calculate camera position for a given scroll offset (for menu navigation)
 function getCameraPositionForOffset(offset: number, GRID_X: number, GRID_Y: number) {
   let x = 0, y = 0, z = 5;
   let lookX = 0, lookY = 0;
 
-  const S1 = 0.16;
-  const STEP = 0.11;
-
-  if (offset < S1) {
-    const t = offset / S1;
-    x = THREE.MathUtils.lerp(0, -GRID_X, easeInOutCubic(t));
-    y = THREE.MathUtils.lerp(0, -GRID_Y, easeInOutCubic(t));
-    z = THREE.MathUtils.lerp(5, 2.8, easeOutCubic(t));
-    lookX = x; lookY = y;
-  } else if (offset < S1 + STEP) {
-    x = 0; y = 0; z = 2.8; lookX = 0; lookY = 0;
-  } else if (offset < S1 + STEP * 2) {
-    x = 0; y = GRID_Y; z = 2.8; lookX = 0; lookY = GRID_Y;
-  } else if (offset < S1 + STEP * 3) {
-    x = 0; y = -GRID_Y; z = 2.8; lookX = 0; lookY = -GRID_Y;
-  } else if (offset < S1 + STEP * 4) {
-    x = GRID_X; y = -GRID_Y; z = 2.8; lookX = GRID_X; lookY = -GRID_Y;
-  } else if (offset < S1 + STEP * 5) {
-    x = -GRID_X; y = 0; z = 2.8; lookX = -GRID_X; lookY = 0;
-  } else if (offset < S1 + STEP * 6) {
+  // Match CameraRig timings exactly for consistent navigation
+  if (offset < 0.05) {
+    // Intro
+    x = 0; y = 0; z = 5; lookX = 0; lookY = 0;
+  } else if (offset < 0.12) {
+    // FullStack Overview
+    x = 0; y = 0; z = 10; lookX = 0; lookY = 0;
+  } else if (offset < 0.17) {
+    // Frontend Slide (LEFT column)
+    x = -GRID_X; y = 0; z = 6; lookX = -GRID_X; lookY = 0;
+  } else if (offset < 0.22) {
+    // Site Web (-GRID_X, GRID_Y)
     x = -GRID_X; y = GRID_Y; z = 2.8; lookX = -GRID_X; lookY = GRID_Y;
-  } else if (offset < 0.90) {
+  } else if (offset < 0.27) {
+    // Mobile (-GRID_X, 0)
+    x = -GRID_X; y = 0; z = 2.8; lookX = -GRID_X; lookY = 0;
+  } else if (offset < 0.32) {
+    // Backoffice (-GRID_X, -GRID_Y)
+    x = -GRID_X; y = -GRID_Y; z = 2.8; lookX = -GRID_X; lookY = -GRID_Y;
+  } else if (offset < 0.37) {
+    // Backend Slide (CENTER)
+    x = 0; y = GRID_Y * 0.5; z = 5; lookX = 0; lookY = GRID_Y * 0.5;
+  } else if (offset < 0.42) {
+    // Server (0, GRID_Y)
+    x = 0; y = GRID_Y; z = 2.8; lookX = 0; lookY = GRID_Y;
+  } else if (offset < 0.47) {
+    // Database (0, 0)
+    x = 0; y = 0; z = 2.8; lookX = 0; lookY = 0;
+  } else if (offset < 0.52) {
+    // DevOps Slide (RIGHT column)
+    x = GRID_X; y = 0; z = 6; lookX = GRID_X; lookY = 0;
+  } else if (offset < 0.57) {
+    // CI/CD (GRID_X, GRID_Y)
+    x = GRID_X; y = GRID_Y; z = 2.8; lookX = GRID_X; lookY = GRID_Y;
+  } else if (offset < 0.62) {
+    // Cloud (GRID_X, 0)
     x = GRID_X; y = 0; z = 2.8; lookX = GRID_X; lookY = 0;
-  } else if (offset < 0.95) {
-    x = 0; y = 0; z = 9; lookX = 0; lookY = 0;
-  } else if (offset < 0.98) {
+  } else if (offset < 0.67) {
+    // Architecture (GRID_X, -GRID_Y)
+    x = GRID_X; y = -GRID_Y; z = 2.8; lookX = GRID_X; lookY = -GRID_Y;
+  } else if (offset < 0.82) {
+    // Timeline
     x = 0; y = -12; z = 8; lookX = 0; lookY = -12;
   } else {
-    // Portfolio section
+    // Portfolio
     x = 0; y = -24; z = 8; lookX = 0; lookY = -24;
   }
 
@@ -194,137 +213,159 @@ function CameraRig({ selectedExperience, detailScrollOffset, targetSection, onNa
     // Use forced offset during navigation, otherwise use scroll offset
     const offset = forcedOffset.current !== null ? forcedOffset.current : scroll.offset;
     
-    // === 8-STEP CAMERA SEQUENCE (User Request) ===
-    // 1. Frontend (Bot Left)
-    // 2. Backend (Mid Center)
-    // 3. BDD (Top Center)
-    // 4. Mobile (Bot Center)
-    // 5. Backoffice (Bot Right)
-    // 6. CI/CD (Mid Left)
-    // 7. Cloud (Top Left)
-    // 8. Testing (Mid Right)
-    
+    // === CAMERA SEQUENCE (15 sections) ===
+    // 0: Intro (Eden Wisniewski) - Start zoomed out
+    // 1: FullStack Overview - See all skills with category boxes
+    // 2: Frontend Slide - Zoom to Frontend group (LEFT column, x=-GRID_X)
+    // 3: Site Web detail (-GRID_X, GRID_Y)
+    // 4: Mobile detail (-GRID_X, 0)
+    // 5: Backoffice detail (-GRID_X, -GRID_Y)
+    // 6: Backend Slide - Zoom to Backend group (CENTER, x=0)
+    // 7: Server detail (0, GRID_Y)
+    // 8: Database detail (0, 0)
+    // 9: DevOps Slide - Zoom to DevOps group (RIGHT column, x=GRID_X)
+    // 10: CI/CD detail (GRID_X, GRID_Y)
+    // 11: Cloud detail (GRID_X, 0)
+    // 12: Architecture detail (GRID_X, -GRID_Y)
+    // 13: Timeline
+    // 14: Portfolio
+
     const GRID_X = 3.2;
     const GRID_Y = 2.5;
 
     let x = 0, y = 0, z = 5; // Default far
     let lookX = 0, lookY = 0;
 
-    // Total phases = 8 + 1 (Overview) + Timeline + Portfolio = 11 segments
+    // NEW TIMING MAP (0.0 - 1.0) - 15 sections total
+    // 0: Intro:        0.00 - 0.05
+    // 1: FullStack:    0.05 - 0.12 (overview, all visible)
+    // 2: Frontend:     0.12 - 0.17 (zoom to frontend group)
+    // 3: Site Web:     0.17 - 0.22
+    // 4: Mobile:       0.22 - 0.27
+    // 5: Backoffice:   0.27 - 0.32
+    // 6: Backend:      0.32 - 0.37 (zoom to backend group)
+    // 7: Server:       0.37 - 0.42
+    // 8: Database:     0.42 - 0.47
+    // 9: DevOps:       0.47 - 0.52 (zoom to devops group)
+    // 10: CI/CD:       0.52 - 0.57
+    // 11: Cloud:       0.57 - 0.62
+    // 12: Archi:       0.62 - 0.67
+    // 13: Timeline:    0.67 - 0.82
+    // 14: Portfolio:   0.82 - 1.00
 
-    // TIMING MAP (0.0 - 1.0)
-    // 1. Frontend: 0.00 - 0.16 (Extended)
-    // 2. Server:   0.16 - 0.27
-    // 3. DB:       0.27 - 0.38
-    // 4. Mobile:   0.38 - 0.49
-    // 5. Back:     0.49 - 0.60
-    // 6. CICD:     0.60 - 0.71
-    // 7. Cloud:    0.71 - 0.82
-    // 8. Test:     0.82 - 0.90
-    // 9. Overview: 0.90 - 0.95
-    // 10. Timeline: 0.95 - 0.98
-    // 11. Portfolio: 0.98 - 1.00
-
-    const S1 = 0.16; // Frontend end
-    const STEP = 0.11; // Standard step size for others
-
-    // 1. Frontend (-3.2, -2.5) [0.0 - 0.16]
-    if (offset < S1) {
-       const t = offset / S1;
-       // Start slightly zoomed out then move in
+    // 0. Intro [0.0 - 0.05] - Start centered, slightly zoomed
+    if (offset < 0.05) {
+       x = 0; y = 0; z = 5;
+       lookX = 0; lookY = 0;
+    }
+    // 1. FullStack Overview [0.05 - 0.12] - Dezoom to see all
+    else if (offset < 0.12) {
+       const t = (offset - 0.05) / 0.07;
+       x = 0; y = 0;
+       z = THREE.MathUtils.lerp(5, 10, easeOutCubic(t));
+       lookX = 0; lookY = 0;
+    }
+    // 2. Frontend Slide [0.12 - 0.17] - Zoom to Frontend group (LEFT column, x=-GRID_X)
+    else if (offset < 0.17) {
+       const t = (offset - 0.12) / 0.05;
        x = THREE.MathUtils.lerp(0, -GRID_X, easeInOutCubic(t));
-       y = THREE.MathUtils.lerp(0, -GRID_Y, easeInOutCubic(t));
-       z = THREE.MathUtils.lerp(5, 2.8, easeOutCubic(t));
-       lookX = x; lookY = y;
+       y = 0;
+       z = THREE.MathUtils.lerp(10, 6, easeInOutCubic(t));
+       lookX = -GRID_X; lookY = 0;
     }
-    // 2. Backend (0, 0) [0.16 - 0.27]
-    else if (offset < S1 + STEP) {
-       const t = (offset - S1) / STEP;
-       x = THREE.MathUtils.lerp(-GRID_X, 0, easeInOutCubic(t));
-       y = THREE.MathUtils.lerp(-GRID_Y, 0, easeInOutCubic(t));
-       z = 2.8;
-       lookX = x; lookY = y;
-    }
-    // 3. Database (0, 2.5) [0.27 - 0.38]
-    else if (offset < S1 + STEP * 2) {
-       const t = (offset - (S1 + STEP)) / STEP;
-       x = 0;
-       y = THREE.MathUtils.lerp(0, GRID_Y, easeInOutCubic(t));
-       z = 2.8;
-       lookX = x; lookY = y;
-    }
-    // 4. Mobile (0, -2.5) [0.38 - 0.49] - BIG JUMP DOWN
-    else if (offset < S1 + STEP * 3) {
-       const t = (offset - (S1 + STEP * 2)) / STEP;
-       // Zoom out in middle of jump
-       if (t < 0.5) {
-         z = THREE.MathUtils.lerp(2.8, 5, easeOutCubic(t * 2));
-         y = THREE.MathUtils.lerp(GRID_Y, 0, t * 2);
-       } else {
-         z = THREE.MathUtils.lerp(5, 2.8, easeInCubic((t - 0.5) * 2));
-         y = THREE.MathUtils.lerp(0, -GRID_Y, (t - 0.5) * 2);
-       }
-       x = 0;
-       lookX = x; lookY = y;
-    }
-    // 5. Backoffice (3.2, -2.5) [0.49 - 0.60]
-    else if (offset < S1 + STEP * 4) {
-       const t = (offset - (S1 + STEP * 3)) / STEP;
-       x = THREE.MathUtils.lerp(0, GRID_X, easeInOutCubic(t));
-       y = -GRID_Y;
-       z = 2.8;
-       lookX = x; lookY = y;
-    }
-    // 6. CI/CD (-3.2, 0) [0.60 - 0.71] - LONG DIAGONAL
-    else if (offset < S1 + STEP * 5) {
-       const t = (offset - (S1 + STEP * 4)) / STEP;
-       x = THREE.MathUtils.lerp(GRID_X, -GRID_X, easeInOutCubic(t));
-       y = THREE.MathUtils.lerp(-GRID_Y, 0, easeInOutCubic(t));
-       z = THREE.MathUtils.lerp(2.8, 4, Math.sin(t * Math.PI)); // Arc out
-       lookX = x; lookY = y;
-    }
-    // 7. Cloud (-3.2, 2.5) [0.71 - 0.82]
-    else if (offset < S1 + STEP * 6) {
-       const t = (offset - (S1 + STEP * 5)) / STEP;
+    // 3. Site Web detail [0.17 - 0.22] - Frontend top (-GRID_X, GRID_Y)
+    else if (offset < 0.22) {
+       const t = (offset - 0.17) / 0.05;
        x = -GRID_X;
        y = THREE.MathUtils.lerp(0, GRID_Y, easeInOutCubic(t));
+       z = THREE.MathUtils.lerp(6, 2.8, easeInOutCubic(t));
+       lookX = x; lookY = y;
+    }
+    // 4. Mobile detail [0.22 - 0.27] - Mobile at (-GRID_X, 0)
+    else if (offset < 0.27) {
+       const t = (offset - 0.22) / 0.05;
+       x = -GRID_X;
+       y = THREE.MathUtils.lerp(GRID_Y, 0, easeInOutCubic(t));
        z = 2.8;
        lookX = x; lookY = y;
     }
-    // 8. Testing (3.2, 0) [0.82 - 0.90] - LONG DIAGONAL
-    else if (offset < 0.90) {
-       const t = (offset - (S1 + STEP * 6)) / (0.90 - (S1 + STEP * 6));
-       x = THREE.MathUtils.lerp(-GRID_X, GRID_X, easeInOutCubic(t));
-       y = THREE.MathUtils.lerp(GRID_Y, 0, easeInOutCubic(t));
-       // Smooth arc that ends at 2.8 for seamless transition to overview
-       z = 2.8 + Math.sin(t * Math.PI) * 1.2;
+    // 5. Backoffice detail [0.27 - 0.32] - Backoffice at (-GRID_X, -GRID_Y)
+    else if (offset < 0.32) {
+       const t = (offset - 0.27) / 0.05;
+       x = -GRID_X;
+       y = THREE.MathUtils.lerp(0, -GRID_Y, easeInOutCubic(t));
+       z = 2.8;
        lookX = x; lookY = y;
     }
-    // 9. Overview [0.90 - 0.95] - Smooth dezoom to see full architecture
-    else if (offset < 0.95) {
-       const t = Math.min((offset - 0.90) / 0.05, 1);
-       const smoothT = easeOutCubic(t);
-       x = THREE.MathUtils.lerp(GRID_X, 0, smoothT);
-       y = THREE.MathUtils.lerp(0, 0, smoothT);
-       z = THREE.MathUtils.lerp(2.8, 9, smoothT);
-       lookX = THREE.MathUtils.lerp(GRID_X, 0, smoothT);
-       lookY = 0;
+    // 6. Backend Slide [0.32 - 0.37] - Zoom out to Backend group (CENTER column)
+    else if (offset < 0.37) {
+       const t = (offset - 0.32) / 0.05;
+       x = THREE.MathUtils.lerp(-GRID_X, 0, easeInOutCubic(t));
+       y = THREE.MathUtils.lerp(-GRID_Y, GRID_Y * 0.5, easeInOutCubic(t));
+       z = THREE.MathUtils.lerp(2.8, 5, easeInOutCubic(t));
+       lookX = 0; lookY = GRID_Y * 0.5;
     }
-    // 10. Timeline Experience [0.95 - 0.98] - Architecture rises up, camera descends to timeline
-    else if (offset < 0.98) {
-       const t = Math.min((offset - 0.95) / 0.03, 1);
-       const smoothT = easeInOutCubic(t);
+    // 7. Server detail [0.37 - 0.42] - Server at (0, GRID_Y)
+    else if (offset < 0.42) {
+       const t = (offset - 0.37) / 0.05;
        x = 0;
-       // Camera stays centered horizontally, moves down to face timeline
-       y = THREE.MathUtils.lerp(0, -12, smoothT);
-       // Zoom in closer to timeline for full-screen effect
-       z = THREE.MathUtils.lerp(9, 8, smoothT);
-       lookX = 0;
-       lookY = THREE.MathUtils.lerp(0, -12, smoothT);
+       y = THREE.MathUtils.lerp(GRID_Y * 0.5, GRID_Y, easeInOutCubic(t));
+       z = THREE.MathUtils.lerp(5, 2.8, easeInOutCubic(t));
+       lookX = 0; lookY = y;
     }
-    // 11. Portfolio [0.98 - 1.0] - Continue down to portfolio section
+    // 8. Database detail [0.42 - 0.47] - Database at (0, 0)
+    else if (offset < 0.47) {
+       const t = (offset - 0.42) / 0.05;
+       x = 0;
+       y = THREE.MathUtils.lerp(GRID_Y, 0, easeInOutCubic(t));
+       z = 2.8;
+       lookX = 0; lookY = y;
+    }
+    // 9. DevOps Slide [0.47 - 0.52] - Zoom out to DevOps group (RIGHT column, x=GRID_X)
+    else if (offset < 0.52) {
+       const t = (offset - 0.47) / 0.05;
+       x = THREE.MathUtils.lerp(0, GRID_X, easeInOutCubic(t));
+       y = 0;
+       z = THREE.MathUtils.lerp(2.8, 6, easeInOutCubic(t));
+       lookX = GRID_X; lookY = 0;
+    }
+    // 10. CI/CD detail [0.52 - 0.57] - CI/CD at (GRID_X, GRID_Y)
+    else if (offset < 0.57) {
+       const t = (offset - 0.52) / 0.05;
+       x = GRID_X;
+       y = THREE.MathUtils.lerp(0, GRID_Y, easeInOutCubic(t));
+       z = THREE.MathUtils.lerp(6, 2.8, easeInOutCubic(t));
+       lookX = x; lookY = y;
+    }
+    // 11. Cloud detail [0.57 - 0.62] - Cloud at (GRID_X, 0)
+    else if (offset < 0.62) {
+       const t = (offset - 0.57) / 0.05;
+       x = GRID_X;
+       y = THREE.MathUtils.lerp(GRID_Y, 0, easeInOutCubic(t));
+       z = 2.8;
+       lookX = x; lookY = y;
+    }
+    // 12. Architecture detail [0.62 - 0.67] - Archi at (GRID_X, -GRID_Y)
+    else if (offset < 0.67) {
+       const t = (offset - 0.62) / 0.05;
+       x = GRID_X;
+       y = THREE.MathUtils.lerp(0, -GRID_Y, easeInOutCubic(t));
+       z = 2.8;
+       lookX = x; lookY = y;
+    }
+    // 13. Timeline Experience [0.67 - 0.82]
+    else if (offset < 0.82) {
+       const t = Math.min((offset - 0.67) / 0.15, 1);
+       const smoothT = easeInOutCubic(t);
+       x = THREE.MathUtils.lerp(GRID_X, 0, smoothT);
+       y = THREE.MathUtils.lerp(-GRID_Y, -12, smoothT);
+       z = THREE.MathUtils.lerp(2.8, 8, easeOutCubic(t * 0.5)) + (1 - t) * 2;
+       lookX = 0;
+       lookY = THREE.MathUtils.lerp(-GRID_Y, -12, smoothT);
+    }
+    // 14. Portfolio [0.82 - 1.0]
     else {
-       const t = Math.min((offset - 0.98) / 0.02, 1);
+       const t = Math.min((offset - 0.82) / 0.18, 1);
        const smoothT = easeInOutCubic(t);
        x = 0;
        y = THREE.MathUtils.lerp(-12, -24, smoothT);
@@ -767,21 +808,25 @@ function ScrollUpdater({ onSectionChange, targetSection }: { onSectionChange?: (
         const offset = scroll.offset;
 
         // Thresholds aligned with getSectionOffset and CameraRig timings
+        // NEW 15-section layout
 
         let newSection = 0;
 
-        if (offset < 0.08) newSection = 0;         // Intro
-        else if (offset < 0.22) newSection = 1;    // Frontend
-        else if (offset < 0.33) newSection = 2;    // Backend
-        else if (offset < 0.44) newSection = 3;    // Database
-        else if (offset < 0.55) newSection = 4;    // Mobile
-        else if (offset < 0.66) newSection = 5;    // Backoffice
-        else if (offset < 0.77) newSection = 6;    // CI/CD
-        else if (offset < 0.86) newSection = 7;    // Cloud
-        else if (offset < 0.91) newSection = 8;    // Testing
-        else if (offset < 0.96) newSection = 9;    // Overview
-        else if (offset < 0.99) newSection = 10;   // Timeline Experience
-        else newSection = 11;                       // Portfolio
+        if (offset < 0.05) newSection = 0;         // Intro
+        else if (offset < 0.12) newSection = 1;    // FullStack Overview
+        else if (offset < 0.17) newSection = 2;    // Frontend Slide
+        else if (offset < 0.22) newSection = 3;    // Site Web
+        else if (offset < 0.27) newSection = 4;    // Mobile
+        else if (offset < 0.32) newSection = 5;    // Backoffice
+        else if (offset < 0.37) newSection = 6;    // Backend Slide
+        else if (offset < 0.42) newSection = 7;    // Server
+        else if (offset < 0.47) newSection = 8;    // Database
+        else if (offset < 0.52) newSection = 9;    // DevOps Slide
+        else if (offset < 0.57) newSection = 10;   // CI/CD
+        else if (offset < 0.62) newSection = 11;   // Cloud
+        else if (offset < 0.67) newSection = 12;   // Architecture
+        else if (offset < 0.82) newSection = 13;   // Timeline
+        else newSection = 14;                       // Portfolio
 
         if (newSection !== lastSection.current) {
             lastSection.current = newSection;

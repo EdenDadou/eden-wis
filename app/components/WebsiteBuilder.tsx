@@ -1,6 +1,6 @@
 import { useRef, useMemo, useLayoutEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { RoundedBox, Text, Line, Instance, Instances, Billboard } from '@react-three/drei';
+import { RoundedBox, Text, Line, Billboard } from '@react-three/drei';
 import { useScroll } from '@react-three/drei';
 import * as THREE from 'three';
 
@@ -127,11 +127,16 @@ export default function WebsiteBuilder() {
   const serverRef = useRef<THREE.Group>(null);
   const databaseRef = useRef<THREE.Group>(null);
   const backofficeRef = useRef<THREE.Group>(null);
-  const testingRef = useRef<THREE.Group>(null);
+  const archiRef = useRef<THREE.Group>(null); // Architecture (replaces testing)
   const cloudRef = useRef<THREE.Group>(null);
   const mobileRef = useRef<THREE.Group>(null);
   const frontendRef = useRef<THREE.Group>(null);
   const cicdRef = useRef<THREE.Group>(null);
+
+  // Group box refs for the 3 category containers
+  const frontendGroupRef = useRef<THREE.Group>(null);
+  const backendGroupRef = useRef<THREE.Group>(null);
+  const devopsGroupRef = useRef<THREE.Group>(null);
 
   // Skills container ref for dezoom offset
   const skillsContainerRef = useRef<THREE.Group>(null);
@@ -147,7 +152,7 @@ export default function WebsiteBuilder() {
   const backofficeVisibleTime = useRef<number | null>(null);
   const cicdVisibleTime = useRef<number | null>(null);
   const cloudVisibleTime = useRef<number | null>(null);
-  const testingVisibleTime = useRef<number | null>(null);
+  const archiVisibleTime = useRef<number | null>(null);
 
   const serverLedIntensity = useRef(0);
   
@@ -190,42 +195,39 @@ export default function WebsiteBuilder() {
       ref.current.scale.setScalar(THREE.MathUtils.lerp(0, 1, eased));
     };
     
-    // SEQUENCE: 1. Front -> 2. Server -> 3. DB -> 4. Mobile -> 5. Back -> 6. CI -> 7. Cloud -> 8. Test
-    
-    // 1. Frontend (0.05) - Special "Fly In" for UI blocks
-    animateElement(frontendRef, 0.05);
-    
-    // Decomposed animation for UI blocks:
-    // Appear one by one with slightly more delay
-    flyIn(uiBlock1, 0.06, 0.04, 1.5); // Header
-    flyIn(uiBlock2, 0.08, 0.04, 2.0); // Sidebar
-    flyIn(uiBlock3, 0.10, 0.04, 2.5); // Main Content
+    // ALL ELEMENTS APPEAR AT FULLSTACK OVERVIEW (section 1, offset ~0.05)
+    // Staggered appearance for visual effect
+    const BASE_APPEAR = 0.045;
+    const STAGGER = 0.008;
 
-    // 2. Server (Start 0.17, Duration 0.10)
-    animateElement(serverRef, 0.17, 0.10); 
+    // Frontend group (right column)
+    animateElement(frontendRef, BASE_APPEAR);
+    animateElement(mobileRef, BASE_APPEAR + STAGGER);
+    animateElement(backofficeRef, BASE_APPEAR + STAGGER * 2);
 
-    animateElement(databaseRef, 0.28);   // 3. Database
-    animateElement(mobileRef, 0.39);     // 4. Mobile
-    animateElement(backofficeRef, 0.50); // 5. Backoffice
-    animateElement(cicdRef, 0.61);       // 6. CI/CD
-    animateElement(cloudRef, 0.72);      // 7. Cloud
-    animateElement(testingRef, 0.83);    // 8. Testing
-    
-    // Server Blades Animation (re-calculated based on new Server duration)
-    // Server starts 0.12, ends ~0.22. 
-    // Blades should start appearing when cabinet is mostly formed, say 0.18.
-    
-    // if (databaseRef.current) databaseRef.current.rotation.y = Date.now() * 0.0003; // Removed rotation per request
-    // if (cicdRef.current) cicdRef.current.rotation.z = Math.sin(Date.now() * 0.001) * 0.1; // Removed oscillation per request
+    // Backend group (center)
+    animateElement(serverRef, BASE_APPEAR + STAGGER * 3, 0.08);
+    animateElement(databaseRef, BASE_APPEAR + STAGGER * 4);
+
+    // DevOps group (left column)
+    animateElement(cicdRef, BASE_APPEAR + STAGGER * 5);
+    animateElement(cloudRef, BASE_APPEAR + STAGGER * 6);
+    animateElement(archiRef, BASE_APPEAR + STAGGER * 7);
+
+    // Frontend UI blocks fly-in
+    flyIn(uiBlock1, BASE_APPEAR + 0.02, 0.04, 1.5);
+    flyIn(uiBlock2, BASE_APPEAR + 0.03, 0.04, 2.0);
+    flyIn(uiBlock3, BASE_APPEAR + 0.04, 0.04, 2.5);
     
     // Server Blades Animation (Time-based, triggered on first view)
-    const SERVER_TRIGGER = 0.17; 
+    // All elements appear at FullStack overview (~0.05)
+    const SERVER_TRIGGER = 0.06;
     if (offset > SERVER_TRIGGER && serverVisibleTime.current === null) {
         serverVisibleTime.current = state.clock.elapsedTime;
     }
-    
+
     // Database Rings Animation (Time-based)
-    const DB_TRIGGER = 0.28;
+    const DB_TRIGGER = 0.06;
     if (offset > DB_TRIGGER && databaseVisibleTime.current === null) {
         databaseVisibleTime.current = state.clock.elapsedTime;
     }
@@ -302,7 +304,7 @@ export default function WebsiteBuilder() {
     }
 
     // --- MOBILE ANIMATION (Bubbles Fly-In) ---
-    const MOBILE_TRIGGER = 0.39;
+    const MOBILE_TRIGGER = 0.06;
     if (offset > MOBILE_TRIGGER && mobileVisibleTime.current === null) {
         mobileVisibleTime.current = state.clock.elapsedTime;
     }
@@ -321,7 +323,7 @@ export default function WebsiteBuilder() {
     }
 
     // --- BACKOFFICE ANIMATION (Charts Grow) ---
-    const BACK_TRIGGER = 0.50;
+    const BACK_TRIGGER = 0.06;
     if (offset > BACK_TRIGGER && backofficeVisibleTime.current === null) {
         backofficeVisibleTime.current = state.clock.elapsedTime;
     }
@@ -342,7 +344,7 @@ export default function WebsiteBuilder() {
     }
 
     // --- CI/CD ANIMATION (Pipeline Nodes Sequence) ---
-    const CICD_TRIGGER = 0.61;
+    const CICD_TRIGGER = 0.06;
     if (offset > CICD_TRIGGER && cicdVisibleTime.current === null) {
         cicdVisibleTime.current = state.clock.elapsedTime;
     }
@@ -364,7 +366,7 @@ export default function WebsiteBuilder() {
     }
 
     // --- CLOUD ANIMATION (Nodes Fly & Float) ---
-    const CLOUD_TRIGGER = 0.72;
+    const CLOUD_TRIGGER = 0.06;
     if (offset > CLOUD_TRIGGER && cloudVisibleTime.current === null) {
         cloudVisibleTime.current = state.clock.elapsedTime;
     }
@@ -395,16 +397,16 @@ export default function WebsiteBuilder() {
         });
     }
 
-    // --- TESTING ANIMATION (Checklist Items Tick) ---
-    const TEST_TRIGGER = 0.83;
-    if (offset > TEST_TRIGGER && testingVisibleTime.current === null) {
-        testingVisibleTime.current = state.clock.elapsedTime;
+    // --- ARCHITECTURE ANIMATION (Items Tick) ---
+    const ARCHI_TRIGGER = 0.06;
+    if (offset > ARCHI_TRIGGER && archiVisibleTime.current === null) {
+        archiVisibleTime.current = state.clock.elapsedTime;
     }
-    if (testingVisibleTime.current !== null) {
+    if (archiVisibleTime.current !== null) {
         checklistRefs.current.forEach((item, i) => {
             if (!item) return;
             const now = state.clock.elapsedTime;
-            const startTime = testingVisibleTime.current!;
+            const startTime = archiVisibleTime.current!;
             const delay = i * 0.2;
             const timeProgress = Math.max(0, Math.min((now - startTime - delay) / 0.4, 1));
             const eased = easeOutCubic(timeProgress);
@@ -437,94 +439,176 @@ export default function WebsiteBuilder() {
 
   const offset = scroll?.offset || 0;
   
-  // Visibility thresholds - Updated to mount earlier (prevent "pop-in")
-  const showFrontend = offset > 0.01; // Ani starts 0.05
-  const showServer = offset > 0.08;   // Ani starts 0.12
-  const showDatabase = offset > 0.20; // Ani starts 0.25
-  const showMobile = offset > 0.30;   // Ani starts 0.35
-  const showBackoffice = offset > 0.40; // Ani starts 0.45
-  const showCICD = offset > 0.50;     // Ani starts 0.55
-  const showCloud = offset > 0.60;    // Ani starts 0.65
-  const showTesting = offset > 0.70;  // Ani starts 0.75
+  // Visibility thresholds - All elements appear early for FullStack overview
+  // Everything visible from section 1 (FullStack) onwards (offset > 0.05)
+  // Section 0 (Intro) is 0.00 - 0.05, so elements appear after that
+  const showElements = offset > 0.05;  // Start showing at FullStack overview
+  const showFrontend = showElements;
+  const showMobile = showElements;
+  const showBackoffice = showElements;
+  const showServer = showElements;
+  const showDatabase = showElements;
+  const showCICD = showElements;
+  const showCloud = showElements;
+  const showArchi = showElements;
+
+  // Category boxes also only show from FullStack overview onwards
+  const showCategoryBoxes = offset > 0.05;
   
   // ... rest of layout constants ...
 
 
   // ═══════════════════════════════════════════════════════════
-  // NEW 3-ROW LAYOUT (Specific User Request)
+  // NEW GRID LAYOUT - Organized by Category
   //
-  // Row 1 (Top): CLOUD (-3.2, 2.5)       DATABASE (0, 2.5)       (EMPTY)
-  // Row 2 (Mid): CI/CD (-3.2, 0)         SERVER (0, 0)           TESTING (3.2, 0)
-  // Row 3 (Bot): FRONTEND (-3.2, -2.5)   MOBILE (0, -2.5)        BACKOFFICE (3.2, -2.5)
+  // FRONTEND (LEFT)    BACKEND (CENTER)    DEVOPS (RIGHT)
+  // ─────────────────────────────────────────────────────────
+  // Row 1 (Top):    SITE WEB         SERVER           CI/CD
+  // Row 2 (Mid):    MOBILE           DATABASE         CLOUD
+  // Row 3 (Bot):    BACKOFFICE       (empty)          ARCHITECTURE
   //
   // ═══════════════════════════════════════════════════════════
 
   const GRID_X = 3.2;
   const GRID_Y = 2.5;
-  
-  // Coordinates
-  const POS_CLOUD = [-GRID_X, GRID_Y, 4] as [number, number, number];
-  const POS_DATABASE = [0, GRID_Y, 4] as [number, number, number];
-  
-  const POS_CICD = [-GRID_X, 0, 4] as [number, number, number];
-  const POS_SERVER = [0, 0, 4] as [number, number, number];
-  const POS_TESTING = [GRID_X, 0, 4] as [number, number, number];
-  
-  const POS_FRONTEND = [-GRID_X, -GRID_Y, 4] as [number, number, number];
-  const POS_MOBILE = [0, -GRID_Y, 4] as [number, number, number];
-  const POS_BACKOFFICE = [GRID_X, -GRID_Y, 4] as [number, number, number];
+
+  // FRONTEND GROUP (LEFT column, x = -GRID_X)
+  const POS_FRONTEND = [-GRID_X, GRID_Y, 4] as [number, number, number];      // Site Web (top)
+  const POS_MOBILE = [-GRID_X, 0, 4] as [number, number, number];             // Mobile (middle)
+  const POS_BACKOFFICE = [-GRID_X, -GRID_Y, 4] as [number, number, number];   // Backoffice (bottom)
+
+  // BACKEND GROUP (CENTER column, x = 0)
+  const POS_SERVER = [0, GRID_Y, 4] as [number, number, number];              // Server (top)
+  const POS_DATABASE = [0, 0, 4] as [number, number, number];                 // Database (middle)
+
+  // DEVOPS GROUP (RIGHT column, x = GRID_X)
+  const POS_CICD = [GRID_X, GRID_Y, 4] as [number, number, number];           // CI/CD (top)
+  const POS_CLOUD = [GRID_X, 0, 4] as [number, number, number];               // Cloud (middle)
+  const POS_ARCHI = [GRID_X, -GRID_Y, 4] as [number, number, number];         // Architecture (bottom)
 
   // Connection Points (Z=0 for drawing logic)
-  const P_FRONT = [-3.2, -2.5, 0];
-  const P_SERVER = [0, 0, 0];
-  const P_DB = [0, 2.5, 0];
-  const P_MOBILE = [0, -2.5, 0];
-  const P_BACK = [3.2, -2.5, 0];
-  const P_CICD = [-3.2, 0, 0];
-  const P_CLOUD = [-3.2, 2.5, 0];
-  const P_TEST = [3.2, 0, 0];
+  // FRONTEND GROUP
+  const P_FRONT = [-GRID_X, GRID_Y, 0];
+  const P_MOBILE = [-GRID_X, 0, 0];
+  const P_BACK = [-GRID_X, -GRID_Y, 0];
+  // BACKEND GROUP
+  const P_SERVER = [0, GRID_Y, 0];
+  const P_DB = [0, 0, 0];
+  // DEVOPS GROUP
+  const P_CICD = [GRID_X, GRID_Y, 0];
+  const P_CLOUD = [GRID_X, 0, 0];
+  const P_ARCHI = [GRID_X, -GRID_Y, 0];
 
   // Colors
-  const C_FRONT = "#3b82f6"; // Blue
+  const C_FRONT = "#3b82f6"; // Blue (Frontend)
+  const C_MOBILE = "#8b5cf6"; // Purple (Mobile)
+  const C_BACK = "#ffaa00"; // Gold/Orange (Backoffice)
   const C_SERVER = "#10b981"; // Green (Node)
-  const C_DB = "#ef4444"; // Red (Database) - UPDATED per request
-  const C_MOBILE = "#8b5cf6"; // Purple
-  const C_BACK = "#ffaa00"; // Gold/Orange (Admin)
-  const C_SAAS = "#ff6600"; // Orange (CI/CD)
-  const C_CLOUD = "#1e3a5f"; // Dark Blue
-  const C_TEST = "#84cc16"; // Lime (Testing) - Changed to avoid conflict with Red DB
-  
+  const C_DB = "#ef4444"; // Red (Database)
+  const C_CICD = "#ff6600"; // Orange (CI/CD)
+  const C_CLOUD = "#1e3a5f"; // Dark Blue (Cloud)
+  const C_ARCHI = "#06b6d4"; // Cyan (Architecture) - replaces Testing
+
+  // Group colors for category boxes
+  const C_GROUP_FRONTEND = "#3b82f6"; // Blue
+  const C_GROUP_BACKEND = "#10b981"; // Green
+  const C_GROUP_DEVOPS = "#ff6600"; // Orange
+
   // Opacity Calculation Helper
   const getLinkOpacity = (threshold: number) => {
       // Fade in over 0.05 units after the threshold
       return Math.max(0, Math.min((offset - threshold) / 0.05, 1));
   };
-  
-  // Match Experience.tsx timings (S1=0.16, Step=0.11)
-  // T_FRONT = 0.05 (unchanged, early enough)
-  // T_SERVER = S1 + small_buffer = 0.16 + 0.02 = 0.18
-  // T_DB = S1 + STEP + buffer = 0.16 + 0.11 + 0.02 = 0.29
-  // T_MOBILE = 0.29 + 0.11 = 0.40
-  // T_BACK = 0.51
-  // T_CICD = 0.62
-  // T_CLOUD = 0.73
-  // T_TEST = 0.84
 
-  // Element "Done" Thresholds (when they are fully visible approx)
-  const T_FRONT = 0.05;
-  const T_SERVER = 0.17; 
-  const T_DB = 0.28;
-  const T_MOBILE = 0.39;
-  const T_BACK = 0.50;
-  const T_CICD = 0.61;
-  const T_CLOUD = 0.72;
-  const T_TEST = 0.83;
+  // NEW TIMING MAP for 13 sections (0-12):
+  // 0: Intro (Eden Wisniewski)
+  // 1: FullStack Overview (all visible)
+  // 2: Frontend slide (zoom to frontend group)
+  // 3: Site Web detail
+  // 4: App Mobile detail
+  // 5: Backoffice detail
+  // 6: Backend slide (zoom to backend group)
+  // 7: Server detail
+  // 8: Database detail
+  // 9: DevOps slide (zoom to devops group)
+  // 10: CI/CD detail
+  // 11: Cloud detail
+  // 12: Architecture detail
+
+  // Element appearance thresholds (all appear early for overview)
+  const T_FRONT = 0.15;      // Frontend group
+  const T_MOBILE = 0.22;
+  const T_BACK = 0.29;
+  const T_SERVER = 0.40;     // Backend group
+  const T_DB = 0.48;
+  const T_CICD = 0.58;       // DevOps group
+  const T_CLOUD = 0.66;
+  const T_ARCHI = 0.74;
 
   return (
     <group ref={sceneRef}>
 
       {/* ========== SKILLS CONTAINER (shifts right on dezoom) ========== */}
       <group ref={skillsContainerRef}>
+
+      {/* ========== CATEGORY BOXES (Frontend / Backend / DevOps) ========== */}
+
+      {/* FRONTEND Group Box - LEFT column (Site Web, Mobile, Backoffice) */}
+      {showCategoryBoxes && (
+        <group ref={frontendGroupRef} position={[-GRID_X, 0, -0.5]}>
+          {/* Vertical rectangle encompassing the 3 frontend elements */}
+          <RoundedBox args={[2.2, 7.5, 0.02]} radius={0.1} position={[0, 0, 0]}>
+            <meshStandardMaterial color={C_GROUP_FRONTEND} transparent opacity={0.08} />
+          </RoundedBox>
+          {/* Border outline */}
+          <mesh position={[0, 0, 0.01]}>
+            <planeGeometry args={[2.3, 7.6]} />
+            <meshBasicMaterial color={C_GROUP_FRONTEND} transparent opacity={0.15} wireframe />
+          </mesh>
+          {/* Category Label */}
+          <Text position={[0, GRID_Y + 1.2, 0.1]} fontSize={0.25} color={C_GROUP_FRONTEND} anchorX="center" anchorY="middle">
+            FRONTEND
+          </Text>
+        </group>
+      )}
+
+      {/* BACKEND Group Box - CENTER column (Server, Database) */}
+      {showCategoryBoxes && (
+        <group ref={backendGroupRef} position={[0, GRID_Y * 0.5, -0.5]}>
+          {/* Vertical rectangle encompassing Server and Database */}
+          <RoundedBox args={[2.2, 4.5, 0.02]} radius={0.1} position={[0, 0, 0]}>
+            <meshStandardMaterial color={C_GROUP_BACKEND} transparent opacity={0.08} />
+          </RoundedBox>
+          {/* Border outline */}
+          <mesh position={[0, 0, 0.01]}>
+            <planeGeometry args={[2.3, 4.6]} />
+            <meshBasicMaterial color={C_GROUP_BACKEND} transparent opacity={0.15} wireframe />
+          </mesh>
+          {/* Category Label */}
+          <Text position={[0, GRID_Y * 0.5 + 1.0, 0.1]} fontSize={0.25} color={C_GROUP_BACKEND} anchorX="center" anchorY="middle">
+            BACKEND
+          </Text>
+        </group>
+      )}
+
+      {/* DEVOPS Group Box - RIGHT column (CI/CD, Cloud, Architecture) */}
+      {showCategoryBoxes && (
+        <group ref={devopsGroupRef} position={[GRID_X, 0, -0.5]}>
+          {/* Vertical rectangle encompassing the 3 devops elements */}
+          <RoundedBox args={[2.2, 7.5, 0.02]} radius={0.1} position={[0, 0, 0]}>
+            <meshStandardMaterial color={C_GROUP_DEVOPS} transparent opacity={0.08} />
+          </RoundedBox>
+          {/* Border outline */}
+          <mesh position={[0, 0, 0.01]}>
+            <planeGeometry args={[2.3, 7.6]} />
+            <meshBasicMaterial color={C_GROUP_DEVOPS} transparent opacity={0.15} wireframe />
+          </mesh>
+          {/* Category Label */}
+          <Text position={[0, GRID_Y + 1.2, 0.1]} fontSize={0.25} color={C_GROUP_DEVOPS} anchorX="center" anchorY="middle">
+            DEVOPS
+          </Text>
+        </group>
+      )}
 
       {/* ========== TOP ROW ========== */}
 
@@ -701,7 +785,7 @@ export default function WebsiteBuilder() {
       {/* CI/CD (-3.2, 0) */}
       {showCICD && (
         <group ref={cicdRef} position={POS_CICD} scale={0}>
-          <Text position={[0, 0.85, 0]} fontSize={0.09} color={C_SAAS} anchorX="center">CI/CD</Text>
+          <Text position={[0, 0.85, 0]} fontSize={0.09} color={C_CICD} anchorX="center">CI/CD</Text>
           <Text position={[0, 0.73, 0]} fontSize={0.04} color="#666" anchorX="center">Pipeline</Text>
 
           {/* Main Pipeline Container - Dark with orange glow */}
@@ -947,131 +1031,91 @@ export default function WebsiteBuilder() {
         </group>
       )}
 
-      {/* TESTING (3.2, 0) */}
-      {showTesting && (
-        <group ref={testingRef} position={POS_TESTING} scale={0}>
-          <Text position={[0, 0.85, 0]} fontSize={0.09} color={C_TEST} anchorX="center">TESTING</Text>
-          <Text position={[0, 0.73, 0]} fontSize={0.04} color="#666" anchorX="center">Quality Assurance</Text>
+      {/* ARCHITECTURE (DevOps Group - Bottom) */}
+      {showArchi && (
+        <group ref={archiRef} position={POS_ARCHI} scale={0}>
+          <Text position={[0, 0.85, 0]} fontSize={0.09} color={C_ARCHI} anchorX="center">ARCHITECTURE</Text>
+          <Text position={[0, 0.73, 0]} fontSize={0.04} color="#666" anchorX="center">System Design</Text>
 
-          {/* Main Container - Test report style */}
+          {/* Main Container - Blueprint/Architecture style */}
           <RoundedBox args={[1.5, 1.0, 0.08]} radius={0.04} smoothness={4}>
-            <meshStandardMaterial color="#0a1a0a" metalness={0.7} roughness={0.3} />
+            <meshStandardMaterial color="#0a1520" metalness={0.7} roughness={0.3} />
           </RoundedBox>
 
-          {/* Green border glow */}
+          {/* Cyan border glow */}
           <mesh position={[0, 0, -0.02]}>
             <planeGeometry args={[1.55, 1.05]} />
-            <meshBasicMaterial color="#22c55e" transparent opacity={0.1} />
+            <meshBasicMaterial color={C_ARCHI} transparent opacity={0.1} />
           </mesh>
 
-          {/* Header bar with status */}
+          {/* Header bar */}
           <RoundedBox args={[1.4, 0.1, 0.02]} radius={0.02} position={[0, 0.38, 0.05]}>
-            <meshStandardMaterial color="#166534" emissive="#22c55e" emissiveIntensity={0.3} />
+            <meshStandardMaterial color="#0e4b5f" emissive={C_ARCHI} emissiveIntensity={0.3} />
           </RoundedBox>
-          <Text position={[-0.55, 0.38, 0.07]} fontSize={0.04} color="#22c55e" anchorX="left">Test Results</Text>
-          <Text position={[0.55, 0.38, 0.07]} fontSize={0.03} color="#22c55e" anchorX="right">PASSED</Text>
+          <Text position={[-0.55, 0.38, 0.07]} fontSize={0.04} color={C_ARCHI} anchorX="left">System Blueprint</Text>
+          <Text position={[0.55, 0.38, 0.07]} fontSize={0.03} color={C_ARCHI} anchorX="right">v2.0</Text>
 
-          {/* Test Suite Results */}
-          <group position={[0, 0.05, 0.05]}>
-            {/* Test suites */}
+          {/* Architecture Diagram */}
+          <group position={[0, 0, 0.05]}>
+            {/* Microservices boxes */}
             {[
-              { name: "Unit Tests", passed: 142, failed: 0, y: 0.18 },
-              { name: "Integration", passed: 38, failed: 0, y: 0.02 },
-              { name: "E2E Tests", passed: 24, failed: 1, y: -0.14 },
-            ].map((suite, i) => (
+              { name: "API Gateway", x: 0, y: 0.18 },
+              { name: "Auth Service", x: -0.45, y: -0.05 },
+              { name: "Core Service", x: 0.45, y: -0.05 },
+            ].map((service, i) => (
               <group
                 key={i}
-                position={[-0.55, suite.y, 0]}
+                position={[service.x, service.y, 0]}
                 ref={(el) => (checklistRefs.current[i] = el)}
                 scale={0}
               >
-                {/* Suite container */}
-                <RoundedBox args={[1.3, 0.12, 0.01]} radius={0.01}>
-                  <meshStandardMaterial color="#0f1f0f" />
+                {/* Service container */}
+                <RoundedBox args={[0.55, 0.2, 0.01]} radius={0.02}>
+                  <meshStandardMaterial color="#0e2a35" />
                 </RoundedBox>
 
-                {/* Status icon */}
-                <group position={[-0.55, 0, 0.01]}>
-                  {suite.failed === 0 ? (
-                    <>
-                      {/* Checkmark */}
-                      <mesh position={[0, 0, 0]}>
-                        <circleGeometry args={[0.035, 16]} />
-                        <meshBasicMaterial color="#166534" />
-                      </mesh>
-                      <Line
-                        points={[[-0.015, 0, 0.01], [-0.005, -0.012, 0.01], [0.02, 0.015, 0.01]]}
-                        color="#22c55e"
-                        lineWidth={3}
-                      />
-                    </>
-                  ) : (
-                    <>
-                      {/* Warning */}
-                      <mesh>
-                        <circleGeometry args={[0.035, 16]} />
-                        <meshBasicMaterial color="#854d0e" />
-                      </mesh>
-                      <Text position={[0, -0.005, 0.01]} fontSize={0.04} color="#fbbf24" anchorX="center">!</Text>
-                    </>
-                  )}
-                </group>
+                {/* Service icon */}
+                <mesh position={[-0.18, 0, 0.01]}>
+                  <boxGeometry args={[0.08, 0.08, 0.01]} />
+                  <meshBasicMaterial color={C_ARCHI} />
+                </mesh>
 
-                {/* Suite name */}
-                <Text position={[-0.4, 0, 0.01]} fontSize={0.03} color="#a3e635" anchorX="left">{suite.name}</Text>
-
-                {/* Results */}
-                <group position={[0.35, 0, 0.01]}>
-                  <Text position={[0, 0, 0]} fontSize={0.025} color="#22c55e" anchorX="center">
-                    {suite.passed} passed
-                  </Text>
-                </group>
-                <group position={[0.55, 0, 0.01]}>
-                  <Text
-                    position={[0, 0, 0]}
-                    fontSize={0.025}
-                    color={suite.failed > 0 ? "#fbbf24" : "#666"}
-                    anchorX="center"
-                  >
-                    {suite.failed} failed
-                  </Text>
-                </group>
-
-                {/* Progress bar */}
-                <group position={[0, -0.04, 0.01]}>
-                  <mesh position={[0.1, 0, 0]}>
-                    <planeGeometry args={[0.9, 0.015]} />
-                    <meshBasicMaterial color="#1a2a1a" />
-                  </mesh>
-                  <mesh position={[0.1 - (0.45 * suite.failed / (suite.passed + suite.failed)), 0, 0.001]}>
-                    <planeGeometry args={[0.9 * (suite.passed / (suite.passed + suite.failed)), 0.015]} />
-                    <meshBasicMaterial color="#22c55e" />
-                  </mesh>
-                </group>
+                {/* Service name */}
+                <Text position={[0.05, 0, 0.01]} fontSize={0.025} color={C_ARCHI} anchorX="left">{service.name}</Text>
               </group>
             ))}
 
-            {/* Coverage summary */}
-            <group position={[0, -0.32, 0]}>
-              <RoundedBox args={[1.3, 0.1, 0.01]} radius={0.01}>
-                <meshStandardMaterial color="#0f1f0f" />
+            {/* Connection lines between services */}
+            <Line points={[[0, 0.08, 0.02], [-0.3, -0.05, 0.02]]} color={C_ARCHI} lineWidth={2} opacity={0.5} transparent />
+            <Line points={[[0, 0.08, 0.02], [0.3, -0.05, 0.02]]} color={C_ARCHI} lineWidth={2} opacity={0.5} transparent />
+            <Line points={[[-0.15, -0.05, 0.02], [0.15, -0.05, 0.02]]} color={C_ARCHI} lineWidth={2} opacity={0.5} transparent dashed dashSize={0.02} gapSize={0.02} />
+
+            {/* Database layer */}
+            <group position={[0, -0.28, 0]}>
+              <RoundedBox args={[1.2, 0.15, 0.01]} radius={0.01}>
+                <meshStandardMaterial color="#0e2a35" />
               </RoundedBox>
-              <Text position={[-0.55, 0, 0.01]} fontSize={0.025} color="#a3e635" anchorX="left">Coverage</Text>
-              {/* Coverage bar */}
-              <mesh position={[0.1, 0, 0.01]}>
-                <planeGeometry args={[0.6, 0.04]} />
-                <meshBasicMaterial color="#1a2a1a" />
+              <mesh position={[-0.45, 0, 0.01]} rotation={[Math.PI / 2, 0, 0]}>
+                <cylinderGeometry args={[0.04, 0.04, 0.02, 16]} />
+                <meshBasicMaterial color={C_ARCHI} />
               </mesh>
-              <mesh position={[0.1 - 0.06, 0, 0.015]}>
-                <planeGeometry args={[0.48, 0.04]} />
-                <meshBasicMaterial color="#22c55e" />
+              <Text position={[-0.3, 0, 0.01]} fontSize={0.025} color="#888" anchorX="left">PostgreSQL</Text>
+              <mesh position={[0.15, 0, 0.01]} rotation={[Math.PI / 2, 0, 0]}>
+                <cylinderGeometry args={[0.04, 0.04, 0.02, 16]} />
+                <meshBasicMaterial color="#ef4444" />
               </mesh>
-              <Text position={[0.55, 0, 0.01]} fontSize={0.03} color="#22c55e" anchorX="right">87%</Text>
+              <Text position={[0.3, 0, 0.01]} fontSize={0.025} color="#888" anchorX="left">Redis</Text>
+            </group>
+
+            {/* Scalability indicators */}
+            <group position={[0.6, 0.18, 0]}>
+              <Text position={[0, 0.05, 0.01]} fontSize={0.02} color="#666" anchorX="center">Replicas</Text>
+              <Text position={[0, -0.02, 0.01]} fontSize={0.03} color={C_ARCHI} anchorX="center">x3</Text>
             </group>
           </group>
 
-          {/* Ambient green glow */}
-          <pointLight position={[0, 0, 0.5]} intensity={0.5} color="#22c55e" distance={2} decay={2} />
+          {/* Ambient cyan glow */}
+          <pointLight position={[0, 0, 0.5]} intensity={0.5} color={C_ARCHI} distance={2} decay={2} />
         </group>
       )}
 
@@ -1316,53 +1360,48 @@ export default function WebsiteBuilder() {
         </group>
       )}
 
-      {/* ========== PARTICLE CONNECTIONS (Updated per diagram) ========== */}
-      {/* ========== PARTICLE CONNECTIONS (Updated per diagram) ========== */}
-      {/* Lines always visible, Particles only on final dezoom (> 88%) */}
-      
-      {/* 1. Cloud <-> BDD (Top Horiz) */}
-      {showCloud && showDatabase && <ParticleStream start={P_CLOUD} end={P_DB} startColor={C_CLOUD} endColor={C_DB} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_CLOUD, T_DB))} />}
+      {/* ========== PARTICLE CONNECTIONS (Logical Layout) ========== */}
+      {/* Lines always visible, Particles only on final dezoom (> 94%) */}
 
-      {/* 2. Cloud <-> CI/CD (Vertical Left) */}
-      {showCloud && showCICD && <ParticleStream start={P_CLOUD} end={P_CICD} startColor={C_CLOUD} endColor={C_SAAS} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_CLOUD, T_CICD))} />}
+      {/* ===== INTRA-GROUP VERTICAL CONNECTIONS ===== */}
 
-      {/* 3. BDD <-> Testing (Diagonal from Top Mid to Mid Right) */}
-      {showDatabase && showTesting && <ParticleStream start={P_DB} end={P_TEST} startColor={C_DB} endColor={C_TEST} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_DB, T_TEST))} />}
-
-      {/* 4. CI/CD <-> Server (Mid Horizontal) */}
-      {showCICD && showServer && <ParticleStream start={P_CICD} end={P_SERVER} startColor={C_SAAS} endColor={C_SERVER} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_CICD, T_SERVER))} />}
-
-      {/* 5. Server <-> Testing (Mid Horizontal) */}
-      {showServer && showTesting && <ParticleStream start={P_SERVER} end={P_TEST} startColor={C_SERVER} endColor={C_TEST} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_SERVER, T_TEST))} />}
-
-      {/* 6. CI/CD <-> Frontend (Vertical Left) */}
-      {showCICD && showFrontend && <ParticleStream start={P_CICD} end={P_FRONT} startColor={C_SAAS} endColor={C_FRONT} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_CICD, T_FRONT))} />}
-
-      {/* 7. Frontend <-> Mobile (REMOVED) */}
-       {/* {showFrontend && showMobile && <ParticleStream start={P_FRONT} end={P_MOBILE} color="#00f0ff" />} */}
-
-      {/* 8. Mobile <-> Backoffice (Bot Horizontal) */}
+      {/* FRONTEND GROUP (vertical chain) */}
+      {/* Site Web <-> Mobile */}
+      {showFrontend && showMobile && <ParticleStream start={P_FRONT} end={P_MOBILE} startColor={C_FRONT} endColor={C_MOBILE} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_FRONT, T_MOBILE))} />}
+      {/* Mobile <-> Backoffice */}
       {showMobile && showBackoffice && <ParticleStream start={P_MOBILE} end={P_BACK} startColor={C_MOBILE} endColor={C_BACK} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_MOBILE, T_BACK))} />}
 
-      {/* 9. Testing <-> Backoffice (Vertical Right) */}
-      {showTesting && showBackoffice && <ParticleStream start={P_TEST} end={P_BACK} startColor={C_TEST} endColor={C_BACK} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_TEST, T_BACK))} />}
+      {/* BACKEND GROUP (vertical) */}
+      {/* Server <-> Database */}
+      {showServer && showDatabase && <ParticleStream start={P_SERVER} end={P_DB} startColor={C_SERVER} endColor={C_DB} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_SERVER, T_DB))} />}
 
-      {/* 10. Frontend <-> Server (Diagonal) - User Request */}
+      {/* DEVOPS GROUP (vertical chain) */}
+      {/* CI/CD <-> Cloud */}
+      {showCICD && showCloud && <ParticleStream start={P_CICD} end={P_CLOUD} startColor={C_CICD} endColor={C_CLOUD} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_CICD, T_CLOUD))} />}
+      {/* Cloud <-> Architecture */}
+      {showCloud && showArchi && <ParticleStream start={P_CLOUD} end={P_ARCHI} startColor={C_CLOUD} endColor={C_ARCHI} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_CLOUD, T_ARCHI))} />}
+
+      {/* ===== CROSS-GROUP HORIZONTAL CONNECTIONS ===== */}
+
+      {/* TOP ROW: Site Web <-> Server <-> CI/CD */}
       {showFrontend && showServer && <ParticleStream start={P_FRONT} end={P_SERVER} startColor={C_FRONT} endColor={C_SERVER} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_FRONT, T_SERVER))} />}
+      {showServer && showCICD && <ParticleStream start={P_SERVER} end={P_CICD} startColor={C_SERVER} endColor={C_CICD} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_SERVER, T_CICD))} />}
 
-      {/* 11. CI/CD <-> Mobile (Diagonal) - User Request */}
-      {showCICD && showMobile && <ParticleStream start={P_CICD} end={P_MOBILE} startColor={C_SAAS} endColor={C_MOBILE} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_CICD, T_MOBILE))} />}
+      {/* MIDDLE ROW: Mobile <-> Database <-> Cloud */}
+      {showMobile && showDatabase && <ParticleStream start={P_MOBILE} end={P_DB} startColor={C_MOBILE} endColor={C_DB} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_MOBILE, T_DB))} />}
+      {showDatabase && showCloud && <ParticleStream start={P_DB} end={P_CLOUD} startColor={C_DB} endColor={C_CLOUD} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_DB, T_CLOUD))} />}
 
-      {/* 12. Database <-> Server (Vertical Center) - NEW Request */}
-      {showDatabase && showServer && <ParticleStream start={P_DB} end={P_SERVER} startColor={C_DB} endColor={C_SERVER} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_DB, T_SERVER))} />}
+      {/* BOTTOM ROW: Backoffice <-> Architecture (Server and Database link both) */}
+      {showBackoffice && showArchi && <ParticleStream start={P_BACK} end={P_ARCHI} startColor={C_BACK} endColor={C_ARCHI} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_BACK, T_ARCHI))} />}
 
-      {/* 13. Server <-> Mobile (Vertical Center) - NEW Request */}
-      {showServer && showMobile && <ParticleStream start={P_SERVER} end={P_MOBILE} startColor={C_SERVER} endColor={C_MOBILE} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_SERVER, T_MOBILE))} />}
+      {/* ===== KEY DIAGONAL/CROSS CONNECTIONS ===== */}
 
-      {/* 14. Server <-> Backoffice (Diagonal) - NEW Request */}
-      {showServer && showBackoffice && <ParticleStream start={P_SERVER} end={P_BACK} startColor={C_SERVER} endColor={C_BACK} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_SERVER, T_BACK))} />}
+      {/* Backoffice <-> Server (admin dashboard needs backend) */}
+      {showBackoffice && showServer && <ParticleStream start={P_BACK} end={P_SERVER} startColor={C_BACK} endColor={C_SERVER} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_BACK, T_SERVER))} />}
+      {/* Backoffice <-> Database (admin reads data) */}
+      {showBackoffice && showDatabase && <ParticleStream start={P_BACK} end={P_DB} startColor={C_BACK} endColor={C_DB} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_BACK, T_DB))} />}
 
-      {/* 15. Server <-> Cloud (Vertical Center to Top) - NEW Request */}
+      {/* Server <-> Cloud (deployment) */}
       {showServer && showCloud && <ParticleStream start={P_SERVER} end={P_CLOUD} startColor={C_SERVER} endColor={C_CLOUD} showParticles={offset > 0.94} opacity={getLinkOpacity(Math.max(T_SERVER, T_CLOUD))} />}
 
       </group>

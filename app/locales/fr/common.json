@@ -233,12 +233,16 @@
   "sections": {
     "introduction": "Introduction",
     "interface": "Interface",
+    "frontend": "Frontend",
+    "backend": "Backend",
     "server": "Serveur",
     "data": "Données",
     "mobile": "Mobile",
     "administration": "Administration",
+    "devops": "DevOps",
     "pipeline": "Pipeline",
     "hosting": "Hébergement",
+    "design": "Design",
     "quality": "Qualité",
     "overview": "Vue d'ensemble",
     "timelineSection": "Timeline",
@@ -246,6 +250,7 @@
     "back": "Retour",
     "scrollToExplore": "Scroll pour explorer",
     "scrollToSeeProjects": "Scrollez pour voir les projets",
+    "youHaveAnIdea": "You have an idea?",
     "letsGoReal": "Let's make it real"
   },
   "content": {
@@ -256,6 +261,16 @@
     },
     "frontend": {
       "title": "Frontend",
+      "subtitle": "Interfaces Utilisateur",
+      "items": [
+        "Sites web, Applications mobiles, Backoffice",
+        "React, Next.js, React Native",
+        "Design responsive et accessible",
+        "Animations fluides et performantes"
+      ]
+    },
+    "siteWeb": {
+      "title": "Site Web",
       "subtitle": "Applications Web Modernes",
       "items": [
         "React, Next.js, Remix pour des interfaces réactives",
@@ -267,6 +282,16 @@
     },
     "backend": {
       "title": "Backend",
+      "subtitle": "Logique Serveur",
+      "items": [
+        "APIs REST et GraphQL scalables",
+        "Node.js, Express, NestJS",
+        "Bases de données SQL et NoSQL",
+        "Architecture microservices"
+      ]
+    },
+    "server": {
+      "title": "Server",
       "subtitle": "Serveurs Node.js Performants",
       "items": [
         "API REST & GraphQL scalables",
@@ -331,14 +356,24 @@
         "Monitoring et alertes 24/7"
       ]
     },
-    "testing": {
-      "title": "Testing",
-      "subtitle": "Qualité Garantie",
+    "devops": {
+      "title": "DevOps",
+      "subtitle": "Automatisation & Infra",
       "items": [
-        "Tests unitaires avec Jest/Vitest",
-        "Tests d'intégration API",
-        "Tests E2E avec Playwright/Cypress",
-        "Coverage maintenu au-dessus de 80%",
+        "CI/CD, Cloud, Architecture système",
+        "Déploiement automatisé",
+        "Monitoring et alertes",
+        "Scalabilité et haute disponibilité"
+      ]
+    },
+    "architecture": {
+      "title": "Architecture",
+      "subtitle": "Design Système",
+      "items": [
+        "Conception d'architectures scalables",
+        "Microservices et API Gateway",
+        "Design patterns et best practices",
+        "Documentation technique complète",
         "Revue de code et standards qualité"
       ]
     },

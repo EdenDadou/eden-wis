@@ -44,7 +44,7 @@ const projects: Project[] = [
 function PortfolioParticles() {
   const particlesRef = useRef<THREE.Points>(null);
 
-  const { positions, geometry } = useMemo(() => {
+  const geometry = useMemo(() => {
     const pos = new Float32Array(100 * 3);
     for (let i = 0; i < 100; i++) {
       const angle = (i / 100) * Math.PI * 2;
@@ -55,7 +55,7 @@ function PortfolioParticles() {
     }
     const geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    return { positions: pos, geometry: geo };
+    return geo;
   }, []);
 
   useFrame((state) => {
@@ -301,9 +301,9 @@ function CentralHub3D() {
 
       {/* Rings */}
       {[
-        { radius: 0.8, color: '#8B5CF6', speed: 0.25 },
-        { radius: 1.0, color: '#06B6D4', speed: -0.18 },
-        { radius: 1.2, color: '#10B981', speed: 0.12 },
+        { radius: 0.8, color: '#8B5CF6' },
+        { radius: 1.0, color: '#06B6D4' },
+        { radius: 1.2, color: '#10B981' },
       ].map((ring, i) => (
         <mesh key={i} rotation={[Math.PI / 2, 0, 0]}>
           <torusGeometry args={[ring.radius, 0.015, 8, 48]} />
