@@ -17,6 +17,7 @@ import Timeline3D, {
 } from "./Timeline3D";
 import ExperienceDetail3D from "./ExperienceDetail3D";
 import Portfolio3D from "./Portfolio3D";
+import About3D from "./About3D";
 import "../styles/global.css";
 
 interface CameraRigProps {
@@ -31,42 +32,68 @@ interface CameraRigProps {
 const GRID_X = 3.2;
 const GRID_Y = 2.5;
 
-// Camera positions for each section - perfectly defined
-const SECTION_CAMERA_POSITIONS: Record<number, { x: number; y: number; z: number; lookX: number; lookY: number }> = {
-  0: { x: 0, y: 0, z: 5, lookX: 0, lookY: 0 }, // Intro
-  1: { x: -5.5, y: 0, z: 7, lookX: -5.5, lookY: 0 }, // FullStack Overview
-  2: { x: -GRID_X, y: 0, z: 8, lookX: -GRID_X, lookY: 0 }, // Frontend Group
-  3: { x: -GRID_X, y: GRID_Y, z: 3.2, lookX: -GRID_X, lookY: GRID_Y }, // Site Web
-  4: { x: -GRID_X, y: 0, z: 3.2, lookX: -GRID_X, lookY: 0 }, // Mobile
-  5: { x: -GRID_X, y: -GRID_Y, z: 3.2, lookX: -GRID_X, lookY: -GRID_Y }, // Backoffice
-  6: { x: 0, y: GRID_Y * 0.5, z: 8, lookX: 0, lookY: GRID_Y * 0.5 }, // Backend Group
-  7: { x: 0, y: GRID_Y, z: 3.2, lookX: 0, lookY: GRID_Y }, // Server
-  8: { x: 0, y: 0, z: 3.2, lookX: 0, lookY: 0 }, // Database
-  9: { x: GRID_X, y: 0, z: 8, lookX: GRID_X, lookY: 0 }, // DevOps Group
-  10: { x: GRID_X, y: GRID_Y, z: 3.2, lookX: GRID_X, lookY: GRID_Y }, // CI/CD
-  11: { x: GRID_X, y: 0, z: 3.2, lookX: GRID_X, lookY: 0 }, // Cloud
-  12: { x: GRID_X, y: -GRID_Y, z: 3.2, lookX: GRID_X, lookY: -GRID_Y }, // Architecture
-  13: { x: 0, y: -12, z: 8, lookX: 0, lookY: -12 }, // Timeline
-  14: { x: 0, y: -24, z: 8, lookX: 0, lookY: -24 }, // Portfolio
+// Circular layout constants
+// 3 main sections arranged at 120° intervals around Y axis
+const ORBIT_RADIUS = 15; // Distance from center to each section
+const CAMERA_DISTANCE = 8; // Distance camera sits from the content
+
+// Section angles (in radians) - 4 sections at 90° apart
+const SECTION_ANGLES = {
+  skills: 0, // Front (0°)
+  experience: Math.PI / 2, // 90°
+  portfolio: Math.PI, // 180°
+  about: (Math.PI * 3) / 2, // 270°
+};
+
+// Camera positions for each section
+// Camera stays on Z axis, world rotates to bring content to front
+// All positions are relative to content at z = ORBIT_RADIUS (after world rotation)
+const SECTION_CAMERA_POSITIONS: Record<number, { x: number; y: number; z: number; lookX: number; lookY: number; lookZ: number }> = {
+  // Intro - far back view
+  0: { x: 0, y: 0, z: ORBIT_RADIUS + 12, lookX: 0, lookY: 0, lookZ: 0 },
+
+  // Skills sections - camera in front, looking at skills (which are at z = ORBIT_RADIUS)
+  1: { x: 0, y: 0, z: ORBIT_RADIUS + CAMERA_DISTANCE, lookX: 0, lookY: 0, lookZ: ORBIT_RADIUS }, // FullStack Overview
+  2: { x: -GRID_X, y: 0, z: ORBIT_RADIUS + CAMERA_DISTANCE, lookX: -GRID_X, lookY: 0, lookZ: ORBIT_RADIUS }, // Frontend Group
+  3: { x: -GRID_X, y: GRID_Y, z: ORBIT_RADIUS + 4, lookX: -GRID_X, lookY: GRID_Y, lookZ: ORBIT_RADIUS }, // Site Web
+  4: { x: -GRID_X, y: 0, z: ORBIT_RADIUS + 4, lookX: -GRID_X, lookY: 0, lookZ: ORBIT_RADIUS }, // Mobile
+  5: { x: -GRID_X, y: -GRID_Y, z: ORBIT_RADIUS + 4, lookX: -GRID_X, lookY: -GRID_Y, lookZ: ORBIT_RADIUS }, // Backoffice
+  6: { x: 0, y: GRID_Y * 0.5, z: ORBIT_RADIUS + CAMERA_DISTANCE, lookX: 0, lookY: GRID_Y * 0.5, lookZ: ORBIT_RADIUS }, // Backend Group
+  7: { x: 0, y: GRID_Y, z: ORBIT_RADIUS + 4, lookX: 0, lookY: GRID_Y, lookZ: ORBIT_RADIUS }, // Server
+  8: { x: 0, y: 0, z: ORBIT_RADIUS + 4, lookX: 0, lookY: 0, lookZ: ORBIT_RADIUS }, // Database
+  9: { x: GRID_X, y: 0, z: ORBIT_RADIUS + CAMERA_DISTANCE, lookX: GRID_X, lookY: 0, lookZ: ORBIT_RADIUS }, // DevOps Group
+  10: { x: GRID_X, y: GRID_Y, z: ORBIT_RADIUS + 4, lookX: GRID_X, lookY: GRID_Y, lookZ: ORBIT_RADIUS }, // CI/CD
+  11: { x: GRID_X, y: 0, z: ORBIT_RADIUS + 4, lookX: GRID_X, lookY: 0, lookZ: ORBIT_RADIUS }, // Cloud
+  12: { x: GRID_X, y: -GRID_Y, z: ORBIT_RADIUS + 4, lookX: GRID_X, lookY: -GRID_Y, lookZ: ORBIT_RADIUS }, // Architecture
+
+  // Experience section - camera stays in front, world rotates to bring experience to front
+  13: { x: 0, y: 0, z: ORBIT_RADIUS + CAMERA_DISTANCE, lookX: 0, lookY: 0, lookZ: ORBIT_RADIUS },
+
+  // Portfolio section - camera stays in front, world rotates to bring portfolio to front
+  14: { x: 0, y: 0, z: ORBIT_RADIUS + CAMERA_DISTANCE, lookX: 0, lookY: 0, lookZ: ORBIT_RADIUS },
+
+  // About section - camera stays in front, world rotates to bring about to front
+  15: { x: 0, y: 0, z: ORBIT_RADIUS + CAMERA_DISTANCE, lookX: 0, lookY: 0, lookZ: ORBIT_RADIUS },
 };
 
 // Scroll offset snap points for each section
 const SECTION_SNAP_OFFSETS: number[] = [
   0.0,    // 0: Intro
-  0.05,   // 1: FullStack Overview
-  0.12,   // 2: Frontend Slide
-  0.16,   // 3: Site Web
-  0.20,   // 4: Mobile
-  0.24,   // 5: Backoffice
-  0.28,   // 6: Backend Slide
-  0.32,   // 7: Server
-  0.36,   // 8: Database
-  0.40,   // 9: DevOps Slide
-  0.44,   // 10: CI/CD
-  0.48,   // 11: Cloud
-  0.52,   // 12: Architecture
-  0.63,   // 13: Timeline
-  0.80,   // 14: Portfolio
+  0.04,   // 1: FullStack Overview
+  0.10,   // 2: Frontend Slide
+  0.14,   // 3: Site Web
+  0.18,   // 4: Mobile
+  0.22,   // 5: Backoffice
+  0.26,   // 6: Backend Slide
+  0.30,   // 7: Server
+  0.34,   // 8: Database
+  0.38,   // 9: DevOps Slide
+  0.42,   // 10: CI/CD
+  0.46,   // 11: Cloud
+  0.50,   // 12: Architecture
+  0.58,   // 13: Timeline
+  0.72,   // 14: Portfolio
+  0.88,   // 15: About
 ];
 
 // Easing function for smooth camera interpolation
@@ -98,7 +125,7 @@ function getCameraPositionForSection(section: number) {
 const GROUP_TRANSITION_SECTIONS = new Set([2, 6, 9, 13]); // Frontend, Backend, DevOps, Timeline
 
 // Get camera position with smooth interpolation between sections
-// Includes zoom-out effect for group transitions
+// Camera stays on Z axis, pulls back during major transitions while world rotates
 function getInterpolatedCameraPosition(offset: number) {
   const section = getSectionFromOffset(offset);
   const nextSection = Math.min(section + 1, SECTION_SNAP_OFFSETS.length - 1);
@@ -114,7 +141,7 @@ function getInterpolatedCameraPosition(offset: number) {
   const nextPos = SECTION_CAMERA_POSITIONS[nextSection];
 
   if (!currentPos || !nextPos) {
-    return SECTION_CAMERA_POSITIONS[0];
+    return { ...SECTION_CAMERA_POSITIONS[0], lookZ: 0 };
   }
 
   // Smooth easing for professional feel
@@ -123,13 +150,16 @@ function getInterpolatedCameraPosition(offset: number) {
   // Check if this is a group transition (needs zoom-out effect)
   const isGroupTransition = GROUP_TRANSITION_SECTIONS.has(nextSection);
 
-  // Calculate zoom-out curve for group transitions
-  // This creates a "pull back and push forward" effect
+  // For transitions between major sections (skills->experience, experience->portfolio)
+  // Camera pulls back while world rotates
+  const isMajorTransition = (section <= 12 && nextSection === 13) || (section === 13 && nextSection === 14);
+
+  // Calculate zoom-out curve for transitions
   let zoomOffset = 0;
-  if (isGroupTransition && progress > 0) {
-    // Bell curve: peaks at 50% progress, adds extra z distance
+  if ((isGroupTransition || isMajorTransition) && progress > 0) {
+    // Bell curve: peaks at 50% progress, camera pulls back
     const zoomCurve = Math.sin(progress * Math.PI);
-    zoomOffset = zoomCurve * 4; // Max 4 units of extra zoom
+    zoomOffset = zoomCurve * (isMajorTransition ? 12 : 4); // Much more pullback for major transitions
   }
 
   return {
@@ -138,6 +168,7 @@ function getInterpolatedCameraPosition(offset: number) {
     z: THREE.MathUtils.lerp(currentPos.z, nextPos.z, t) + zoomOffset,
     lookX: THREE.MathUtils.lerp(currentPos.lookX, nextPos.lookX, t),
     lookY: THREE.MathUtils.lerp(currentPos.lookY, nextPos.lookY, t),
+    lookZ: THREE.MathUtils.lerp(currentPos.lookZ ?? 0, nextPos.lookZ ?? 0, t),
   };
 }
 
@@ -240,12 +271,12 @@ function CameraRig({
 
       navStartPos.current.copy(state.camera.position);
       navTargetPos.current.set(pos.x, pos.y, pos.z);
-      navTargetLookAt.current.set(pos.lookX, pos.lookY, 0);
-      navStartLookAt.current.set(
-        state.camera.position.x,
-        state.camera.position.y,
-        0
-      );
+      navTargetLookAt.current.set(pos.lookX, pos.lookY, pos.lookZ ?? 0);
+      // Get current lookAt from camera direction
+      const currentLookAt = new THREE.Vector3();
+      state.camera.getWorldDirection(currentLookAt);
+      currentLookAt.multiplyScalar(10).add(state.camera.position);
+      navStartLookAt.current.copy(currentLookAt);
 
       const distance = navStartPos.current.distanceTo(navTargetPos.current);
       navAnimationDuration.current = Math.min(1.5, Math.max(0.8, 0.8 + distance * 0.05));
@@ -351,15 +382,17 @@ function CameraRig({
 
     // Get interpolated camera position based on scroll
     const camPos = getInterpolatedCameraPosition(offset);
-    let { x, y, z, lookX, lookY } = camPos;
+    let { x, y, z, lookX, lookY, lookZ } = camPos;
 
     // Override camera position when in detail view (experience selected)
+    // Camera stays in front, world is already rotated to show experience
     if (isInDetailView) {
       x = 0;
       y = 0;
-      z = 7;
+      z = ORBIT_RADIUS + 7;
       lookX = 0;
       lookY = 0;
+      lookZ = ORBIT_RADIUS;
     }
 
     // Add subtle drift for life (only when idle and not snapping)
@@ -370,7 +403,7 @@ function CameraRig({
     }
 
     const targetPos = new THREE.Vector3(x, y, z);
-    const lookAt = new THREE.Vector3(lookX, lookY, 0);
+    const lookAt = new THREE.Vector3(lookX, lookY, lookZ);
 
     // Smooth camera movement - adjust damping based on state
     const dampFactor = isSnapping.current ? 0.08 : 0.12;
@@ -857,6 +890,197 @@ interface ExperienceProps {
   onFirstSectionAnimationComplete?: () => void;
 }
 
+// Determine which major section we're in (skills, experience, portfolio, about)
+const getMajorSection = (section: number): 'skills' | 'experience' | 'portfolio' | 'about' => {
+  if (section <= 12) return 'skills';
+  if (section === 13) return 'experience';
+  if (section === 14) return 'portfolio';
+  return 'about';
+};
+
+// Get rotation angle for major section (to bring it to front)
+const getRotationForSection = (majorSection: 'skills' | 'experience' | 'portfolio' | 'about'): number => {
+  switch (majorSection) {
+    case 'skills': return 0;
+    case 'experience': return -SECTION_ANGLES.experience; // Rotate world so experience faces camera
+    case 'portfolio': return -SECTION_ANGLES.portfolio; // Rotate world so portfolio faces camera
+    case 'about': return -SECTION_ANGLES.about; // Rotate world so about faces camera
+  }
+};
+
+// Component that rotates all content based on current major section
+// Camera stays in place, world rotates to bring content to front
+function RotatingWorld({
+  children,
+  currentSection,
+  targetSection,
+  onAnimatingChange,
+}: {
+  children: React.ReactNode;
+  currentSection: number;
+  targetSection: number | null;
+  onAnimatingChange?: (isAnimating: boolean) => void;
+}) {
+  const groupRef = useRef<THREE.Group>(null);
+  const targetRotation = useRef(0);
+  const isAnimating = useRef(false);
+  const animationProgress = useRef(0);
+  const startRotation = useRef(0);
+  const lastAnimatingState = useRef(false);
+
+  useFrame((_, delta) => {
+    if (!groupRef.current) return;
+
+    // Determine target section for rotation
+    const effectiveSection = targetSection ?? currentSection;
+    const majorSection = getMajorSection(effectiveSection);
+    const newTargetRotation = getRotationForSection(majorSection);
+
+    // Check if we need to start a new rotation animation
+    if (Math.abs(newTargetRotation - targetRotation.current) > 0.01) {
+      startRotation.current = groupRef.current.rotation.y;
+      targetRotation.current = newTargetRotation;
+      isAnimating.current = true;
+      animationProgress.current = 0;
+    }
+
+    // Animate rotation
+    if (isAnimating.current) {
+      animationProgress.current += delta * 0.8; // Animation speed
+
+      if (animationProgress.current >= 1) {
+        animationProgress.current = 1;
+        isAnimating.current = false;
+      }
+
+      // Easing function
+      const t = animationProgress.current;
+      const easeInOutCubic = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+      groupRef.current.rotation.y = THREE.MathUtils.lerp(
+        startRotation.current,
+        targetRotation.current,
+        easeInOutCubic
+      );
+    }
+
+    // Notify parent of animation state changes
+    if (lastAnimatingState.current !== isAnimating.current) {
+      lastAnimatingState.current = isAnimating.current;
+      if (onAnimatingChange) {
+        onAnimatingChange(isAnimating.current);
+      }
+    }
+  });
+
+  return <group ref={groupRef}>{children}</group>;
+}
+
+// Orbit rings that only appear during navigation or on hero section
+function FadingOrbitRings({ isAnimating, currentSection }: { isAnimating: boolean; currentSection: number }) {
+  const groupRef = useRef<THREE.Group>(null);
+  const currentOpacity = useRef(0);
+
+  useFrame((_, delta) => {
+    if (!groupRef.current) return;
+
+    // Visible during animation OR on hero section (section 0)
+    const targetOpacity = (isAnimating || currentSection === 0) ? 1 : 0;
+
+    // Smooth fade
+    currentOpacity.current = THREE.MathUtils.lerp(
+      currentOpacity.current,
+      targetOpacity,
+      delta * 3
+    );
+
+    // Apply opacity to rings
+    groupRef.current.traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        const material = child.material as THREE.MeshBasicMaterial;
+        if (material && 'opacity' in material) {
+          const mat = material as unknown as { opacity: number; _originalOpacity?: number };
+          if (mat._originalOpacity === undefined) {
+            mat._originalOpacity = material.opacity;
+          }
+          material.opacity = mat._originalOpacity * currentOpacity.current;
+        }
+      }
+    });
+
+    groupRef.current.visible = currentOpacity.current > 0.01;
+  });
+
+  return (
+    <group ref={groupRef}>
+      {/* Main orbit ring */}
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[ORBIT_RADIUS, 0.03, 16, 100]} />
+        <meshBasicMaterial color="#06b6d4" transparent opacity={0.3} />
+      </mesh>
+      {/* Secondary tilted ring */}
+      <mesh rotation={[Math.PI / 2.2, 0.2, 0]}>
+        <torusGeometry args={[ORBIT_RADIUS * 0.95, 0.015, 16, 100]} />
+        <meshBasicMaterial color="#8b5cf6" transparent opacity={0.1} />
+      </mesh>
+    </group>
+  );
+}
+
+// Wrapper component that fades sections based on active state
+function FadingSection({
+  children,
+  isActive,
+  isAnimating,
+  sectionType,
+}: {
+  children: React.ReactNode;
+  isActive: boolean;
+  isAnimating: boolean;
+  sectionType: 'skills' | 'experience' | 'portfolio' | 'about';
+}) {
+  const groupRef = useRef<THREE.Group>(null);
+  const currentOpacity = useRef(isActive ? 1 : 0);
+
+  useFrame((_, delta) => {
+    if (!groupRef.current) return;
+
+    // Target opacity: full if active OR animating, otherwise invisible
+    const targetOpacity = (isActive || isAnimating) ? 1 : 0;
+
+    // Smooth interpolation
+    const speed = isAnimating ? 3 : 2; // Faster during animation
+    currentOpacity.current = THREE.MathUtils.lerp(
+      currentOpacity.current,
+      targetOpacity,
+      delta * speed
+    );
+
+    // Apply opacity to all materials in the group
+    groupRef.current.traverse((child) => {
+      if (child instanceof THREE.Mesh || child instanceof THREE.Line || child instanceof THREE.Points) {
+        const materials = Array.isArray(child.material) ? child.material : [child.material];
+        materials.forEach((material) => {
+          if (material && 'opacity' in material) {
+            // Store original opacity if not yet stored
+            if ((material as { _originalOpacity?: number })._originalOpacity === undefined) {
+              (material as { _originalOpacity: number })._originalOpacity = material.opacity;
+            }
+            const originalOpacity = (material as { _originalOpacity: number })._originalOpacity;
+            material.opacity = originalOpacity * currentOpacity.current;
+            material.transparent = true;
+          }
+        });
+      }
+    });
+
+    // Also update visibility for performance when fully hidden
+    groupRef.current.visible = currentOpacity.current > 0.01;
+  });
+
+  return <group ref={groupRef}>{children}</group>;
+}
+
 export default function Experience({
   onSectionChange,
   onExperienceSelect,
@@ -875,6 +1099,9 @@ export default function Experience({
   // Track current section for camera and highlight logic
   const [currentSection, setCurrentSection] = useState(0);
 
+  // Track if world is rotating (for section visibility)
+  const [isWorldAnimating, setIsWorldAnimating] = useState(false);
+
   // Scroll snap state
   const [snapOffset, setSnapOffset] = useState<number | null>(null);
 
@@ -890,6 +1117,9 @@ export default function Experience({
     setCurrentSection(section);
     if (onSectionChange) onSectionChange(section);
   };
+
+  // Determine active major section
+  const activeMajorSection = getMajorSection(currentSection);
 
   return (
     <>
@@ -954,21 +1184,59 @@ export default function Experience({
         />
 
         {/* Main content - hidden when in detail view */}
+        {/* RotatingWorld rotates all content to bring the current section to front */}
         {!selectedExperience && (
-          <>
-            <Float rotationIntensity={0.05} floatIntensity={0.1} speed={1}>
-              <WebsiteBuilder currentSection={currentSection} />
-            </Float>
+          <RotatingWorld
+            currentSection={currentSection}
+            targetSection={targetSection ?? null}
+            onAnimatingChange={setIsWorldAnimating}
+          >
+            {/* Skills section - at 0° on the circle (front) */}
+            <FadingSection
+              isActive={activeMajorSection === 'skills'}
+              isAnimating={isWorldAnimating}
+              sectionType="skills"
+            >
+              <group position={[0, 0, ORBIT_RADIUS]}>
+                <Float rotationIntensity={0.05} floatIntensity={0.1} speed={1}>
+                  <WebsiteBuilder currentSection={currentSection} />
+                </Float>
+              </group>
+            </FadingSection>
 
-            {/* Timeline 3D Experience */}
-            <Timeline3D
-              onExperienceSelect={onExperienceSelect || (() => {})}
-              selectedId={selectedExperienceId || null}
-            />
+            {/* Timeline 3D Experience - at 120° */}
+            <FadingSection
+              isActive={activeMajorSection === 'experience'}
+              isAnimating={isWorldAnimating}
+              sectionType="experience"
+            >
+              <Timeline3D
+                onExperienceSelect={onExperienceSelect || (() => {})}
+                selectedId={selectedExperienceId || null}
+              />
+            </FadingSection>
 
-            {/* Portfolio 3D */}
-            <Portfolio3D />
-          </>
+            {/* Portfolio 3D - at 180° */}
+            <FadingSection
+              isActive={activeMajorSection === 'portfolio'}
+              isAnimating={isWorldAnimating}
+              sectionType="portfolio"
+            >
+              <Portfolio3D />
+            </FadingSection>
+
+            {/* About 3D - at 270° */}
+            <FadingSection
+              isActive={activeMajorSection === 'about'}
+              isAnimating={isWorldAnimating}
+              sectionType="about"
+            >
+              <About3D />
+            </FadingSection>
+
+            {/* Central decoration - orbit rings (visible during navigation or hero section) */}
+            <FadingOrbitRings isAnimating={isWorldAnimating} currentSection={currentSection} />
+          </RotatingWorld>
         )}
 
         {/* Experience Detail View - completely separate view */}

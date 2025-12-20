@@ -244,8 +244,19 @@ export default function Timeline3D({ onExperienceSelect, selectedId }: Timeline3
     }
   };
 
+  // Position on circle at 90° (experience section)
+  const ORBIT_RADIUS = 15;
+  const angle = Math.PI / 2; // 90°
+  const posX = Math.sin(angle) * ORBIT_RADIUS;
+  const posZ = Math.cos(angle) * ORBIT_RADIUS;
+  // Rotate to be tangent to circle and face outward (toward where camera will be)
+  // Content at angle θ needs rotation θ to face outward
+  // When RotatingWorld rotates by -θ, the content ends up at angle 0 with rotation 0
+  // (θ + (-θ) = 0), so it faces the camera on the +Z axis
+  const rotationY = angle;
+
   return (
-    <group position={[0, -12, 0]}>
+    <group position={[posX, 0, posZ]} rotation={[0, rotationY, 0]}>
       {/* Title */}
       <TimelineTitle
         position={[0, 3, 0]}

@@ -36,6 +36,11 @@ export function TopNav({ section, onNavigate }: TopNavProps) {
         {/* Navigation Links */}
         <div className="flex items-center gap-8">
           <NavLink
+            label={t("nav.about")}
+            isActive={section === 15}
+            onClick={() => onNavigate(15)}
+          />
+          <NavLink
             label={t("nav.skills")}
             isActive={section >= 1 && section <= 12}
             onClick={() => onNavigate(1)}
@@ -54,7 +59,7 @@ export function TopNav({ section, onNavigate }: TopNavProps) {
           {/* Language Switcher */}
           <div className="relative ml-4">
             <motion.button
-              className="group flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 backdrop-blur-xl rounded-xl border border-white/10 hover:border-cyan-500/30 transition-all duration-300"
+              className="group flex items-center gap-1 px-3 py-2 bg-white/5 hover:bg-white/10 backdrop-blur-xl rounded-xl border border-white/10 hover:border-cyan-500/30 transition-all duration-300"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={changeLanguage}
@@ -96,19 +101,6 @@ export function TopNav({ section, onNavigate }: TopNavProps) {
                   {i18n.language === "fr" ? "FR" : "EN"}
                 </motion.span>
               </AnimatePresence>
-              <svg
-                className="w-3 h-3 text-white/40 group-hover:text-cyan-400 transition-colors"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
-                />
-              </svg>
             </motion.button>
           </div>
         </div>

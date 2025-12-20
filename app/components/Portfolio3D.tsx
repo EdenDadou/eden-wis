@@ -323,8 +323,18 @@ function CentralHub3D() {
 }
 
 export default function Portfolio3D() {
+  // Position on circle at 180° (portfolio section)
+  const ORBIT_RADIUS = 15;
+  const angle = Math.PI; // 180°
+  const posX = Math.sin(angle) * ORBIT_RADIUS;
+  const posZ = Math.cos(angle) * ORBIT_RADIUS;
+  // Rotate to be tangent to circle and face outward (toward where camera will be)
+  // Content at angle θ needs rotation θ to face outward
+  // When RotatingWorld rotates by -θ, the content ends up at angle 0 with rotation 0
+  const rotationY = angle;
+
   return (
-    <group position={[0, -24, 0]}>
+    <group position={[posX, 0, posZ]} rotation={[0, rotationY, 0]}>
       <PortfolioParticles />
       <CentralHub3D />
 

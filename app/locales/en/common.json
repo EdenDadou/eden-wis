@@ -1,6 +1,7 @@
 {
   "nav": {
     "home": "Home",
+    "about": "About",
     "skills": "Skills",
     "expertise": "Expertise",
     "experience": "Experience",
@@ -222,6 +223,16 @@
           "Multi-language support (12 languages)"
         ]
       }
+    }
+  },
+  "about": {
+    "name": "Eden Wisniewski",
+    "role": "Full-Stack Developer",
+    "available": "Available for new projects",
+    "bio": "Passionate about web and mobile development for over 6 years, I create custom digital solutions that combine performance, design and user experience.",
+    "experience": "From innovative startups to large-scale e-commerce projects, I support my clients from design to production. My expertise covers frontend, backend, mobile and DevOps.",
+    "cta": {
+      "contact": "Contact me"
     }
   },
   "errors": {

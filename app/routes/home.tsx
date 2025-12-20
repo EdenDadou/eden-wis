@@ -4,7 +4,7 @@ import "../styles/global.css";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { AnimatePresence } from "framer-motion";
 import { TopNav, SectionIndicator } from "../components/navigation";
-import { HeroSection, SkillsSection, ExperienceSection, PortfolioSection } from "../components/sections";
+import { HeroSection, SkillsSection, ExperienceSection, PortfolioSection, AboutSection } from "../components/sections";
 import type { Experience } from "../components/Timeline3D";
 import type { Project } from "../types";
 import { projects } from "../constants";
@@ -240,6 +240,13 @@ export default function Home() {
         selectedProject={selectedProject}
         onSelectProject={setSelectedProject}
         scrollRef={portfolioScrollRef}
+      />
+
+      {/* Section 15 - About */}
+      <AboutSection
+        section={section}
+        showCard={showCard}
+        targetSection={targetSection}
       />
     </main>
   );
