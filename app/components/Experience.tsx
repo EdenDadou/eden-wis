@@ -48,23 +48,25 @@ const SECTION_ANGLES = {
 // Camera positions for each section
 // Camera stays on Z axis, world rotates to bring content to front
 // All positions are relative to content at z = ORBIT_RADIUS (after world rotation)
+// Skills 3D elements are offset +3 on X axis to appear on the right
+const SKILLS_X_OFFSET = 3;
 const SECTION_CAMERA_POSITIONS: Record<number, { x: number; y: number; z: number; lookX: number; lookY: number; lookZ: number }> = {
   // Intro - far back view
   0: { x: 0, y: 0, z: ORBIT_RADIUS + 12, lookX: 0, lookY: 0, lookZ: 0 },
 
-  // Skills sections - camera in front, looking at skills (which are at z = ORBIT_RADIUS)
-  1: { x: 0, y: 0, z: ORBIT_RADIUS + CAMERA_DISTANCE, lookX: 0, lookY: 0, lookZ: ORBIT_RADIUS }, // FullStack Overview
-  2: { x: -GRID_X, y: 0, z: ORBIT_RADIUS + CAMERA_DISTANCE, lookX: -GRID_X, lookY: 0, lookZ: ORBIT_RADIUS }, // Frontend Group
-  3: { x: -GRID_X, y: GRID_Y, z: ORBIT_RADIUS + 4, lookX: -GRID_X, lookY: GRID_Y, lookZ: ORBIT_RADIUS }, // Site Web
-  4: { x: -GRID_X, y: 0, z: ORBIT_RADIUS + 4, lookX: -GRID_X, lookY: 0, lookZ: ORBIT_RADIUS }, // Mobile
-  5: { x: -GRID_X, y: -GRID_Y, z: ORBIT_RADIUS + 4, lookX: -GRID_X, lookY: -GRID_Y, lookZ: ORBIT_RADIUS }, // Backoffice
-  6: { x: 0, y: GRID_Y * 0.5, z: ORBIT_RADIUS + CAMERA_DISTANCE, lookX: 0, lookY: GRID_Y * 0.5, lookZ: ORBIT_RADIUS }, // Backend Group
-  7: { x: 0, y: GRID_Y, z: ORBIT_RADIUS + 4, lookX: 0, lookY: GRID_Y, lookZ: ORBIT_RADIUS }, // Server
-  8: { x: 0, y: 0, z: ORBIT_RADIUS + 4, lookX: 0, lookY: 0, lookZ: ORBIT_RADIUS }, // Database
-  9: { x: GRID_X, y: 0, z: ORBIT_RADIUS + CAMERA_DISTANCE, lookX: GRID_X, lookY: 0, lookZ: ORBIT_RADIUS }, // DevOps Group
-  10: { x: GRID_X, y: GRID_Y, z: ORBIT_RADIUS + 4, lookX: GRID_X, lookY: GRID_Y, lookZ: ORBIT_RADIUS }, // CI/CD
-  11: { x: GRID_X, y: 0, z: ORBIT_RADIUS + 4, lookX: GRID_X, lookY: 0, lookZ: ORBIT_RADIUS }, // Cloud
-  12: { x: GRID_X, y: -GRID_Y, z: ORBIT_RADIUS + 4, lookX: GRID_X, lookY: -GRID_Y, lookZ: ORBIT_RADIUS }, // Architecture
+  // Skills sections - camera in front, looking at skills (which are at z = ORBIT_RADIUS, x offset +3)
+  1: { x: SKILLS_X_OFFSET, y: 0, z: ORBIT_RADIUS + CAMERA_DISTANCE, lookX: SKILLS_X_OFFSET, lookY: 0, lookZ: ORBIT_RADIUS }, // FullStack Overview
+  2: { x: -GRID_X + SKILLS_X_OFFSET, y: 0, z: ORBIT_RADIUS + CAMERA_DISTANCE, lookX: -GRID_X + SKILLS_X_OFFSET, lookY: 0, lookZ: ORBIT_RADIUS }, // Frontend Group
+  3: { x: -GRID_X + SKILLS_X_OFFSET, y: GRID_Y, z: ORBIT_RADIUS + 4, lookX: -GRID_X + SKILLS_X_OFFSET, lookY: GRID_Y, lookZ: ORBIT_RADIUS }, // Site Web
+  4: { x: -GRID_X + SKILLS_X_OFFSET, y: 0, z: ORBIT_RADIUS + 4, lookX: -GRID_X + SKILLS_X_OFFSET, lookY: 0, lookZ: ORBIT_RADIUS }, // Mobile
+  5: { x: -GRID_X + SKILLS_X_OFFSET, y: -GRID_Y, z: ORBIT_RADIUS + 4, lookX: -GRID_X + SKILLS_X_OFFSET, lookY: -GRID_Y, lookZ: ORBIT_RADIUS }, // Backoffice
+  6: { x: SKILLS_X_OFFSET, y: GRID_Y * 0.5, z: ORBIT_RADIUS + CAMERA_DISTANCE, lookX: SKILLS_X_OFFSET, lookY: GRID_Y * 0.5, lookZ: ORBIT_RADIUS }, // Backend Group
+  7: { x: SKILLS_X_OFFSET, y: GRID_Y, z: ORBIT_RADIUS + 4, lookX: SKILLS_X_OFFSET, lookY: GRID_Y, lookZ: ORBIT_RADIUS }, // Server
+  8: { x: SKILLS_X_OFFSET, y: 0, z: ORBIT_RADIUS + 4, lookX: SKILLS_X_OFFSET, lookY: 0, lookZ: ORBIT_RADIUS }, // Database
+  9: { x: GRID_X + SKILLS_X_OFFSET, y: 0, z: ORBIT_RADIUS + CAMERA_DISTANCE, lookX: GRID_X + SKILLS_X_OFFSET, lookY: 0, lookZ: ORBIT_RADIUS }, // DevOps Group
+  10: { x: GRID_X + SKILLS_X_OFFSET, y: GRID_Y, z: ORBIT_RADIUS + 4, lookX: GRID_X + SKILLS_X_OFFSET, lookY: GRID_Y, lookZ: ORBIT_RADIUS }, // CI/CD
+  11: { x: GRID_X + SKILLS_X_OFFSET, y: 0, z: ORBIT_RADIUS + 4, lookX: GRID_X + SKILLS_X_OFFSET, lookY: 0, lookZ: ORBIT_RADIUS }, // Cloud
+  12: { x: GRID_X + SKILLS_X_OFFSET, y: -GRID_Y, z: ORBIT_RADIUS + 4, lookX: GRID_X + SKILLS_X_OFFSET, lookY: -GRID_Y, lookZ: ORBIT_RADIUS }, // Architecture
 
   // Experience section - camera stays in front, world rotates to bring experience to front
   13: { x: 0, y: 0, z: ORBIT_RADIUS + CAMERA_DISTANCE, lookX: 0, lookY: 0, lookZ: ORBIT_RADIUS },
@@ -279,7 +281,11 @@ function CameraRig({
       navStartLookAt.current.copy(currentLookAt);
 
       const distance = navStartPos.current.distanceTo(navTargetPos.current);
-      navAnimationDuration.current = Math.min(1.5, Math.max(0.8, 0.8 + distance * 0.05));
+      // Faster animation for skill sections (1-12)
+      const isSkillNavigation = targetSection >= 1 && targetSection <= 12;
+      const baseDuration = isSkillNavigation ? 0.5 : 0.8;
+      const maxDuration = isSkillNavigation ? 0.8 : 1.5;
+      navAnimationDuration.current = Math.min(maxDuration, Math.max(baseDuration, baseDuration + distance * 0.03));
 
       navAnimationProgress.current = 0;
       navAnimationActive.current = true;
@@ -860,10 +866,10 @@ function ScrollUpdater({
       if (onSectionChange) onSectionChange(newSection);
     }
 
-    // Detect when section 1 starts (synchronized with 3D elements at offset >= 0.035)
-    // This triggers the FullStack card to appear at the same time as 3D elements
+    // Detect when section 1 starts - trigger immediately when entering section 1
+    // This triggers the FullStack card to appear quickly
     if (
-      offset >= 0.035 &&
+      offset >= 0.02 &&
       !firstSectionAnimationFired.current &&
       lastSection.current === 1
     ) {
@@ -888,6 +894,7 @@ interface ExperienceProps {
   targetSection?: number | null;
   onNavigationComplete?: () => void;
   onFirstSectionAnimationComplete?: () => void;
+  onSkillClick?: (skillSection: number) => void;
 }
 
 // Determine which major section we're in (skills, experience, portfolio, about)
@@ -987,12 +994,16 @@ function FadingOrbitRings({ isAnimating, currentSection }: { isAnimating: boolea
     // Visible during animation OR on hero section (section 0)
     const targetOpacity = (isAnimating || currentSection === 0) ? 1 : 0;
 
-    // Smooth fade
-    currentOpacity.current = THREE.MathUtils.lerp(
-      currentOpacity.current,
-      targetOpacity,
-      delta * 3
-    );
+    // Linear fade - constant speed, no slowdown at end
+    const fadeSpeed = 6; // Units per second
+    const diff = targetOpacity - currentOpacity.current;
+    const step = delta * fadeSpeed;
+
+    if (Math.abs(diff) <= step) {
+      currentOpacity.current = targetOpacity;
+    } else {
+      currentOpacity.current += Math.sign(diff) * step;
+    }
 
     // Apply opacity to rings
     groupRef.current.traverse((child) => {
@@ -1048,13 +1059,16 @@ function FadingSection({
     // Target opacity: full if active OR animating, otherwise invisible
     const targetOpacity = (isActive || isAnimating) ? 1 : 0;
 
-    // Smooth interpolation
-    const speed = isAnimating ? 3 : 2; // Faster during animation
-    currentOpacity.current = THREE.MathUtils.lerp(
-      currentOpacity.current,
-      targetOpacity,
-      delta * speed
-    );
+    // Linear fade - constant speed, no slowdown at end
+    const fadeSpeed = isAnimating ? 6 : 4; // Units per second (1 = full fade in 1s)
+    const diff = targetOpacity - currentOpacity.current;
+    const step = delta * fadeSpeed;
+
+    if (Math.abs(diff) <= step) {
+      currentOpacity.current = targetOpacity;
+    } else {
+      currentOpacity.current += Math.sign(diff) * step;
+    }
 
     // Apply opacity to all materials in the group
     groupRef.current.traverse((child) => {
@@ -1062,8 +1076,18 @@ function FadingSection({
         const materials = Array.isArray(child.material) ? child.material : [child.material];
         materials.forEach((material) => {
           if (material && 'opacity' in material) {
+            // Skip materials that are managed externally (category boxes start at 0 and are animated separately)
+            // These materials have _externallyManaged flag or start with opacity 0 and use depthWrite false
+            const mat = material as THREE.Material & { _externallyManaged?: boolean; depthWrite?: boolean };
+            if (mat._externallyManaged) return;
+
             // Store original opacity if not yet stored
             if ((material as { _originalOpacity?: number })._originalOpacity === undefined) {
+              // Don't store 0 as original - it means it's externally managed
+              if (material.opacity === 0) {
+                mat._externallyManaged = true;
+                return;
+              }
               (material as { _originalOpacity: number })._originalOpacity = material.opacity;
             }
             const originalOpacity = (material as { _originalOpacity: number })._originalOpacity;
@@ -1089,6 +1113,7 @@ export default function Experience({
   targetSection,
   onNavigationComplete,
   onFirstSectionAnimationComplete,
+  onSkillClick,
 }: ExperienceProps) {
   const selectedExperience = selectedExperienceId
     ? experienceData.find(
@@ -1197,9 +1222,9 @@ export default function Experience({
               isAnimating={isWorldAnimating}
               sectionType="skills"
             >
-              <group position={[0, 0, ORBIT_RADIUS]}>
+              <group position={[3, 0, ORBIT_RADIUS]}>
                 <Float rotationIntensity={0.05} floatIntensity={0.1} speed={1}>
-                  <WebsiteBuilder currentSection={currentSection} />
+                  <WebsiteBuilder currentSection={currentSection} onSkillClick={onSkillClick} />
                 </Float>
               </group>
             </FadingSection>
@@ -1231,7 +1256,10 @@ export default function Experience({
               isAnimating={isWorldAnimating}
               sectionType="about"
             >
-              <About3D />
+              <About3D
+                isActive={activeMajorSection === 'about'}
+                isAnimating={isWorldAnimating}
+              />
             </FadingSection>
 
             {/* Central decoration - orbit rings (visible during navigation or hero section) */}

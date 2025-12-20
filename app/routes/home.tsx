@@ -4,7 +4,13 @@ import "../styles/global.css";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { AnimatePresence } from "framer-motion";
 import { TopNav, SectionIndicator } from "../components/navigation";
-import { HeroSection, SkillsSection, ExperienceSection, PortfolioSection, AboutSection } from "../components/sections";
+import {
+  HeroSection,
+  SkillsSection,
+  ExperienceSection,
+  PortfolioSection,
+  AboutSection,
+} from "../components/sections";
 import type { Experience } from "../components/Timeline3D";
 import type { Project } from "../types";
 import { projects } from "../constants";
@@ -18,7 +24,8 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
   const [section, setSection] = useState(0);
-  const [selectedExperience, setSelectedExperience] = useState<Experience | null>(null);
+  const [selectedExperience, setSelectedExperience] =
+    useState<Experience | null>(null);
   const [detailScrollOffset, setDetailScrollOffset] = useState(0);
   const [targetSection, setTargetSection] = useState<number | null>(null);
   const [showCard, setShowCard] = useState(true);
@@ -45,10 +52,30 @@ export default function Home() {
     setTargetSection(sectionNumber);
     setShowCard(false);
 
+    // Faster card appearance for Skills section (section 1)
+    const cardDelay = sectionNumber === 1 ? 150 : 200;
     setTimeout(() => {
       setShowCard(true);
-    }, 840);
+    }, cardDelay);
   }, []);
+
+  // Handle skill click - navigate to that skill's detail view
+  const handleSkillClick = useCallback(
+    (skillSection: number) => {
+      // Only navigate if we're in the skills overview (section 1)
+      if (section === 1 && skillSection >= 3 && skillSection <= 12) {
+        setSection(skillSection);
+        setTargetSection(skillSection);
+        setShowCard(false);
+
+        // Show card faster for skill clicks
+        setTimeout(() => {
+          setShowCard(true);
+        }, 400);
+      }
+    },
+    [section]
+  );
 
   const handleNavigationComplete = useCallback(() => {
     setTargetSection(null);
@@ -96,7 +123,10 @@ export default function Home() {
 
     const snapToNearest = (offset: number) => {
       const nearestSnap = Math.round(offset);
-      const clampedSnap = Math.max(0, Math.min(maxScrollRef.current, nearestSnap));
+      const clampedSnap = Math.max(
+        0,
+        Math.min(maxScrollRef.current, nearestSnap)
+      );
 
       targetOffsetRef.current = clampedSnap;
       isSnappingRef.current = true;
@@ -130,7 +160,10 @@ export default function Home() {
         const direction = e.key === "ArrowDown" ? 1 : -1;
         setDetailScrollOffset((current) => {
           const currentSnap = Math.round(current);
-          const nextSnap = Math.max(0, Math.min(maxScrollRef.current, currentSnap + direction));
+          const nextSnap = Math.max(
+            0,
+            Math.min(maxScrollRef.current, currentSnap + direction)
+          );
           targetOffsetRef.current = nextSnap;
           isSnappingRef.current = true;
           return current;
@@ -183,7 +216,9 @@ export default function Home() {
 
     const container = portfolioScrollRef.current;
     if (container) {
-      container.addEventListener("wheel", handlePortfolioWheel, { passive: false });
+      container.addEventListener("wheel", handlePortfolioWheel, {
+        passive: false,
+      });
       return () => {
         container.removeEventListener("wheel", handlePortfolioWheel);
       };
@@ -200,6 +235,7 @@ export default function Home() {
         targetSection={targetSection}
         onNavigationComplete={handleNavigationComplete}
         onFirstSectionAnimationComplete={handleFirstSectionAnimationComplete}
+        onSkillClick={handleSkillClick}
       />
 
       {/* Top Navigation Menu */}

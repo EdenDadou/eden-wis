@@ -121,9 +121,10 @@ function ParticleStream({ start, end, startColor = "#ffffff", endColor = "#fffff
 
 interface WebsiteBuilderProps {
   currentSection?: number;
+  onSkillClick?: (skillSection: number) => void;
 }
 
-export default function WebsiteBuilder({ currentSection = 0 }: WebsiteBuilderProps) {
+export default function WebsiteBuilder({ currentSection = 0, onSkillClick }: WebsiteBuilderProps) {
   const sceneRef = useRef<THREE.Group>(null);
   const scroll = useScroll();
 
@@ -147,9 +148,9 @@ export default function WebsiteBuilder({ currentSection = 0 }: WebsiteBuilderPro
   const devopsGroupRef = useRef<THREE.Group>(null);
 
   // Material refs for direct opacity updates in useFrame
-  const frontendBoxMatRef = useRef<THREE.MeshStandardMaterial>(null);
-  const backendBoxMatRef = useRef<THREE.MeshStandardMaterial>(null);
-  const devopsBoxMatRef = useRef<THREE.MeshStandardMaterial>(null);
+  const frontendBoxMatRef = useRef<THREE.MeshBasicMaterial>(null);
+  const backendBoxMatRef = useRef<THREE.MeshBasicMaterial>(null);
+  const devopsBoxMatRef = useRef<THREE.MeshBasicMaterial>(null);
   const frontendLabelRef = useRef<any>(null);
   const backendLabelRef = useRef<any>(null);
   const devopsLabelRef = useRef<any>(null);
@@ -223,13 +224,13 @@ export default function WebsiteBuilder({ currentSection = 0 }: WebsiteBuilderPro
       const isDevopsActive = currentSection >= 9 && currentSection <= 12;
 
       if (frontendBoxMatRef.current) {
-        frontendBoxMatRef.current.opacity = (isFrontendActive ? 0.2 : 0.08) * baseOpacity;
+        frontendBoxMatRef.current.opacity = (isFrontendActive ? 0.35 : 0.15) * baseOpacity;
       }
       if (backendBoxMatRef.current) {
-        backendBoxMatRef.current.opacity = (isBackendActive ? 0.2 : 0.08) * baseOpacity;
+        backendBoxMatRef.current.opacity = (isBackendActive ? 0.35 : 0.15) * baseOpacity;
       }
       if (devopsBoxMatRef.current) {
-        devopsBoxMatRef.current.opacity = (isDevopsActive ? 0.2 : 0.08) * baseOpacity;
+        devopsBoxMatRef.current.opacity = (isDevopsActive ? 0.35 : 0.15) * baseOpacity;
       }
       // Update label opacities
       if (frontendLabelRef.current) {
@@ -530,21 +531,22 @@ export default function WebsiteBuilder({ currentSection = 0 }: WebsiteBuilderPro
         });
     }
 
-    // --- DEZOOM LAYOUT SHIFT (Skills to right) ---
+    // --- DEZOOM LAYOUT SHIFT (Skills further right) ---
     const DEZOOM_START = 0.93;
     const DEZOOM_END = 0.97;
+    const BASE_X_OFFSET = 3; // Base position (right side of screen)
     if (offset > DEZOOM_START) {
         const dezoomProgress = Math.min((offset - DEZOOM_START) / (DEZOOM_END - DEZOOM_START), 1);
         const easedDezoom = easeOutCubic(dezoomProgress);
 
-        // Shift skills container to the right
+        // Shift skills container further right during dezoom
         if (skillsContainerRef.current) {
-            skillsContainerRef.current.position.x = THREE.MathUtils.lerp(0, 3, easedDezoom);
+            skillsContainerRef.current.position.x = THREE.MathUtils.lerp(BASE_X_OFFSET, BASE_X_OFFSET + 3, easedDezoom);
         }
     } else {
-        // Reset position when not in dezoom
+        // Reset to base position when not in dezoom
         if (skillsContainerRef.current) {
-            skillsContainerRef.current.position.x = 0;
+            skillsContainerRef.current.position.x = BASE_X_OFFSET;
         }
     }
 
@@ -646,17 +648,6 @@ export default function WebsiteBuilder({ currentSection = 0 }: WebsiteBuilderPro
   // Determine which specific element is active
   const isElementActive = (elementSection: number) => currentSection === elementSection;
 
-  // Get label color with highlight effect
-  const getGroupLabelColor = (groupType: 'frontend' | 'backend' | 'devops') => {
-    if (groupType === 'frontend' && isFrontendGroupActive) return C_HIGHLIGHT;
-    if (groupType === 'backend' && isBackendGroupActive) return C_HIGHLIGHT;
-    if (groupType === 'devops' && isDevopsGroupActive) return C_HIGHLIGHT;
-    // Default colors
-    if (groupType === 'frontend') return C_GROUP_FRONTEND;
-    if (groupType === 'backend') return C_GROUP_BACKEND;
-    return C_GROUP_DEVOPS;
-  };
-
   // Get element label color with highlight
   const getElementLabelColor = (elementSection: number, baseColor: string) => {
     return isElementActive(elementSection) ? C_HIGHLIGHT : baseColor;
@@ -697,8 +688,8 @@ export default function WebsiteBuilder({ currentSection = 0 }: WebsiteBuilderPro
   return (
     <group ref={sceneRef}>
 
-      {/* ========== SKILLS CONTAINER (shifts right on dezoom) ========== */}
-      <group ref={skillsContainerRef}>
+      {/* ========== SKILLS CONTAINER (positioned right side of screen) ========== */}
+      <group ref={skillsContainerRef} position={[3, 0, 0]}>
 
       {/* ========== CATEGORY BOXES (Frontend / Backend / DevOps) ========== */}
 
@@ -707,10 +698,10 @@ export default function WebsiteBuilder({ currentSection = 0 }: WebsiteBuilderPro
         <group ref={frontendGroupRef} position={[-GRID_X, 0, -0.5]}>
           {/* Vertical rectangle encompassing the 3 frontend elements - larger size */}
           <RoundedBox args={[2.8, 8.5, 0.02]} radius={0.1} position={[0, 0, 0]}>
-            <meshStandardMaterial ref={frontendBoxMatRef} color={isFrontendGroupActive ? C_GLOW_FRONTEND : C_GROUP_FRONTEND} transparent opacity={0} />
+            <meshBasicMaterial ref={frontendBoxMatRef} color={isFrontendGroupActive ? C_GLOW_FRONTEND : C_GROUP_FRONTEND} transparent opacity={0} depthWrite={false} />
           </RoundedBox>
           {/* Category Label - Positioned higher to avoid overlap */}
-          <Text ref={frontendLabelRef} position={[0, GRID_Y + 1.8, 0.1]} fontSize={isFrontendGroupActive ? 0.3 : 0.25} color={getGroupLabelColor('frontend')} anchorX="center" anchorY="middle" outlineWidth={isFrontendGroupActive ? 0.02 : 0} outlineColor={C_GROUP_FRONTEND} fillOpacity={0}>
+          <Text ref={frontendLabelRef} position={[0, GRID_Y + 1.8, 0.1]} fontSize={isFrontendGroupActive ? 0.4 : 0.35} color={isFrontendGroupActive ? "#ffffff" : "#60a5fa"} anchorX="center" anchorY="middle" outlineWidth={0.03} outlineColor="#3b82f6" fillOpacity={0}>
             FRONTEND
           </Text>
         </group>
@@ -721,10 +712,10 @@ export default function WebsiteBuilder({ currentSection = 0 }: WebsiteBuilderPro
         <group ref={backendGroupRef} position={[0, GRID_Y * 0.5, -0.5]}>
           {/* Vertical rectangle encompassing Server and Database - larger size */}
           <RoundedBox args={[2.8, 5.5, 0.02]} radius={0.1} position={[0, 0, 0]}>
-            <meshStandardMaterial ref={backendBoxMatRef} color={isBackendGroupActive ? C_GLOW_BACKEND : C_GROUP_BACKEND} transparent opacity={0} />
+            <meshBasicMaterial ref={backendBoxMatRef} color={isBackendGroupActive ? C_GLOW_BACKEND : C_GROUP_BACKEND} transparent opacity={0} depthWrite={false} />
           </RoundedBox>
           {/* Category Label - Positioned higher to avoid overlap */}
-          <Text ref={backendLabelRef} position={[0, GRID_Y * 0.5 + 1.5, 0.1]} fontSize={isBackendGroupActive ? 0.3 : 0.25} color={getGroupLabelColor('backend')} anchorX="center" anchorY="middle" outlineWidth={isBackendGroupActive ? 0.02 : 0} outlineColor={C_GROUP_BACKEND} fillOpacity={0}>
+          <Text ref={backendLabelRef} position={[0, GRID_Y * 0.5 + 1.5, 0.1]} fontSize={isBackendGroupActive ? 0.4 : 0.35} color={isBackendGroupActive ? "#ffffff" : "#34d399"} anchorX="center" anchorY="middle" outlineWidth={0.03} outlineColor="#10b981" fillOpacity={0}>
             BACKEND
           </Text>
         </group>
@@ -735,10 +726,10 @@ export default function WebsiteBuilder({ currentSection = 0 }: WebsiteBuilderPro
         <group ref={devopsGroupRef} position={[GRID_X, 0, -0.5]}>
           {/* Vertical rectangle encompassing the 3 devops elements - larger size */}
           <RoundedBox args={[2.8, 8.5, 0.02]} radius={0.1} position={[0, 0, 0]}>
-            <meshStandardMaterial ref={devopsBoxMatRef} color={isDevopsGroupActive ? C_GLOW_DEVOPS : C_GROUP_DEVOPS} transparent opacity={0} />
+            <meshBasicMaterial ref={devopsBoxMatRef} color={isDevopsGroupActive ? C_GLOW_DEVOPS : C_GROUP_DEVOPS} transparent opacity={0} depthWrite={false} />
           </RoundedBox>
           {/* Category Label - Positioned higher to avoid overlap */}
-          <Text ref={devopsLabelRef} position={[0, GRID_Y + 1.8, 0.1]} fontSize={isDevopsGroupActive ? 0.3 : 0.25} color={getGroupLabelColor('devops')} anchorX="center" anchorY="middle" outlineWidth={isDevopsGroupActive ? 0.02 : 0} outlineColor={C_GROUP_DEVOPS} fillOpacity={0}>
+          <Text ref={devopsLabelRef} position={[0, GRID_Y + 1.8, 0.1]} fontSize={isDevopsGroupActive ? 0.4 : 0.35} color={isDevopsGroupActive ? "#ffffff" : "#ff8c00"} anchorX="center" anchorY="middle" outlineWidth={0.03} outlineColor="#ff6600" fillOpacity={0}>
             DEVOPS
           </Text>
         </group>
@@ -748,7 +739,7 @@ export default function WebsiteBuilder({ currentSection = 0 }: WebsiteBuilderPro
 
       {/* CLOUD (-3.2, 2.5) - Section 11 */}
       {showCloud && (
-        <group ref={cloudRef} position={POS_CLOUD} scale={0}>
+        <group ref={cloudRef} position={POS_CLOUD} scale={0} onClick={() => onSkillClick?.(11)} onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }} onPointerOut={() => { document.body.style.cursor = 'auto'; }}>
           <Text position={[0, 0.85, 0]} fontSize={isElementActive(11) ? 0.11 : 0.09} color={getElementLabelColor(11, "#4a90d9")} anchorX="center" outlineWidth={isElementActive(11) ? 0.015 : 0} outlineColor="#4a90d9">CLOUD</Text>
           <Text position={[0, 0.73, 0]} fontSize={0.04} color={isElementActive(11) ? "#aaa" : "#666"} anchorX="center">AWS / Infrastructure</Text>
 
@@ -891,7 +882,7 @@ export default function WebsiteBuilder({ currentSection = 0 }: WebsiteBuilderPro
 
       {/* DATABASE (0, 2.5) - Section 8 */}
       {showDatabase && (
-        <group ref={databaseRef} position={POS_DATABASE} scale={0}>
+        <group ref={databaseRef} position={POS_DATABASE} scale={0} onClick={() => onSkillClick?.(8)} onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }} onPointerOut={() => { document.body.style.cursor = 'auto'; }}>
           <Billboard>
             <Text position={[0, 0.7, 0]} fontSize={isElementActive(8) ? 0.11 : 0.09} color={getElementLabelColor(8, C_DB)} anchorX="center" outlineWidth={isElementActive(8) ? 0.015 : 0} outlineColor={C_DB}>DATABASE</Text>
             <Text position={[0, 0.58, 0]} fontSize={0.04} color={isElementActive(8) ? "#aaa" : "#666"} anchorX="center">PostgreSQL</Text>
@@ -918,7 +909,7 @@ export default function WebsiteBuilder({ currentSection = 0 }: WebsiteBuilderPro
 
       {/* CI/CD (-3.2, 0) - Section 10 */}
       {showCICD && (
-        <group ref={cicdRef} position={POS_CICD} scale={0}>
+        <group ref={cicdRef} position={POS_CICD} scale={0} onClick={() => onSkillClick?.(10)} onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }} onPointerOut={() => { document.body.style.cursor = 'auto'; }}>
           <Text position={[0, 0.85, 0]} fontSize={isElementActive(10) ? 0.11 : 0.09} color={getElementLabelColor(10, C_CICD)} anchorX="center" outlineWidth={isElementActive(10) ? 0.015 : 0} outlineColor={C_CICD}>CI/CD</Text>
           <Text position={[0, 0.73, 0]} fontSize={0.04} color={isElementActive(10) ? "#aaa" : "#666"} anchorX="center">Pipeline</Text>
 
@@ -1104,7 +1095,7 @@ export default function WebsiteBuilder({ currentSection = 0 }: WebsiteBuilderPro
 
       {/* SERVER (0, 0) - Section 7 */}
       {showServer && (
-        <group ref={serverRef} position={POS_SERVER} scale={0}>
+        <group ref={serverRef} position={POS_SERVER} scale={0} onClick={() => onSkillClick?.(7)} onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }} onPointerOut={() => { document.body.style.cursor = 'auto'; }}>
           <Text position={[0, 0.85, 0]} fontSize={isElementActive(7) ? 0.11 : 0.09} color={getElementLabelColor(7, C_SERVER)} anchorX="center" outlineWidth={isElementActive(7) ? 0.015 : 0} outlineColor={C_SERVER}>SERVEUR</Text>
           <Text position={[0, 0.73, 0]} fontSize={0.04} color={isElementActive(7) ? "#aaa" : "#666"} anchorX="center">Node.js</Text>
           
@@ -1167,7 +1158,7 @@ export default function WebsiteBuilder({ currentSection = 0 }: WebsiteBuilderPro
 
       {/* ARCHITECTURE (DevOps Group - Bottom) - Section 12 */}
       {showArchi && (
-        <group ref={archiRef} position={POS_ARCHI} scale={0}>
+        <group ref={archiRef} position={POS_ARCHI} scale={0} onClick={() => onSkillClick?.(12)} onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }} onPointerOut={() => { document.body.style.cursor = 'auto'; }}>
           <Text position={[0, 0.85, 0]} fontSize={isElementActive(12) ? 0.11 : 0.09} color={getElementLabelColor(12, C_ARCHI)} anchorX="center" outlineWidth={isElementActive(12) ? 0.015 : 0} outlineColor={C_ARCHI}>ARCHITECTURE</Text>
           <Text position={[0, 0.73, 0]} fontSize={0.04} color={isElementActive(12) ? "#aaa" : "#666"} anchorX="center">System Design</Text>
 
@@ -1257,7 +1248,7 @@ export default function WebsiteBuilder({ currentSection = 0 }: WebsiteBuilderPro
 
       {/* FRONTEND (-3.2, -2.5) - Section 3 */}
       {showFrontend && (
-        <group ref={frontendRef} position={POS_FRONTEND} scale={0}>
+        <group ref={frontendRef} position={POS_FRONTEND} scale={0} onClick={() => onSkillClick?.(3)} onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }} onPointerOut={() => { document.body.style.cursor = 'auto'; }}>
           <Text position={[0, 0.9, 0]} fontSize={isElementActive(3) ? 0.12 : 0.1} color={getElementLabelColor(3, C_FRONT)} anchorX="center" outlineWidth={isElementActive(3) ? 0.015 : 0} outlineColor={C_FRONT}>APP WEB</Text>
           <Text position={[0, 0.78, 0]} fontSize={0.04} color={isElementActive(3) ? "#aaa" : "#666"} anchorX="center">React / Remix</Text>
           
@@ -1314,7 +1305,7 @@ export default function WebsiteBuilder({ currentSection = 0 }: WebsiteBuilderPro
 
       {/* MOBILE (0, -2.5) - Section 4 */}
       {showMobile && (
-        <group ref={mobileRef} position={POS_MOBILE} scale={0}>
+        <group ref={mobileRef} position={POS_MOBILE} scale={0} onClick={() => onSkillClick?.(4)} onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }} onPointerOut={() => { document.body.style.cursor = 'auto'; }}>
           <Text position={[0, 0.85, 0]} fontSize={isElementActive(4) ? 0.11 : 0.09} color={getElementLabelColor(4, C_MOBILE)} anchorX="center" outlineWidth={isElementActive(4) ? 0.015 : 0} outlineColor={C_MOBILE}>MOBILE</Text>
           <Text position={[0, 0.73, 0]} fontSize={0.04} color={isElementActive(4) ? "#aaa" : "#666"} anchorX="center">Native App</Text>
           {/* Phone Body */}
@@ -1347,7 +1338,7 @@ export default function WebsiteBuilder({ currentSection = 0 }: WebsiteBuilderPro
 
       {/* BACKOFFICE (3.2, -2.5) - Section 5 */}
       {showBackoffice && (
-        <group ref={backofficeRef} position={POS_BACKOFFICE} scale={0}>
+        <group ref={backofficeRef} position={POS_BACKOFFICE} scale={0} onClick={() => onSkillClick?.(5)} onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }} onPointerOut={() => { document.body.style.cursor = 'auto'; }}>
           <Text position={[0, 0.85, 0]} fontSize={isElementActive(5) ? 0.11 : 0.09} color={getElementLabelColor(5, C_BACK)} anchorX="center" outlineWidth={isElementActive(5) ? 0.015 : 0} outlineColor={C_BACK}>BACKOFFICE</Text>
           <Text position={[0, 0.73, 0]} fontSize={0.04} color={isElementActive(5) ? "#aaa" : "#666"} anchorX="center">Admin Dashboard</Text>
 

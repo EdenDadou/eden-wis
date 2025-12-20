@@ -27,25 +27,22 @@ export const langItemVariants: Variants = {
 };
 
 // Text position mapping based on section
-// Position text on opposite side of 3D element for visibility
-// NEW LAYOUT: Section 1 (FullStack) has 3D on RIGHT, so card on LEFT
-// Frontend elements (sections 2-5): 3D on LEFT column, card on RIGHT
-// Backend elements (sections 6-8): 3D CENTER, card position varies
-// DevOps elements (sections 9-12): 3D on RIGHT column, card on LEFT
+// NEW LAYOUT: Cards ALWAYS on LEFT, 3D elements ALWAYS on RIGHT
+// This provides consistent UX across all skill sections
 export const sectionTextPositions: Record<number, "left" | "right" | "center"> = {
   0: "center",  // Hero intro - centered
-  1: "left",    // FullStack Overview - 3D tableau on RIGHT, card on LEFT
-  2: "right",   // Frontend Slide - 3D on LEFT, card on RIGHT
-  3: "right",   // Site Web - 3D on LEFT, card on RIGHT
-  4: "right",   // Mobile - 3D on LEFT, card on RIGHT
-  5: "right",   // Backoffice - 3D on LEFT, card on RIGHT
-  6: "left",    // Backend Slide - 3D CENTER, card on LEFT (or right)
-  7: "left",    // Server - 3D CENTER, card on LEFT
-  8: "left",    // Database - 3D CENTER, card on LEFT
-  9: "left",    // DevOps Slide - 3D on RIGHT, card on LEFT
-  10: "left",   // CI/CD - 3D on RIGHT, card on LEFT
-  11: "left",   // Cloud - 3D on RIGHT, card on LEFT
-  12: "left",   // Architecture - 3D on RIGHT, card on LEFT
+  1: "left",    // FullStack Overview - card LEFT, 3D RIGHT
+  2: "left",    // Frontend Slide - card LEFT, 3D RIGHT
+  3: "left",    // Site Web - card LEFT, 3D RIGHT
+  4: "left",    // Mobile - card LEFT, 3D RIGHT
+  5: "left",    // Backoffice - card LEFT, 3D RIGHT
+  6: "left",    // Backend Slide - card LEFT, 3D RIGHT
+  7: "left",    // Server - card LEFT, 3D RIGHT
+  8: "left",    // Database - card LEFT, 3D RIGHT
+  9: "left",    // DevOps Slide - card LEFT, 3D RIGHT
+  10: "left",   // CI/CD - card LEFT, 3D RIGHT
+  11: "left",   // Cloud - card LEFT, 3D RIGHT
+  12: "left",   // Architecture - card LEFT, 3D RIGHT
 };
 
 export const getTextPosition = (section: number): "left" | "right" | "center" => {

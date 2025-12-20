@@ -1,6 +1,6 @@
 import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Float, Text3D, Center } from "@react-three/drei";
+import { Float } from "@react-three/drei";
 import * as THREE from "three";
 
 // Simple floating particles around the About section
@@ -13,7 +13,6 @@ function FloatingParticles() {
     const col = new Float32Array(count * 3);
 
     for (let i = 0; i < count; i++) {
-      // Spread particles in a sphere around the section
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
       const r = 3 + Math.random() * 4;
@@ -24,9 +23,9 @@ function FloatingParticles() {
 
       // Cyan to violet gradient
       const t = Math.random();
-      col[i * 3] = 0.02 + t * 0.5; // R
-      col[i * 3 + 1] = 0.7 - t * 0.3; // G
-      col[i * 3 + 2] = 0.8 + t * 0.2; // B
+      col[i * 3] = 0.02 + t * 0.5;
+      col[i * 3 + 1] = 0.7 - t * 0.3;
+      col[i * 3 + 2] = 0.8 + t * 0.2;
     }
 
     return [pos, col];
@@ -138,15 +137,130 @@ function GlowingSphere() {
   );
 }
 
+// Armillary Sphere - gardée pour usage futur
+function ArmillarySphere() {
+  const groupRef = useRef<THREE.Group>(null);
+  const innerRingRef = useRef<THREE.Group>(null);
+  const middleRingRef = useRef<THREE.Group>(null);
+  const outerRingRef = useRef<THREE.Group>(null);
+
+  const metalMaterial = useMemo(() => ({
+    color: "#a8a8a8",
+    metalness: 0.9,
+    roughness: 0.2,
+    transparent: true,
+    opacity: 0.35,
+  }), []);
+
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+
+    if (groupRef.current) {
+      groupRef.current.rotation.y = t * 0.1;
+    }
+    if (innerRingRef.current) {
+      innerRingRef.current.rotation.z = t * 0.15;
+    }
+    if (middleRingRef.current) {
+      middleRingRef.current.rotation.x = t * 0.12;
+    }
+    if (outerRingRef.current) {
+      outerRingRef.current.rotation.y = t * 0.08;
+    }
+  });
+
+  return (
+    <group ref={groupRef} scale={0.8}>
+      <mesh position={[0, -2.2, 0]}>
+        <cylinderGeometry args={[0.8, 1, 0.3, 32]} />
+        <meshStandardMaterial {...metalMaterial} color="#707070" />
+      </mesh>
+      <mesh position={[0, -2, 0]}>
+        <cylinderGeometry args={[0.15, 0.15, 0.4, 16]} />
+        <meshStandardMaterial {...metalMaterial} color="#606060" />
+      </mesh>
+      <mesh>
+        <sphereGeometry args={[0.6, 32, 32]} />
+        <meshStandardMaterial
+          color="#1a1a2e"
+          metalness={0.3}
+          roughness={0.7}
+          transparent
+          opacity={0.25}
+        />
+      </mesh>
+      <mesh rotation={[0, 0, 0]}>
+        <torusGeometry args={[0.61, 0.015, 8, 64]} />
+        <meshStandardMaterial {...metalMaterial} color="#505050" />
+      </mesh>
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[0.61, 0.015, 8, 64]} />
+        <meshStandardMaterial {...metalMaterial} color="#505050" />
+      </mesh>
+      <group ref={innerRingRef} rotation={[0.4, 0, 0.3]}>
+        <mesh>
+          <torusGeometry args={[1.2, 0.04, 16, 100]} />
+          <meshStandardMaterial {...metalMaterial} />
+        </mesh>
+      </group>
+      <group ref={middleRingRef} rotation={[1.2, 0.5, 0]}>
+        <mesh>
+          <torusGeometry args={[1.6, 0.035, 16, 100]} />
+          <meshStandardMaterial {...metalMaterial} />
+        </mesh>
+      </group>
+      <group ref={outerRingRef} rotation={[0, 0, 0.2]}>
+        <mesh>
+          <torusGeometry args={[2, 0.03, 16, 100]} />
+          <meshStandardMaterial {...metalMaterial} />
+        </mesh>
+      </group>
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[1.8, 0.025, 16, 100]} />
+        <meshStandardMaterial {...metalMaterial} color="#909090" />
+      </mesh>
+      <group rotation={[0, 0, -0.3]}>
+        <mesh>
+          <cylinderGeometry args={[0.03, 0.03, 5, 16]} />
+          <meshStandardMaterial {...metalMaterial} />
+        </mesh>
+        <mesh position={[0, 2.7, 0]} rotation={[0, 0, 0]}>
+          <coneGeometry args={[0.12, 0.4, 16]} />
+          <meshStandardMaterial {...metalMaterial} />
+        </mesh>
+        <mesh position={[0, -2.5, 0]} rotation={[Math.PI, 0, 0]}>
+          <coneGeometry args={[0.08, 0.2, 16]} />
+          <meshStandardMaterial {...metalMaterial} />
+        </mesh>
+      </group>
+      <mesh position={[0, 1.5, 0]} rotation={[0, 0, -0.3]}>
+        <torusGeometry args={[0.08, 0.02, 8, 32]} />
+        <meshStandardMaterial {...metalMaterial} />
+      </mesh>
+      <mesh position={[0, -1.5, 0]} rotation={[0, 0, -0.3]}>
+        <torusGeometry args={[0.08, 0.02, 8, 32]} />
+        <meshStandardMaterial {...metalMaterial} />
+      </mesh>
+      <mesh position={[0, -1.1, 0]} rotation={[0, 0, 0]}>
+        <torusGeometry args={[1.1, 0.025, 8, 32, Math.PI]} />
+        <meshStandardMaterial {...metalMaterial} color="#808080" />
+      </mesh>
+    </group>
+  );
+}
+
 // Section angle for About (270° = 3π/2)
 const SECTION_ANGLE = (Math.PI * 3) / 2;
 const ORBIT_RADIUS = 15;
 
-export default function About3D() {
-  // Position on the orbital circle at 270°
+interface About3DProps {
+  isActive?: boolean;
+  isAnimating?: boolean;
+}
+
+export default function About3D({ isActive = false, isAnimating = false }: About3DProps) {
   const posX = Math.sin(SECTION_ANGLE) * ORBIT_RADIUS;
   const posZ = Math.cos(SECTION_ANGLE) * ORBIT_RADIUS;
-  // Rotate to face outward (toward where camera will be)
   const rotationY = SECTION_ANGLE;
 
   return (
@@ -159,3 +273,6 @@ export default function About3D() {
     </group>
   );
 }
+
+// Export pour usage futur
+export { ArmillarySphere };
