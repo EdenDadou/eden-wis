@@ -7,7 +7,10 @@
       "Bash(wc:*)",
       "Bash(npm run dev:*)",
       "Bash(npx tsc:*)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "Bash(rm:*)",
+      "Bash(cat:*)",
+      "Bash(lsof:*)"
     ]
   }
 }

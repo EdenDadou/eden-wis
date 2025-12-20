@@ -178,10 +178,10 @@ export function ParticleText({
             Math.pow(particle.y - particle.originY, 2)
         );
 
-        // Add cyan glow when dispersed
+        // Add green glow when dispersed (matches favicon color #22c55e)
         if (distFromOrigin > 5) {
           ctx.shadowBlur = 8;
-          ctx.shadowColor = "rgba(6, 182, 212, 0.8)";
+          ctx.shadowColor = "rgba(34, 197, 94, 1)";
         } else {
           ctx.shadowBlur = 0;
         }

@@ -3,6 +3,16 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-story: "Story Script", cursive;
+  --font-lucky: "Luckiest Guy", cursive;
+}
+
+.font-story {
+  font-family: "Story Script", cursive;
+}
+
+.font-lucky {
+  font-family: "Luckiest Guy", cursive;
 }
 
 html,

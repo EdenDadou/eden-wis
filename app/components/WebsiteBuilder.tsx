@@ -119,9 +119,17 @@ function ParticleStream({ start, end, startColor = "#ffffff", endColor = "#fffff
   );
 }
 
-export default function WebsiteBuilder() {
+interface WebsiteBuilderProps {
+  currentSection?: number;
+}
+
+export default function WebsiteBuilder({ currentSection = 0 }: WebsiteBuilderProps) {
   const sceneRef = useRef<THREE.Group>(null);
   const scroll = useScroll();
+
+  // Track when we first enter section 1 (FullStack) for time-based animations
+  const enteredSection1Time = useRef<number | null>(null);
+  const hasTriggeredEntryAnimation = useRef(false);
   
   // Block refs
   const serverRef = useRef<THREE.Group>(null);
@@ -137,6 +145,17 @@ export default function WebsiteBuilder() {
   const frontendGroupRef = useRef<THREE.Group>(null);
   const backendGroupRef = useRef<THREE.Group>(null);
   const devopsGroupRef = useRef<THREE.Group>(null);
+
+  // Material refs for direct opacity updates in useFrame
+  const frontendBoxMatRef = useRef<THREE.MeshStandardMaterial>(null);
+  const backendBoxMatRef = useRef<THREE.MeshStandardMaterial>(null);
+  const devopsBoxMatRef = useRef<THREE.MeshStandardMaterial>(null);
+  const frontendLabelRef = useRef<any>(null);
+  const backendLabelRef = useRef<any>(null);
+  const devopsLabelRef = useRef<any>(null);
+
+  // Category box opacity for fade-in effect
+  const categoryBoxOpacity = useRef(0);
 
   // Skills container ref for dezoom offset
   const skillsContainerRef = useRef<THREE.Group>(null);
@@ -171,65 +190,149 @@ export default function WebsiteBuilder() {
   useFrame((state) => {
     if (!sceneRef.current) return;
     const offset = scroll.offset;
-    
-    // Helper for Fly In animation (From Z+ to 0)
-    const flyIn = (ref: React.RefObject<THREE.Group | null>, startT: number, duration: number = 0.05, distance: number = 2) => {
-        if (!ref.current) return;
-        // Normalized time for this specific animation window
-        const progress = Math.max(0, Math.min((offset - startT) / duration, 1));
-        const eased = easeOutCubic(progress);
-        
-        ref.current.position.z = THREE.MathUtils.lerp(distance, 0.02, eased); 
-        ref.current.scale.setScalar(eased);
-    };
 
+    // ============ TIME-BASED ENTRY ANIMATION FOR SECTION 1 ============
+    // Trigger entry animation when we reach section 1 (currentSection >= 1)
+    // This makes elements fly in automatically, not tied to scroll position
 
+    if (currentSection >= 1 && enteredSection1Time.current === null) {
+      enteredSection1Time.current = state.clock.elapsedTime;
+      hasTriggeredEntryAnimation.current = true;
+    }
 
-    // Animate elements appearing
-    const animateElement = (ref: React.RefObject<THREE.Group | null>, threshold: number, duration: number = 0.05, fromZ: number = 4) => {
-      if (!ref.current) return;
-      const progress = Math.max(0, Math.min((offset - threshold) / duration, 1));
-      // Use easeInOut for smoother start/end, less "pop"
-      const eased = easeInOutCubic(progress);
+    // Reset if we go back to section 0
+    if (currentSection === 0) {
+      enteredSection1Time.current = null;
+      hasTriggeredEntryAnimation.current = false;
+      categoryBoxOpacity.current = 0;
+    }
+
+    // ============ CATEGORY BOX FADE-IN (same time as 3D elements) ============
+    // Fade in category boxes at the same time as 3D elements
+    if (enteredSection1Time.current !== null) {
+      const elapsed = state.clock.elapsedTime - enteredSection1Time.current;
+      const fadeDelay = 0.3; // Same as initialDelay for 3D elements
+      const fadeDuration = 0.6; // Faster fade to match element animations
+      const fadeProgress = Math.max(0, Math.min((elapsed - fadeDelay) / fadeDuration, 1));
+      categoryBoxOpacity.current = easeOutCubic(fadeProgress);
+
+      // Update material opacities directly (not via React props)
+      const baseOpacity = categoryBoxOpacity.current;
+      const isFrontendActive = currentSection >= 2 && currentSection <= 5;
+      const isBackendActive = currentSection >= 6 && currentSection <= 8;
+      const isDevopsActive = currentSection >= 9 && currentSection <= 12;
+
+      if (frontendBoxMatRef.current) {
+        frontendBoxMatRef.current.opacity = (isFrontendActive ? 0.2 : 0.08) * baseOpacity;
+      }
+      if (backendBoxMatRef.current) {
+        backendBoxMatRef.current.opacity = (isBackendActive ? 0.2 : 0.08) * baseOpacity;
+      }
+      if (devopsBoxMatRef.current) {
+        devopsBoxMatRef.current.opacity = (isDevopsActive ? 0.2 : 0.08) * baseOpacity;
+      }
+      // Update label opacities
+      if (frontendLabelRef.current) {
+        frontendLabelRef.current.fillOpacity = baseOpacity;
+      }
+      if (backendLabelRef.current) {
+        backendLabelRef.current.fillOpacity = baseOpacity;
+      }
+      if (devopsLabelRef.current) {
+        devopsLabelRef.current.fillOpacity = baseOpacity;
+      }
+    }
+
+    // Time-based animation helper for entry animations
+    const animateElementByTime = (
+      ref: React.RefObject<THREE.Group | null>,
+      delaySeconds: number,
+      durationSeconds: number = 0.6,
+      fromZ: number = 4,
+      fromX: number = 0  // Allow lateral entry
+    ) => {
+      if (!ref.current || enteredSection1Time.current === null) {
+        // Keep hidden until triggered
+        if (ref.current) {
+          ref.current.scale.setScalar(0);
+        }
+        return;
+      }
+
+      const elapsed = state.clock.elapsedTime - enteredSection1Time.current;
+      const progress = Math.max(0, Math.min((elapsed - delaySeconds) / durationSeconds, 1));
+      const eased = easeOutCubic(progress);
+
+      // Animate from starting position to final position
       ref.current.position.z = THREE.MathUtils.lerp(fromZ, 0, eased);
-      ref.current.scale.setScalar(THREE.MathUtils.lerp(0, 1, eased));
+      if (fromX !== 0) {
+        // For lateral animations, we need to track original position
+        const originalX = ref.current.userData.originalX ?? ref.current.position.x;
+        ref.current.userData.originalX = originalX;
+        ref.current.position.x = THREE.MathUtils.lerp(originalX + fromX, originalX, eased);
+      }
+      ref.current.scale.setScalar(eased);
     };
+
+    // Helper for Fly In animation (time-based)
+    const flyInByTime = (
+      ref: React.RefObject<THREE.Group | null>,
+      delaySeconds: number,
+      durationSeconds: number = 0.4,
+      distance: number = 2
+    ) => {
+      if (!ref.current || enteredSection1Time.current === null) return;
+
+      const elapsed = state.clock.elapsedTime - enteredSection1Time.current;
+      const progress = Math.max(0, Math.min((elapsed - delaySeconds) / durationSeconds, 1));
+      const eased = easeOutCubic(progress);
+
+      ref.current.position.z = THREE.MathUtils.lerp(distance, 0.02, eased);
+      ref.current.scale.setScalar(eased);
+    };
+
+    // ============ STAGGERED ENTRY ANIMATIONS ============
+    // All elements animate in when entering section 1
+    // Staggered delays for a cascading effect
+    // Added initial delay (0.3s) to let camera settle after Hero transition
+
+    const initialDelay = 0.3; // Let camera transition settle first
+
+    // Frontend group (LEFT column) - enters from left
+    animateElementByTime(frontendRef, initialDelay + 0.0, 0.8, 4, -3);
+    animateElementByTime(mobileRef, initialDelay + 0.12, 0.8, 4, -3);
+    animateElementByTime(backofficeRef, initialDelay + 0.24, 0.8, 4, -3);
+
+    // Backend group (CENTER) - enters from front
+    animateElementByTime(serverRef, initialDelay + 0.08, 0.9, 5);
+    animateElementByTime(databaseRef, initialDelay + 0.2, 0.8, 5);
+
+    // DevOps group (RIGHT column) - enters from right
+    animateElementByTime(cicdRef, initialDelay + 0.16, 0.8, 4, 3);
+    animateElementByTime(cloudRef, initialDelay + 0.28, 0.8, 4, 3);
+    animateElementByTime(archiRef, initialDelay + 0.4, 0.8, 4, 3);
+
+    // Frontend UI blocks fly-in (after main element appears)
+    flyInByTime(uiBlock1, initialDelay + 0.5, 0.5, 1.5);
+    flyInByTime(uiBlock2, initialDelay + 0.6, 0.5, 2.0);
+    flyInByTime(uiBlock3, initialDelay + 0.7, 0.5, 2.5);
     
-    // ALL ELEMENTS APPEAR AT FULLSTACK OVERVIEW (section 1, offset ~0.05)
-    // Staggered appearance for visual effect
-    const BASE_APPEAR = 0.045;
-    const STAGGER = 0.008;
-
-    // Frontend group (right column)
-    animateElement(frontendRef, BASE_APPEAR);
-    animateElement(mobileRef, BASE_APPEAR + STAGGER);
-    animateElement(backofficeRef, BASE_APPEAR + STAGGER * 2);
-
-    // Backend group (center)
-    animateElement(serverRef, BASE_APPEAR + STAGGER * 3, 0.08);
-    animateElement(databaseRef, BASE_APPEAR + STAGGER * 4);
-
-    // DevOps group (left column)
-    animateElement(cicdRef, BASE_APPEAR + STAGGER * 5);
-    animateElement(cloudRef, BASE_APPEAR + STAGGER * 6);
-    animateElement(archiRef, BASE_APPEAR + STAGGER * 7);
-
-    // Frontend UI blocks fly-in
-    flyIn(uiBlock1, BASE_APPEAR + 0.02, 0.04, 1.5);
-    flyIn(uiBlock2, BASE_APPEAR + 0.03, 0.04, 2.0);
-    flyIn(uiBlock3, BASE_APPEAR + 0.04, 0.04, 2.5);
-    
-    // Server Blades Animation (Time-based, triggered on first view)
-    // All elements appear at FullStack overview (~0.05)
-    const SERVER_TRIGGER = 0.06;
-    if (offset > SERVER_TRIGGER && serverVisibleTime.current === null) {
+    // Server Blades Animation (Time-based, triggered when entering section 1)
+    // Use currentSection instead of scroll offset
+    if (currentSection >= 1 && serverVisibleTime.current === null) {
         serverVisibleTime.current = state.clock.elapsedTime;
+    }
+    // Reset if back to section 0
+    if (currentSection === 0) {
+        serverVisibleTime.current = null;
     }
 
     // Database Rings Animation (Time-based)
-    const DB_TRIGGER = 0.06;
-    if (offset > DB_TRIGGER && databaseVisibleTime.current === null) {
+    if (currentSection >= 1 && databaseVisibleTime.current === null) {
         databaseVisibleTime.current = state.clock.elapsedTime;
+    }
+    if (currentSection === 0) {
+        databaseVisibleTime.current = null;
     }
 
     if (serverVisibleTime.current !== null) {
@@ -304,9 +407,11 @@ export default function WebsiteBuilder() {
     }
 
     // --- MOBILE ANIMATION (Bubbles Fly-In) ---
-    const MOBILE_TRIGGER = 0.06;
-    if (offset > MOBILE_TRIGGER && mobileVisibleTime.current === null) {
+    if (currentSection >= 1 && mobileVisibleTime.current === null) {
         mobileVisibleTime.current = state.clock.elapsedTime;
+    }
+    if (currentSection === 0) {
+        mobileVisibleTime.current = null;
     }
     if (mobileVisibleTime.current !== null) {
         chatBubbleRefs.current.forEach((bubble, i) => {
@@ -323,9 +428,11 @@ export default function WebsiteBuilder() {
     }
 
     // --- BACKOFFICE ANIMATION (Charts Grow) ---
-    const BACK_TRIGGER = 0.06;
-    if (offset > BACK_TRIGGER && backofficeVisibleTime.current === null) {
+    if (currentSection >= 1 && backofficeVisibleTime.current === null) {
         backofficeVisibleTime.current = state.clock.elapsedTime;
+    }
+    if (currentSection === 0) {
+        backofficeVisibleTime.current = null;
     }
     if (backofficeVisibleTime.current !== null) {
         chartRefs.current.forEach((chart, i) => {
@@ -344,9 +451,11 @@ export default function WebsiteBuilder() {
     }
 
     // --- CI/CD ANIMATION (Pipeline Nodes Sequence) ---
-    const CICD_TRIGGER = 0.06;
-    if (offset > CICD_TRIGGER && cicdVisibleTime.current === null) {
+    if (currentSection >= 1 && cicdVisibleTime.current === null) {
         cicdVisibleTime.current = state.clock.elapsedTime;
+    }
+    if (currentSection === 0) {
+        cicdVisibleTime.current = null;
     }
     if (cicdVisibleTime.current !== null) {
         pipelineNodeRefs.current.forEach((node, i) => {
@@ -366,9 +475,11 @@ export default function WebsiteBuilder() {
     }
 
     // --- CLOUD ANIMATION (Nodes Fly & Float) ---
-    const CLOUD_TRIGGER = 0.06;
-    if (offset > CLOUD_TRIGGER && cloudVisibleTime.current === null) {
+    if (currentSection >= 1 && cloudVisibleTime.current === null) {
         cloudVisibleTime.current = state.clock.elapsedTime;
+    }
+    if (currentSection === 0) {
+        cloudVisibleTime.current = null;
     }
     if (cloudVisibleTime.current !== null) {
         cloudNodeRefs.current.forEach((node, i) => {
@@ -398,9 +509,11 @@ export default function WebsiteBuilder() {
     }
 
     // --- ARCHITECTURE ANIMATION (Items Tick) ---
-    const ARCHI_TRIGGER = 0.06;
-    if (offset > ARCHI_TRIGGER && archiVisibleTime.current === null) {
+    if (currentSection >= 1 && archiVisibleTime.current === null) {
         archiVisibleTime.current = state.clock.elapsedTime;
+    }
+    if (currentSection === 0) {
+        archiVisibleTime.current = null;
     }
     if (archiVisibleTime.current !== null) {
         checklistRefs.current.forEach((item, i) => {
@@ -438,11 +551,10 @@ export default function WebsiteBuilder() {
   });
 
   const offset = scroll?.offset || 0;
-  
-  // Visibility thresholds - All elements appear early for FullStack overview
-  // Everything visible from section 1 (FullStack) onwards (offset > 0.05)
-  // Section 0 (Intro) is 0.00 - 0.05, so elements appear after that
-  const showElements = offset > 0.05;  // Start showing at FullStack overview
+
+  // Visibility thresholds - All elements appear from section 1 (FullStack) onwards
+  // Use currentSection instead of offset to ensure elements are visible when animations trigger
+  const showElements = currentSection >= 1;
   const showFrontend = showElements;
   const showMobile = showElements;
   const showBackoffice = showElements;
@@ -453,7 +565,7 @@ export default function WebsiteBuilder() {
   const showArchi = showElements;
 
   // Category boxes also only show from FullStack overview onwards
-  const showCategoryBoxes = offset > 0.05;
+  const showCategoryBoxes = currentSection >= 1;
   
   // ... rest of layout constants ...
 
@@ -514,6 +626,43 @@ export default function WebsiteBuilder() {
   const C_GROUP_BACKEND = "#10b981"; // Green
   const C_GROUP_DEVOPS = "#ff6600"; // Orange
 
+  // Highlight colors (brighter versions for active sections)
+  const C_HIGHLIGHT = "#ffffff";
+  const C_GLOW_FRONTEND = "#60a5fa";
+  const C_GLOW_BACKEND = "#34d399";
+  const C_GLOW_DEVOPS = "#ff8c00";
+
+  // Section to element mapping:
+  // Section 3: Site Web (Frontend), Section 4: Mobile, Section 5: Backoffice
+  // Section 7: Server (Backend), Section 8: Database
+  // Section 10: CI/CD (DevOps), Section 11: Cloud, Section 12: Architecture
+
+  // Determine which group is active based on currentSection
+  // Sections 2-5: Frontend, Sections 6-8: Backend, Sections 9-12: DevOps
+  const isFrontendGroupActive = currentSection >= 2 && currentSection <= 5;
+  const isBackendGroupActive = currentSection >= 6 && currentSection <= 8;
+  const isDevopsGroupActive = currentSection >= 9 && currentSection <= 12;
+
+  // Determine which specific element is active
+  const isElementActive = (elementSection: number) => currentSection === elementSection;
+
+  // Get label color with highlight effect
+  const getGroupLabelColor = (groupType: 'frontend' | 'backend' | 'devops') => {
+    if (groupType === 'frontend' && isFrontendGroupActive) return C_HIGHLIGHT;
+    if (groupType === 'backend' && isBackendGroupActive) return C_HIGHLIGHT;
+    if (groupType === 'devops' && isDevopsGroupActive) return C_HIGHLIGHT;
+    // Default colors
+    if (groupType === 'frontend') return C_GROUP_FRONTEND;
+    if (groupType === 'backend') return C_GROUP_BACKEND;
+    return C_GROUP_DEVOPS;
+  };
+
+  // Get element label color with highlight
+  const getElementLabelColor = (elementSection: number, baseColor: string) => {
+    return isElementActive(elementSection) ? C_HIGHLIGHT : baseColor;
+  };
+
+
   // Opacity Calculation Helper
   const getLinkOpacity = (threshold: number) => {
       // Fade in over 0.05 units after the threshold
@@ -556,17 +705,12 @@ export default function WebsiteBuilder() {
       {/* FRONTEND Group Box - LEFT column (Site Web, Mobile, Backoffice) */}
       {showCategoryBoxes && (
         <group ref={frontendGroupRef} position={[-GRID_X, 0, -0.5]}>
-          {/* Vertical rectangle encompassing the 3 frontend elements */}
-          <RoundedBox args={[2.2, 7.5, 0.02]} radius={0.1} position={[0, 0, 0]}>
-            <meshStandardMaterial color={C_GROUP_FRONTEND} transparent opacity={0.08} />
+          {/* Vertical rectangle encompassing the 3 frontend elements - larger size */}
+          <RoundedBox args={[2.8, 8.5, 0.02]} radius={0.1} position={[0, 0, 0]}>
+            <meshStandardMaterial ref={frontendBoxMatRef} color={isFrontendGroupActive ? C_GLOW_FRONTEND : C_GROUP_FRONTEND} transparent opacity={0} />
           </RoundedBox>
-          {/* Border outline */}
-          <mesh position={[0, 0, 0.01]}>
-            <planeGeometry args={[2.3, 7.6]} />
-            <meshBasicMaterial color={C_GROUP_FRONTEND} transparent opacity={0.15} wireframe />
-          </mesh>
-          {/* Category Label */}
-          <Text position={[0, GRID_Y + 1.2, 0.1]} fontSize={0.25} color={C_GROUP_FRONTEND} anchorX="center" anchorY="middle">
+          {/* Category Label - Positioned higher to avoid overlap */}
+          <Text ref={frontendLabelRef} position={[0, GRID_Y + 1.8, 0.1]} fontSize={isFrontendGroupActive ? 0.3 : 0.25} color={getGroupLabelColor('frontend')} anchorX="center" anchorY="middle" outlineWidth={isFrontendGroupActive ? 0.02 : 0} outlineColor={C_GROUP_FRONTEND} fillOpacity={0}>
             FRONTEND
           </Text>
         </group>
@@ -575,17 +719,12 @@ export default function WebsiteBuilder() {
       {/* BACKEND Group Box - CENTER column (Server, Database) */}
       {showCategoryBoxes && (
         <group ref={backendGroupRef} position={[0, GRID_Y * 0.5, -0.5]}>
-          {/* Vertical rectangle encompassing Server and Database */}
-          <RoundedBox args={[2.2, 4.5, 0.02]} radius={0.1} position={[0, 0, 0]}>
-            <meshStandardMaterial color={C_GROUP_BACKEND} transparent opacity={0.08} />
+          {/* Vertical rectangle encompassing Server and Database - larger size */}
+          <RoundedBox args={[2.8, 5.5, 0.02]} radius={0.1} position={[0, 0, 0]}>
+            <meshStandardMaterial ref={backendBoxMatRef} color={isBackendGroupActive ? C_GLOW_BACKEND : C_GROUP_BACKEND} transparent opacity={0} />
           </RoundedBox>
-          {/* Border outline */}
-          <mesh position={[0, 0, 0.01]}>
-            <planeGeometry args={[2.3, 4.6]} />
-            <meshBasicMaterial color={C_GROUP_BACKEND} transparent opacity={0.15} wireframe />
-          </mesh>
-          {/* Category Label */}
-          <Text position={[0, GRID_Y * 0.5 + 1.0, 0.1]} fontSize={0.25} color={C_GROUP_BACKEND} anchorX="center" anchorY="middle">
+          {/* Category Label - Positioned higher to avoid overlap */}
+          <Text ref={backendLabelRef} position={[0, GRID_Y * 0.5 + 1.5, 0.1]} fontSize={isBackendGroupActive ? 0.3 : 0.25} color={getGroupLabelColor('backend')} anchorX="center" anchorY="middle" outlineWidth={isBackendGroupActive ? 0.02 : 0} outlineColor={C_GROUP_BACKEND} fillOpacity={0}>
             BACKEND
           </Text>
         </group>
@@ -594,17 +733,12 @@ export default function WebsiteBuilder() {
       {/* DEVOPS Group Box - RIGHT column (CI/CD, Cloud, Architecture) */}
       {showCategoryBoxes && (
         <group ref={devopsGroupRef} position={[GRID_X, 0, -0.5]}>
-          {/* Vertical rectangle encompassing the 3 devops elements */}
-          <RoundedBox args={[2.2, 7.5, 0.02]} radius={0.1} position={[0, 0, 0]}>
-            <meshStandardMaterial color={C_GROUP_DEVOPS} transparent opacity={0.08} />
+          {/* Vertical rectangle encompassing the 3 devops elements - larger size */}
+          <RoundedBox args={[2.8, 8.5, 0.02]} radius={0.1} position={[0, 0, 0]}>
+            <meshStandardMaterial ref={devopsBoxMatRef} color={isDevopsGroupActive ? C_GLOW_DEVOPS : C_GROUP_DEVOPS} transparent opacity={0} />
           </RoundedBox>
-          {/* Border outline */}
-          <mesh position={[0, 0, 0.01]}>
-            <planeGeometry args={[2.3, 7.6]} />
-            <meshBasicMaterial color={C_GROUP_DEVOPS} transparent opacity={0.15} wireframe />
-          </mesh>
-          {/* Category Label */}
-          <Text position={[0, GRID_Y + 1.2, 0.1]} fontSize={0.25} color={C_GROUP_DEVOPS} anchorX="center" anchorY="middle">
+          {/* Category Label - Positioned higher to avoid overlap */}
+          <Text ref={devopsLabelRef} position={[0, GRID_Y + 1.8, 0.1]} fontSize={isDevopsGroupActive ? 0.3 : 0.25} color={getGroupLabelColor('devops')} anchorX="center" anchorY="middle" outlineWidth={isDevopsGroupActive ? 0.02 : 0} outlineColor={C_GROUP_DEVOPS} fillOpacity={0}>
             DEVOPS
           </Text>
         </group>
@@ -612,11 +746,11 @@ export default function WebsiteBuilder() {
 
       {/* ========== TOP ROW ========== */}
 
-      {/* CLOUD (-3.2, 2.5) */}
+      {/* CLOUD (-3.2, 2.5) - Section 11 */}
       {showCloud && (
         <group ref={cloudRef} position={POS_CLOUD} scale={0}>
-          <Text position={[0, 0.85, 0]} fontSize={0.09} color="#4a90d9" anchorX="center">CLOUD</Text>
-          <Text position={[0, 0.73, 0]} fontSize={0.04} color="#666" anchorX="center">AWS / Infrastructure</Text>
+          <Text position={[0, 0.85, 0]} fontSize={isElementActive(11) ? 0.11 : 0.09} color={getElementLabelColor(11, "#4a90d9")} anchorX="center" outlineWidth={isElementActive(11) ? 0.015 : 0} outlineColor="#4a90d9">CLOUD</Text>
+          <Text position={[0, 0.73, 0]} fontSize={0.04} color={isElementActive(11) ? "#aaa" : "#666"} anchorX="center">AWS / Infrastructure</Text>
 
           {/* Main Container - Dark blue server rack style */}
           <RoundedBox args={[1.5, 1.0, 0.1]} radius={0.04} smoothness={4}>
@@ -755,12 +889,12 @@ export default function WebsiteBuilder() {
         </group>
       )}
 
-      {/* DATABASE (0, 2.5) */}
+      {/* DATABASE (0, 2.5) - Section 8 */}
       {showDatabase && (
         <group ref={databaseRef} position={POS_DATABASE} scale={0}>
           <Billboard>
-            <Text position={[0, 0.7, 0]} fontSize={0.09} color={C_DB} anchorX="center">DATABASE</Text>
-            <Text position={[0, 0.58, 0]} fontSize={0.04} color="#666" anchorX="center">PostgreSQL</Text>
+            <Text position={[0, 0.7, 0]} fontSize={isElementActive(8) ? 0.11 : 0.09} color={getElementLabelColor(8, C_DB)} anchorX="center" outlineWidth={isElementActive(8) ? 0.015 : 0} outlineColor={C_DB}>DATABASE</Text>
+            <Text position={[0, 0.58, 0]} fontSize={0.04} color={isElementActive(8) ? "#aaa" : "#666"} anchorX="center">PostgreSQL</Text>
           </Billboard>
           {/* Core */}
           <mesh><cylinderGeometry args={[0.35, 0.35, 0.6, 32]} /><meshStandardMaterial color="#1a0b2e" metalness={0.8} roughness={0.2} /></mesh>
@@ -782,11 +916,11 @@ export default function WebsiteBuilder() {
 
       {/* ========== MIDDLE ROW ========== */}
 
-      {/* CI/CD (-3.2, 0) */}
+      {/* CI/CD (-3.2, 0) - Section 10 */}
       {showCICD && (
         <group ref={cicdRef} position={POS_CICD} scale={0}>
-          <Text position={[0, 0.85, 0]} fontSize={0.09} color={C_CICD} anchorX="center">CI/CD</Text>
-          <Text position={[0, 0.73, 0]} fontSize={0.04} color="#666" anchorX="center">Pipeline</Text>
+          <Text position={[0, 0.85, 0]} fontSize={isElementActive(10) ? 0.11 : 0.09} color={getElementLabelColor(10, C_CICD)} anchorX="center" outlineWidth={isElementActive(10) ? 0.015 : 0} outlineColor={C_CICD}>CI/CD</Text>
+          <Text position={[0, 0.73, 0]} fontSize={0.04} color={isElementActive(10) ? "#aaa" : "#666"} anchorX="center">Pipeline</Text>
 
           {/* Main Pipeline Container - Dark with orange glow */}
           <RoundedBox args={[1.6, 1.1, 0.08]} radius={0.04} smoothness={4}>
@@ -968,11 +1102,11 @@ export default function WebsiteBuilder() {
         </group>
       )}
 
-      {/* SERVER (0, 0) */}
+      {/* SERVER (0, 0) - Section 7 */}
       {showServer && (
         <group ref={serverRef} position={POS_SERVER} scale={0}>
-          <Text position={[0, 0.85, 0]} fontSize={0.09} color={C_SERVER} anchorX="center">SERVEUR</Text>
-          <Text position={[0, 0.73, 0]} fontSize={0.04} color="#666" anchorX="center">Node.js</Text>
+          <Text position={[0, 0.85, 0]} fontSize={isElementActive(7) ? 0.11 : 0.09} color={getElementLabelColor(7, C_SERVER)} anchorX="center" outlineWidth={isElementActive(7) ? 0.015 : 0} outlineColor={C_SERVER}>SERVEUR</Text>
+          <Text position={[0, 0.73, 0]} fontSize={0.04} color={isElementActive(7) ? "#aaa" : "#666"} anchorX="center">Node.js</Text>
           
           {/* Main Cabinet Frame */}
           <RoundedBox args={[0.9, 1.4, 0.5]} radius={0.02} smoothness={4}>
@@ -1031,11 +1165,11 @@ export default function WebsiteBuilder() {
         </group>
       )}
 
-      {/* ARCHITECTURE (DevOps Group - Bottom) */}
+      {/* ARCHITECTURE (DevOps Group - Bottom) - Section 12 */}
       {showArchi && (
         <group ref={archiRef} position={POS_ARCHI} scale={0}>
-          <Text position={[0, 0.85, 0]} fontSize={0.09} color={C_ARCHI} anchorX="center">ARCHITECTURE</Text>
-          <Text position={[0, 0.73, 0]} fontSize={0.04} color="#666" anchorX="center">System Design</Text>
+          <Text position={[0, 0.85, 0]} fontSize={isElementActive(12) ? 0.11 : 0.09} color={getElementLabelColor(12, C_ARCHI)} anchorX="center" outlineWidth={isElementActive(12) ? 0.015 : 0} outlineColor={C_ARCHI}>ARCHITECTURE</Text>
+          <Text position={[0, 0.73, 0]} fontSize={0.04} color={isElementActive(12) ? "#aaa" : "#666"} anchorX="center">System Design</Text>
 
           {/* Main Container - Blueprint/Architecture style */}
           <RoundedBox args={[1.5, 1.0, 0.08]} radius={0.04} smoothness={4}>
@@ -1121,11 +1255,11 @@ export default function WebsiteBuilder() {
 
       {/* ========== BOTTOM ROW ========== */}
 
-      {/* FRONTEND (-3.2, -2.5) */}
+      {/* FRONTEND (-3.2, -2.5) - Section 3 */}
       {showFrontend && (
         <group ref={frontendRef} position={POS_FRONTEND} scale={0}>
-          <Text position={[0, 0.9, 0]} fontSize={0.1} color={C_FRONT} anchorX="center">APP WEB</Text>
-          <Text position={[0, 0.78, 0]} fontSize={0.04} color="#666" anchorX="center">React / Remix</Text>
+          <Text position={[0, 0.9, 0]} fontSize={isElementActive(3) ? 0.12 : 0.1} color={getElementLabelColor(3, C_FRONT)} anchorX="center" outlineWidth={isElementActive(3) ? 0.015 : 0} outlineColor={C_FRONT}>APP WEB</Text>
+          <Text position={[0, 0.78, 0]} fontSize={0.04} color={isElementActive(3) ? "#aaa" : "#666"} anchorX="center">React / Remix</Text>
           
           {/* Wireframe Mode (Initial state hint) */}
           <group scale={1.02} position={[0,0,-0.1]}>
@@ -1178,11 +1312,11 @@ export default function WebsiteBuilder() {
         </group>
       )}
 
-      {/* MOBILE (0, -2.5) */}
+      {/* MOBILE (0, -2.5) - Section 4 */}
       {showMobile && (
         <group ref={mobileRef} position={POS_MOBILE} scale={0}>
-          <Text position={[0, 0.85, 0]} fontSize={0.09} color={C_MOBILE} anchorX="center">MOBILE</Text>
-          <Text position={[0, 0.73, 0]} fontSize={0.04} color="#666" anchorX="center">Native App</Text>
+          <Text position={[0, 0.85, 0]} fontSize={isElementActive(4) ? 0.11 : 0.09} color={getElementLabelColor(4, C_MOBILE)} anchorX="center" outlineWidth={isElementActive(4) ? 0.015 : 0} outlineColor={C_MOBILE}>MOBILE</Text>
+          <Text position={[0, 0.73, 0]} fontSize={0.04} color={isElementActive(4) ? "#aaa" : "#666"} anchorX="center">Native App</Text>
           {/* Phone Body */}
           <RoundedBox args={[0.5, 0.9, 0.05]} radius={0.05} smoothness={4}>
             <meshStandardMaterial color="#1a1a2e" metalness={0.8} roughness={0.2} />
@@ -1211,11 +1345,11 @@ export default function WebsiteBuilder() {
         </group>
       )}
 
-      {/* BACKOFFICE (3.2, -2.5) */}
+      {/* BACKOFFICE (3.2, -2.5) - Section 5 */}
       {showBackoffice && (
         <group ref={backofficeRef} position={POS_BACKOFFICE} scale={0}>
-          <Text position={[0, 0.85, 0]} fontSize={0.09} color={C_BACK} anchorX="center">BACKOFFICE</Text>
-          <Text position={[0, 0.73, 0]} fontSize={0.04} color="#666" anchorX="center">Admin Dashboard</Text>
+          <Text position={[0, 0.85, 0]} fontSize={isElementActive(5) ? 0.11 : 0.09} color={getElementLabelColor(5, C_BACK)} anchorX="center" outlineWidth={isElementActive(5) ? 0.015 : 0} outlineColor={C_BACK}>BACKOFFICE</Text>
+          <Text position={[0, 0.73, 0]} fontSize={0.04} color={isElementActive(5) ? "#aaa" : "#666"} anchorX="center">Admin Dashboard</Text>
 
           {/* Main Container */}
           <RoundedBox args={[1.6, 1.1, 0.08]} radius={0.04} smoothness={4}>

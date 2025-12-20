@@ -11,9 +11,10 @@ interface SceneProps {
   detailScrollOffset?: number;
   targetSection?: number | null;
   onNavigationComplete?: () => void;
+  onFirstSectionAnimationComplete?: () => void;
 }
 
-export default function Scene({ onSectionChange, onExperienceSelect, selectedExperienceId, detailScrollOffset = 0, targetSection, onNavigationComplete }: SceneProps) {
+export default function Scene({ onSectionChange, onExperienceSelect, selectedExperienceId, detailScrollOffset = 0, targetSection, onNavigationComplete, onFirstSectionAnimationComplete }: SceneProps) {
   return (
     <>
       <div className="fixed inset-0 z-0">
@@ -35,6 +36,7 @@ export default function Scene({ onSectionChange, onExperienceSelect, selectedExp
               detailScrollOffset={detailScrollOffset}
               targetSection={targetSection}
               onNavigationComplete={onNavigationComplete}
+              onFirstSectionAnimationComplete={onFirstSectionAnimationComplete}
             />
           </Suspense>
         </Canvas>

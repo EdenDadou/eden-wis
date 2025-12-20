@@ -28,20 +28,24 @@ export const langItemVariants: Variants = {
 
 // Text position mapping based on section
 // Position text on opposite side of 3D element for visibility
+// NEW LAYOUT: Section 1 (FullStack) has 3D on RIGHT, so card on LEFT
+// Frontend elements (sections 2-5): 3D on LEFT column, card on RIGHT
+// Backend elements (sections 6-8): 3D CENTER, card position varies
+// DevOps elements (sections 9-12): 3D on RIGHT column, card on LEFT
 export const sectionTextPositions: Record<number, "left" | "right" | "center"> = {
   0: "center",  // Hero intro - centered
-  1: "left",    // FullStack Overview - card left
-  2: "left",    // Frontend Slide - card left (3D on right)
-  3: "left",    // Site Web - card left (3D on right)
-  4: "right",   // Mobile - card right (3D center)
-  5: "left",    // Backoffice - card left (3D on right)
-  6: "right",   // Backend Slide - card right (3D center)
-  7: "right",   // Server - card right (3D center)
-  8: "right",   // Database - card right (3D center-top)
-  9: "right",   // DevOps Slide - card right (3D on left)
-  10: "right",  // CI/CD - card right (3D on left)
-  11: "right",  // Cloud - card right (3D on left)
-  12: "left",   // Architecture - card left (3D on right)
+  1: "left",    // FullStack Overview - 3D tableau on RIGHT, card on LEFT
+  2: "right",   // Frontend Slide - 3D on LEFT, card on RIGHT
+  3: "right",   // Site Web - 3D on LEFT, card on RIGHT
+  4: "right",   // Mobile - 3D on LEFT, card on RIGHT
+  5: "right",   // Backoffice - 3D on LEFT, card on RIGHT
+  6: "left",    // Backend Slide - 3D CENTER, card on LEFT (or right)
+  7: "left",    // Server - 3D CENTER, card on LEFT
+  8: "left",    // Database - 3D CENTER, card on LEFT
+  9: "left",    // DevOps Slide - 3D on RIGHT, card on LEFT
+  10: "left",   // CI/CD - 3D on RIGHT, card on LEFT
+  11: "left",   // Cloud - 3D on RIGHT, card on LEFT
+  12: "left",   // Architecture - 3D on RIGHT, card on LEFT
 };
 
 export const getTextPosition = (section: number): "left" | "right" | "center" => {

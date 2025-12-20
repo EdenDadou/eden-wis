@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
+import PixelHeart from "../PixelHeart";
 
 interface TopNavProps {
   section: number;
@@ -24,10 +25,11 @@ export function TopNav({ section, onNavigate }: TopNavProps) {
         {/* Logo/Name - Click to go back to intro */}
         <motion.button
           onClick={() => onNavigate(0)}
-          className="text-white/90 font-bold text-lg tracking-tight cursor-pointer"
+          className="flex items-center gap-2 text-white/90 font-bold text-lg tracking-tight cursor-pointer"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
+          <PixelHeart size={20} />
           EW
         </motion.button>
 
