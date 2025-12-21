@@ -13,6 +13,7 @@
     "@react-router/serve": "7.10.1",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.4.2",
+    "@react-three/postprocessing": "^3.0.4",
     "@types/three": "^0.182.0",
     "framer-motion": "^12.23.26",
     "i18next": "^25.7.3",

@@ -62,8 +62,13 @@ export default function Home() {
   // Handle skill click - navigate to that skill's detail view
   const handleSkillClick = useCallback(
     (skillSection: number) => {
-      // Only navigate if we're in the skills overview (section 1)
-      if (section === 1 && skillSection >= 3 && skillSection <= 12) {
+      // Allow navigation from skills overview (section 1) or from another skill detail (sections 2-9)
+      const isFromOverview = section === 1;
+      const isFromSkillDetail = section >= 2 && section <= 9;
+      const isValidTarget = skillSection >= 2 && skillSection <= 9;
+      const isDifferentSkill = skillSection !== section;
+
+      if ((isFromOverview || isFromSkillDetail) && isValidTarget && isDifferentSkill) {
         setSection(skillSection);
         setTargetSection(skillSection);
         setShowCard(false);
@@ -193,7 +198,8 @@ export default function Home() {
   const portfolioScrollAccumulator = useRef(0);
 
   useEffect(() => {
-    if (section !== 14) {
+    // Portfolio is now section 11
+    if (section !== 11) {
       portfolioScrollAccumulator.current = 0;
       return;
     }
@@ -208,7 +214,8 @@ export default function Home() {
 
         if (portfolioScrollAccumulator.current > 100) {
           portfolioScrollAccumulator.current = 0;
-          navigateToSection(13);
+          // Navigate to Timeline (section 10)
+          navigateToSection(10);
         }
       } else {
         portfolioScrollAccumulator.current = 0;
@@ -250,7 +257,7 @@ export default function Home() {
         {section === 0 && <HeroSection isVisible={section === 0} />}
       </AnimatePresence>
 
-      {/* Sections 1-12 - Compétences */}
+      {/* Sections 1-9 - Compétences */}
       <SkillsSection
         section={section}
         showCard={showCard}
@@ -258,9 +265,11 @@ export default function Home() {
         isFirstCardReady={isFirstCardReady}
         isNavigating={isNavigating}
         onBackToSkillsMenu={() => navigateToSection(1)}
+        onNavigateSkill={handleSkillClick}
+        onNavigateToPortfolio={() => navigateToSection(11)}
       />
 
-      {/* Section 13 - Expérience */}
+      {/* Section 10 - Expérience */}
       <ExperienceSection
         section={section}
         selectedExperience={selectedExperience}
@@ -270,7 +279,7 @@ export default function Home() {
         onBackToTimeline={handleBackToTimeline}
       />
 
-      {/* Section 14 - Portfolio */}
+      {/* Section 11 - Portfolio */}
       <PortfolioSection
         section={section}
         showCard={showCard}
@@ -282,7 +291,7 @@ export default function Home() {
         scrollRef={portfolioScrollRef}
       />
 
-      {/* Section 15 - About */}
+      {/* Section 12 - About */}
       <AboutSection
         section={section}
         showCard={showCard}

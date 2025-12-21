@@ -21,6 +21,7 @@ export interface ParticleStreamProps {
   count?: number;
   showParticles?: boolean;
   opacity?: number;
+  drawProgress?: number; // 0-1, how much of the line is drawn
 }
 
 export interface CategoryBoxProps {

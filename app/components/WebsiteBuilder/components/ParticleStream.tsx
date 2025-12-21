@@ -1,4 +1,4 @@
-import { useRef, useMemo, useLayoutEffect } from "react";
+import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Line } from "@react-three/drei";
 import * as THREE from "three";
@@ -9,128 +9,147 @@ export function ParticleStream({
   end,
   startColor = "#ffffff",
   endColor = "#ffffff",
-  speed = 0.5,
-  count = 10,
-  showParticles = true,
   opacity = 1,
+  drawProgress = 1,
 }: ParticleStreamProps) {
-  const meshRef = useRef<THREE.InstancedMesh>(null);
-  const glowRef = useRef<THREE.InstancedMesh>(null);
-  const dummy = useMemo(() => new THREE.Object3D(), []);
+  const particlesRef = useRef<THREE.InstancedMesh>(null);
   const startVec = useMemo(() => new THREE.Vector3(...start), [start]);
   const endVec = useMemo(() => new THREE.Vector3(...end), [end]);
   const color1 = useMemo(() => new THREE.Color(startColor), [startColor]);
   const color2 = useMemo(() => new THREE.Color(endColor), [endColor]);
 
-  // Random offsets and direction for each particle
+  const zOffset = -0.3;
+
+  // Calculate current end point based on draw progress
+  const currentEndVec = useMemo(() => {
+    return new THREE.Vector3(
+      THREE.MathUtils.lerp(startVec.x, endVec.x, drawProgress),
+      THREE.MathUtils.lerp(startVec.y, endVec.y, drawProgress),
+      zOffset
+    );
+  }, [startVec, endVec, drawProgress]);
+
+  // Simple straight line behind 3D models
+  const linePoints = useMemo(() => {
+    return [
+      new THREE.Vector3(startVec.x, startVec.y, zOffset),
+      currentEndVec,
+    ];
+  }, [startVec, currentEndVec]);
+
+  // Vertex colors for gradient (interpolate end color based on progress)
+  const currentEndColor = useMemo(() => {
+    return new THREE.Color().lerpColors(color1, color2, drawProgress);
+  }, [color1, color2, drawProgress]);
+
+  const vertexColors = useMemo(() => {
+    return [color1, currentEndColor];
+  }, [color1, currentEndColor]);
+
+  // Mid color for glow layers
+  const midColor = useMemo(() => {
+    return new THREE.Color().lerpColors(color1, currentEndColor, 0.5);
+  }, [color1, currentEndColor]);
+
+  // Floating particles data
+  const particleCount = 20;
   const particles = useMemo(() => {
-    return new Array(count).fill(0).map(() => ({
-      offset: Math.random(),
-      speed: 0.3 + Math.random() * 0.4,
-      reverse: Math.random() > 0.5,
+    return new Array(particleCount).fill(0).map(() => ({
+      offset: Math.random(), // Position along the line (0-1)
+      speed: 0.1 + Math.random() * 0.15,
+      drift: (Math.random() - 0.5) * 0.3, // Side drift
+      driftSpeed: 0.5 + Math.random() * 1,
+      size: 0.015 + Math.random() * 0.02,
+      phase: Math.random() * Math.PI * 2,
     }));
-  }, [count]);
+  }, []);
 
-  useLayoutEffect(() => {
-    const applyColors = (ref: React.RefObject<THREE.InstancedMesh | null>) => {
-      if (!ref.current) return;
-      particles.forEach((p, i) => {
-        ref.current?.setColorAt(i, p.reverse ? color2 : color1);
-      });
-      ref.current.instanceColor!.needsUpdate = true;
-    };
+  const dummy = useMemo(() => new THREE.Object3D(), []);
 
-    if (showParticles) {
-      applyColors(meshRef);
-      applyColors(glowRef);
-    }
-  }, [particles, color1, color2, showParticles]);
-
+  // Animate particles
   useFrame((state) => {
-    if (!showParticles) return;
+    if (!particlesRef.current) return;
 
-    // Update core particles
-    if (meshRef.current) {
-      particles.forEach((particle, i) => {
-        const direction = particle.reverse ? -1 : 1;
-        const t =
-          (state.clock.getElapsedTime() * speed * particle.speed * direction +
-            particle.offset) %
-          1;
-        const normalizedT = t < 0 ? 1 + t : t;
+    const time = state.clock.getElapsedTime();
 
-        dummy.position.lerpVectors(startVec, endVec, normalizedT);
-        const scale =
-          0.8 + Math.sin(state.clock.getElapsedTime() * 5 + i) * 0.3;
-        dummy.scale.setScalar(scale);
-        dummy.updateMatrix();
-        meshRef.current?.setMatrixAt(i, dummy.matrix);
-      });
-      meshRef.current.instanceMatrix.needsUpdate = true;
-    }
+    particles.forEach((particle, i) => {
+      // Move along the line, but only up to drawProgress
+      const rawT = (particle.offset + time * particle.speed) % 1;
+      const t = rawT * drawProgress; // Limit particles to drawn portion
 
-    // Update glow particles
-    if (glowRef.current && meshRef.current) {
-      particles.forEach((particle, i) => {
-        const direction = particle.reverse ? -1 : 1;
-        const t =
-          (state.clock.getElapsedTime() * speed * particle.speed * direction +
-            particle.offset) %
-          1;
-        const normalizedT = t < 0 ? 1 + t : t;
+      // Interpolate position along line
+      const x = THREE.MathUtils.lerp(startVec.x, endVec.x, t);
+      const y = THREE.MathUtils.lerp(startVec.y, endVec.y, t);
 
-        dummy.position.lerpVectors(startVec, endVec, normalizedT);
-        const scale =
-          0.8 + Math.sin(state.clock.getElapsedTime() * 5 + i) * 0.3;
-        dummy.scale.setScalar(scale);
-        dummy.updateMatrix();
-        glowRef.current?.setMatrixAt(i, dummy.matrix);
-      });
-      glowRef.current.instanceMatrix.needsUpdate = true;
+      // Add floating drift perpendicular to line
+      const lineDir = new THREE.Vector3().subVectors(endVec, startVec).normalize();
+      const perpX = -lineDir.y;
+      const perpY = lineDir.x;
+      const drift = Math.sin(time * particle.driftSpeed + particle.phase) * particle.drift;
+
+      dummy.position.set(
+        x + perpX * drift,
+        y + perpY * drift,
+        zOffset + Math.sin(time * 2 + particle.phase) * 0.05
+      );
+
+      // Pulsing size
+      const pulse = 0.8 + Math.sin(time * 3 + particle.phase) * 0.2;
+      dummy.scale.setScalar(particle.size * pulse);
+
+      dummy.updateMatrix();
+      particlesRef.current!.setMatrixAt(i, dummy.matrix);
+
+      // Color based on position along line
+      const color = new THREE.Color().lerpColors(color1, color2, t);
+      particlesRef.current!.setColorAt(i, color);
+    });
+
+    particlesRef.current.instanceMatrix.needsUpdate = true;
+    if (particlesRef.current.instanceColor) {
+      particlesRef.current.instanceColor.needsUpdate = true;
     }
   });
 
   return (
-    <>
-      {/* Base solid line - ALWAYS VISIBLE if component is rendered */}
+    <group>
+      {/* Outer glow */}
       <Line
-        points={[startVec, endVec]}
-        color={undefined}
-        vertexColors={[color1, color2]}
-        opacity={0.15 * opacity}
+        points={linePoints}
+        color={midColor}
+        lineWidth={6}
         transparent
-        lineWidth={2}
-        dashed={false}
+        opacity={opacity * 0.4}
       />
 
-      {/* Particles - CONDITIONALLY VISIBLE */}
-      {showParticles && (
-        <>
-          {/* Outer Glow (Blur) */}
-          <instancedMesh ref={glowRef} args={[undefined, undefined, count]}>
-            <sphereGeometry args={[0.12, 16, 16]} />
-            <meshBasicMaterial
-              toneMapped={false}
-              transparent
-              opacity={0.15 * opacity}
-              blending={THREE.AdditiveBlending}
-              depthWrite={false}
-            />
-          </instancedMesh>
+      {/* Core neon line with gradient */}
+      <Line
+        points={linePoints}
+        vertexColors={vertexColors}
+        lineWidth={2}
+        transparent
+        opacity={opacity * 1}
+      />
 
-          {/* Inner Core */}
-          <instancedMesh ref={meshRef} args={[undefined, undefined, count]}>
-            <sphereGeometry args={[0.04, 8, 8]} />
-            <meshBasicMaterial
-              toneMapped={false}
-              transparent
-              opacity={0.6 * opacity}
-              blending={THREE.AdditiveBlending}
-              depthWrite={false}
-            />
-          </instancedMesh>
-        </>
-      )}
-    </>
+      {/* Bright center */}
+      <Line
+        points={linePoints}
+        color="white"
+        lineWidth={0.5}
+        transparent
+        opacity={opacity * 0.5}
+      />
+
+      {/* Floating particles */}
+      <instancedMesh ref={particlesRef} args={[undefined, undefined, particleCount]}>
+        <sphereGeometry args={[1, 6, 6]} />
+        <meshBasicMaterial
+          transparent
+          opacity={opacity * 0.8}
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
+        />
+      </instancedMesh>
+    </group>
   );
 }

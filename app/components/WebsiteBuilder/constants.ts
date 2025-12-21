@@ -40,7 +40,7 @@ export const C_ARCHI = "#06b6d4"; // Cyan (Architecture)
 // Group Colors for category boxes
 export const C_GROUP_FRONTEND = "#1e3a8a";
 export const C_GROUP_BACKEND = "#065f46";
-export const C_GROUP_DEVOPS = "#ff6600";
+export const C_GROUP_DEVOPS = "#713f12";
 
 // Highlight/Glow Colors
 export const C_HIGHLIGHT = "#ffffff";
@@ -64,14 +64,26 @@ export const DEZOOM_START = 0.93;
 export const DEZOOM_END = 0.97;
 export const BASE_X_OFFSET = 3;
 
-// Section Mapping
+// Section Mapping (without transition slides)
+// 0: Intro, 1: Overview, 2-4: Frontend, 5-6: Backend, 7-9: DevOps, 10: Timeline, 11: Portfolio, 12: About
 export const SECTION_MAP = {
-  FRONTEND: 3,
-  MOBILE: 4,
-  BACKOFFICE: 5,
-  SERVER: 7,
-  DATABASE: 8,
-  CICD: 10,
-  CLOUD: 11,
-  ARCHITECTURE: 12,
+  FRONTEND: 2,
+  MOBILE: 3,
+  BACKOFFICE: 4,
+  SERVER: 5,
+  DATABASE: 6,
+  CICD: 7,
+  CLOUD: 8,
+  ARCHITECTURE: 9,
+} as const;
+
+// Section boundaries for active state logic
+export const SECTION_BOUNDARIES = {
+  FRONTEND_START: 2,
+  FRONTEND_END: 4,
+  BACKEND_START: 5,
+  BACKEND_END: 6,
+  DEVOPS_START: 7,
+  DEVOPS_END: 9,
+  SKILLS_END: 9,
 } as const;

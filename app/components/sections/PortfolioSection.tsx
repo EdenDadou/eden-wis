@@ -27,7 +27,8 @@ export function PortfolioSection({
 }: PortfolioSectionProps) {
   const { t } = useTranslation("common");
 
-  const isVisible = section === 14 && (targetSection === null || showCard) && !isNavigating;
+  // Portfolio is now section 11
+  const isVisible = section === 11 && (targetSection === null || showCard) && !isNavigating;
 
   return (
     <>

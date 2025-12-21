@@ -22,7 +22,8 @@ export function ExperienceSection({
 }: ExperienceSectionProps) {
   const { t } = useTranslation("common");
 
-  const isInExperienceSection = section === 13;
+  // Experience/Timeline is now section 10
+  const isInExperienceSection = section === 10;
 
   return (
     <>

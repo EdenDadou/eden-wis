@@ -112,7 +112,7 @@ export default function Experience({
 
       {/* Lighting */}
       <ambientLight intensity={0.6} />
-      <directionalLight
+      {/* <directionalLight
         position={[10, 10, 5]}
         intensity={1.2}
         color="#00f0ff"
@@ -122,8 +122,8 @@ export default function Experience({
         intensity={0.8}
         color="#06b6d4"
       />
-      <directionalLight position={[0, 5, 0]} intensity={0.5} color="#ffffff" />
-      <Environment preset="city" />
+      <directionalLight position={[0, 5, 0]} intensity={0.5} color="#ffffff" /> */}
+      <Environment preset="forest" />
 
       <ScrollControls pages={25} damping={0.25}>
         <CameraRig

@@ -10,9 +10,11 @@ interface SkillsSectionProps {
   isFirstCardReady: boolean;
   isNavigating: boolean;
   onBackToSkillsMenu?: () => void;
+  onNavigateSkill?: (skillSection: number) => void;
+  onNavigateToPortfolio?: () => void;
 }
 
-export function SkillsSection({ section, showCard, targetSection, isFirstCardReady, isNavigating, onBackToSkillsMenu }: SkillsSectionProps) {
+export function SkillsSection({ section, showCard, targetSection, isFirstCardReady, isNavigating, onBackToSkillsMenu, onNavigateSkill, onNavigateToPortfolio }: SkillsSectionProps) {
   const { t, i18n } = useTranslation("common");
   const textPosition = getTextPosition(section);
   const positionClass = getPositionClass(textPosition);
@@ -21,12 +23,9 @@ export function SkillsSection({ section, showCard, targetSection, isFirstCardRea
   // Determine if this is the first skill section (coming from hero)
   const isFirstSection = section === 1;
 
-  // Determine if this is a group slide section (2, 6, 9) - these get special treatment
-  const isGroupSlide = section === 2 || section === 6 || section === 9;
-
-  // Determine if we're in a detail skill section (not overview, not group slides)
-  // These are sections 3, 4, 5 (Frontend details), 7, 8 (Backend details), 10, 11, 12 (DevOps details)
-  const isDetailSection = section >= 3 && section <= 12 && !isGroupSlide;
+  // No more group slide sections - all skill detail sections are 2-9
+  // 2-4: Frontend, 5-6: Backend, 7-9: DevOps
+  const isDetailSection = section >= 2 && section <= 9;
 
   // Calculate entrance direction based on position
   // Cards slide in from the opposite side of where they'll end up
@@ -37,8 +36,8 @@ export function SkillsSection({ section, showCard, targetSection, isFirstCardRea
     return 0;
   };
 
-  // Check if we're in skills section range
-  const isInSkillsRange = section > 0 && section < 13;
+  // Check if we're in skills section range (now 1-9)
+  const isInSkillsRange = section > 0 && section <= 9;
 
   // Card should be visible when in skills range, ready, and not navigating
   const shouldShowCard = isInSkillsRange && (targetSection === null || showCard) && (!isFirstSection || isFirstCardReady) && !isNavigating;
@@ -65,9 +64,9 @@ export function SkillsSection({ section, showCard, targetSection, isFirstCardRea
               scale: 1,
               filter: "blur(0px)",
               transition: {
-                duration: isFirstSection ? 0.8 : isGroupSlide ? 0.7 : 0.6,
+                duration: isFirstSection ? 0.8 : 0.6,
                 ease: [0.25, 0.1, 0.25, 1],
-                delay: 0.1, // Small delay after navigation completes
+                delay: 0.1,
                 filter: { duration: 0.4 }
               }
             }}
@@ -168,16 +167,79 @@ export function SkillsSection({ section, showCard, targetSection, isFirstCardRea
               </AnimatePresence>
             )}
 
-            {section === 1 && (
+            {section === 1 && onNavigateToPortfolio && (
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={onNavigateToPortfolio}
                 className="mt-6 px-8 py-3 bg-linear-to-r from-cyan-500 to-blue-600 text-white font-bold rounded-full shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all pointer-events-auto"
               >
                 {t("home.cta")}
               </motion.button>
             )}
           </div>
+
+          {/* Navigation arrows for skill sections */}
+          {isDetailSection && onNavigateSkill && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0, transition: { delay: 0.4 } }}
+              className="flex items-center justify-center gap-4 mt-4 pointer-events-auto"
+            >
+              {/* Previous skill */}
+              <motion.button
+                whileHover={{ scale: 1.1, x: -3 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => onNavigateSkill(section > 2 ? section - 1 : 9)}
+                className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/70 hover:text-cyan-400 hover:border-cyan-400/50 transition-colors"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </motion.button>
+
+              {/* Skill indicators */}
+              <div className="flex items-center gap-2">
+                {[2, 3, 4, 5, 6, 7, 8, 9].map((skillNum) => (
+                  <motion.button
+                    key={skillNum}
+                    whileHover={{ scale: 1.2 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => onNavigateSkill(skillNum)}
+                    className={`w-2 h-2 rounded-full transition-all ${
+                      skillNum === section
+                        ? "bg-cyan-400 w-4"
+                        : "bg-white/30 hover:bg-white/50"
+                    }`}
+                  />
+                ))}
+              </div>
+
+              {/* Next skill */}
+              <motion.button
+                whileHover={{ scale: 1.1, x: 3 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => onNavigateSkill(section < 9 ? section + 1 : 2)}
+                className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/70 hover:text-cyan-400 hover:border-cyan-400/50 transition-colors"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </motion.button>
+            </motion.div>
+          )}
         </motion.div>
         )}
       </AnimatePresence>

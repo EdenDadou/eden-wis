@@ -18,6 +18,7 @@ import {
   FACE_CAMERA_ROTATION,
   C_HIGHLIGHT,
   SECTION_MAP,
+  SECTION_BOUNDARIES,
 } from "./constants";
 import type { WebsiteBuilderProps } from "./types";
 
@@ -69,7 +70,7 @@ export default function WebsiteBuilder({
   const uiBlock3 = useRef<THREE.Group>(null);
 
   // Initialize animations
-  const { scroll } = useAnimations({
+  const { scroll, showParticles, linkDrawProgress } = useAnimations({
     currentSection,
     refs: {
       sceneRef,
@@ -107,15 +108,15 @@ export default function WebsiteBuilder({
   const showElements = currentSection >= 1;
   const showCategoryBoxes = currentSection >= 1;
 
-  // Active states
-  const isFrontendGroupActive = currentSection >= 2 && currentSection <= 5;
-  const isBackendGroupActive = currentSection >= 6 && currentSection <= 8;
-  const isDevopsGroupActive = currentSection >= 9 && currentSection <= 12;
+  // Active states using section boundaries
+  const { FRONTEND_START, FRONTEND_END, BACKEND_START, BACKEND_END, DEVOPS_START, DEVOPS_END } = SECTION_BOUNDARIES;
 
-  const isInDetailSection =
-    (currentSection >= 3 && currentSection <= 5) ||
-    (currentSection >= 7 && currentSection <= 8) ||
-    (currentSection >= 10 && currentSection <= 12);
+  const isFrontendGroupActive = currentSection >= FRONTEND_START && currentSection <= FRONTEND_END;
+  const isBackendGroupActive = currentSection >= BACKEND_START && currentSection <= BACKEND_END;
+  const isDevopsGroupActive = currentSection >= DEVOPS_START && currentSection <= DEVOPS_END;
+
+  // All skill detail sections (2-9) are detail views now (no more transition slides)
+  const isInDetailSection = currentSection >= FRONTEND_START && currentSection <= DEVOPS_END;
 
   // Helper to determine label color
   const getElementLabelColor = (elementSection: number, baseColor: string) => {
@@ -240,7 +241,12 @@ export default function WebsiteBuilder({
         )}
 
         {/* Skill Connections */}
-        <SkillConnections offset={offset} showElements={showElements} />
+        <SkillConnections
+          offset={offset}
+          showElements={showElements}
+          showParticles={showParticles}
+          linkDrawProgress={linkDrawProgress}
+        />
       </group>
     </group>
   );

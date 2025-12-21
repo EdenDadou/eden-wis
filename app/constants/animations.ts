@@ -27,22 +27,20 @@ export const langItemVariants: Variants = {
 };
 
 // Text position mapping based on section
-// NEW LAYOUT: Cards ALWAYS on LEFT, 3D elements ALWAYS on RIGHT
-// This provides consistent UX across all skill sections
+// Section mapping (without transition slides):
+// 0: Intro, 1: Overview, 2-4: Frontend, 5-6: Backend, 7-9: DevOps
+// 10: Timeline, 11: Portfolio, 12: About
 export const sectionTextPositions: Record<number, "left" | "right" | "center"> = {
   0: "center",  // Hero intro - centered
   1: "left",    // FullStack Overview - card LEFT, 3D RIGHT
-  2: "left",    // Frontend Slide - card LEFT, 3D RIGHT
-  3: "left",    // Site Web - card LEFT, 3D RIGHT
-  4: "left",    // Mobile - card LEFT, 3D RIGHT
-  5: "left",    // Backoffice - card LEFT, 3D RIGHT
-  6: "left",    // Backend Slide - card LEFT, 3D RIGHT
-  7: "left",    // Server - card LEFT, 3D RIGHT
-  8: "left",    // Database - card LEFT, 3D RIGHT
-  9: "left",    // DevOps Slide - card LEFT, 3D RIGHT
-  10: "left",   // CI/CD - card LEFT, 3D RIGHT
-  11: "left",   // Cloud - card LEFT, 3D RIGHT
-  12: "left",   // Architecture - card LEFT, 3D RIGHT
+  2: "left",    // Site Web (Frontend) - card LEFT, 3D RIGHT
+  3: "left",    // Mobile - card LEFT, 3D RIGHT
+  4: "left",    // Backoffice - card LEFT, 3D RIGHT
+  5: "left",    // Server (Backend) - card LEFT, 3D RIGHT
+  6: "left",    // Database - card LEFT, 3D RIGHT
+  7: "left",    // CI/CD (DevOps) - card LEFT, 3D RIGHT
+  8: "left",    // Cloud - card LEFT, 3D RIGHT
+  9: "left",    // Architecture - card LEFT, 3D RIGHT
 };
 
 export const getTextPosition = (section: number): "left" | "right" | "center" => {

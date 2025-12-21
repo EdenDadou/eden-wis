@@ -3,15 +3,30 @@ import {
   SECTION_SNAP_OFFSETS,
   SECTION_CAMERA_POSITIONS,
   GROUP_TRANSITION_SECTIONS,
+  SKILL_SECTION_BOUNDARIES,
 } from "./camera.constants";
 
-// Easing functions
+// Easing functions for smooth animations
 export function easeInOutQuint(x: number): number {
   return x < 0.5 ? 16 * x * x * x * x * x : 1 - Math.pow(-2 * x + 2, 5) / 2;
 }
 
 export function easeOutExpo(x: number): number {
   return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
+}
+
+export function easeOutCubic(x: number): number {
+  return 1 - Math.pow(1 - x, 3);
+}
+
+export function easeInOutCubic(x: number): number {
+  return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+}
+
+// Smooth step function for natural transitions
+export function smoothstep(edge0: number, edge1: number, x: number): number {
+  const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
+  return t * t * (3 - 2 * t);
 }
 
 // Map section number to scroll offset
@@ -54,54 +69,83 @@ export function getInterpolatedCameraPosition(offset: number) {
     return { ...SECTION_CAMERA_POSITIONS[0], lookZ: 0 };
   }
 
-  const t = easeInOutQuint(progress);
+  // Use smooth easing for all transitions
+  const t = easeInOutCubic(progress);
 
-  // Check if this is a group transition (needs zoom-out effect)
-  const isGroupTransition = GROUP_TRANSITION_SECTIONS.has(nextSection);
+  // Check if transitioning between skill groups (for subtle zoom effect)
+  const isEnteringNewGroup = checkGroupTransition(section, nextSection);
 
-  // For transitions between major sections
-  const isMajorTransition =
-    (section <= 12 && nextSection === 13) ||
-    (section === 13 && nextSection === 14) ||
-    (section === 14 && nextSection === 15) ||
-    (section === 13 && section > nextSection) ||
-    (section === 14 && section > nextSection) ||
-    (section === 15 && section > nextSection);
+  // Check if this is a major section transition (skills → timeline, etc.)
+  const isMajorTransition = GROUP_TRANSITION_SECTIONS.has(nextSection);
 
-  // Calculate zoom-out curve for transitions
+  // Calculate smooth zoom curve for group transitions
   let zoomOffset = 0;
-  if ((isGroupTransition || isMajorTransition) && progress > 0) {
-    const smoothstep = progress * progress * (3 - 2 * progress);
-    const bellBase = Math.sin(smoothstep * Math.PI);
-    const zoomCurve = Math.pow(bellBase, 0.8);
-    zoomOffset = zoomCurve * (isMajorTransition ? 12 : 4);
+
+  if (isMajorTransition && progress > 0) {
+    // Major transition (skills → experience): larger zoom-out
+    const bellCurve = Math.sin(progress * Math.PI);
+    zoomOffset = bellCurve * 8;
+  } else if (isEnteringNewGroup && progress > 0) {
+    // Subtle zoom when moving between skill groups (Frontend→Backend, Backend→DevOps)
+    const bellCurve = Math.sin(progress * Math.PI);
+    zoomOffset = bellCurve * 2;
   }
 
-  // Special zoom-in effect for Experience section (13)
-  let experienceZoomIn = 0;
-  if (section === 13) {
-    experienceZoomIn = -4 * easeOutExpo(progress);
+  // Smooth vertical arc for transitions between skills in different rows
+  const yDiff = Math.abs(nextPos.y - currentPos.y);
+  let arcOffset = 0;
+  if (yDiff > 0.5) {
+    // Add subtle arc when moving vertically between skills
+    const arcCurve = Math.sin(progress * Math.PI);
+    arcOffset = arcCurve * 0.5;
   }
 
   return {
     x: THREE.MathUtils.lerp(currentPos.x, nextPos.x, t),
-    y: THREE.MathUtils.lerp(currentPos.y, nextPos.y, t),
-    z:
-      THREE.MathUtils.lerp(currentPos.z, nextPos.z, t) +
-      zoomOffset +
-      experienceZoomIn,
+    y: THREE.MathUtils.lerp(currentPos.y, nextPos.y, t) + arcOffset,
+    z: THREE.MathUtils.lerp(currentPos.z, nextPos.z, t) + zoomOffset,
     lookX: THREE.MathUtils.lerp(currentPos.lookX, nextPos.lookX, t),
-    lookY: THREE.MathUtils.lerp(currentPos.lookY, nextPos.lookY, t),
+    lookY: THREE.MathUtils.lerp(currentPos.lookY, nextPos.lookY, t) + arcOffset * 0.5,
     lookZ: THREE.MathUtils.lerp(currentPos.lookZ ?? 0, nextPos.lookZ ?? 0, t),
   };
+}
+
+// Check if transitioning between skill groups
+function checkGroupTransition(currentSection: number, nextSection: number): boolean {
+  const { FRONTEND_END, BACKEND_START, BACKEND_END, DEVOPS_START } = SKILL_SECTION_BOUNDARIES;
+
+  // Frontend → Backend transition
+  if (currentSection === FRONTEND_END && nextSection === BACKEND_START) return true;
+  // Backend → DevOps transition
+  if (currentSection === BACKEND_END && nextSection === DEVOPS_START) return true;
+  // Reverse transitions
+  if (currentSection === BACKEND_START && nextSection === FRONTEND_END) return true;
+  if (currentSection === DEVOPS_START && nextSection === BACKEND_END) return true;
+
+  return false;
 }
 
 // Determine which major section we're in
 export type MajorSection = "skills" | "experience" | "portfolio" | "about";
 
 export function getMajorSection(section: number): MajorSection {
-  if (section <= 12) return "skills";
-  if (section === 13) return "experience";
-  if (section === 14) return "portfolio";
+  const { SKILLS_END, TIMELINE, PORTFOLIO } = SKILL_SECTION_BOUNDARIES;
+
+  if (section <= SKILLS_END) return "skills";
+  if (section === TIMELINE) return "experience";
+  if (section === PORTFOLIO) return "portfolio";
   return "about";
+}
+
+// Get the skill group for a given section
+export type SkillGroup = "overview" | "frontend" | "backend" | "devops" | "none";
+
+export function getSkillGroup(section: number): SkillGroup {
+  const { FRONTEND_START, FRONTEND_END, BACKEND_START, BACKEND_END, DEVOPS_START, DEVOPS_END } = SKILL_SECTION_BOUNDARIES;
+
+  if (section === 1) return "overview";
+  if (section >= FRONTEND_START && section <= FRONTEND_END) return "frontend";
+  if (section >= BACKEND_START && section <= BACKEND_END) return "backend";
+  if (section >= DEVOPS_START && section <= DEVOPS_END) return "devops";
+  return "none";
 }

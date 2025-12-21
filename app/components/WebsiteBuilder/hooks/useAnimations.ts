@@ -1,8 +1,22 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useScroll } from "@react-three/drei";
 import * as THREE from "three";
-import { DEZOOM_START, DEZOOM_END, BASE_X_OFFSET, SECTION_MAP } from "../constants";
+import {
+  DEZOOM_START,
+  DEZOOM_END,
+  BASE_X_OFFSET,
+  SECTION_MAP,
+  SECTION_BOUNDARIES,
+  POS_FRONTEND,
+  POS_MOBILE,
+  POS_BACKOFFICE,
+  POS_SERVER,
+  POS_DATABASE,
+  POS_CICD,
+  POS_CLOUD,
+  POS_ARCHI,
+} from "../constants";
 
 function easeOutCubic(x: number): number {
   return 1 - Math.pow(1 - x, 3);
@@ -58,6 +72,22 @@ export function useAnimations({ currentSection, refs }: UseAnimationsProps) {
   const archiVisibleTime = useRef<number | null>(null);
   const serverLedIntensity = useRef(0);
 
+  // Particle and link animation state
+  const [showParticles, setShowParticles] = useState(false);
+  const [linkDrawProgress, setLinkDrawProgress] = useState<number[]>([]);
+  const particlesTriggered = useRef(false);
+  const linksTriggered = useRef(false);
+  const linksVisible = useRef(false); // Track if links should be visible
+  const linkAnimationStartTimes = useRef<number[]>([]);
+  const shuffledLinkOrder = useRef<number[]>([]);
+  const linkFadeOutStartTime = useRef<number | null>(null); // Track fade out animation
+  const linkEntryTime = useRef<number | null>(null); // Track when we entered skill section
+  const totalLinks = 11; // Total number of links in SkillConnections
+  const linkDrawDuration = 0.4; // Duration to draw each link in seconds
+  const linkStaggerDelay = 0.15; // Delay between starting each link
+  const linkFadeOutDuration = 0.3; // Duration to fade out all links
+  const linkAppearDelay = 1.5; // Delay before links appear after entering skill section
+
   useFrame((state) => {
     if (!refs.sceneRef.current) return;
     const offset = scroll.offset;
@@ -72,6 +102,102 @@ export function useAnimations({ currentSection, refs }: UseAnimationsProps) {
       enteredSection1Time.current = null;
       hasTriggeredEntryAnimation.current = false;
       categoryBoxOpacity.current = 0;
+      // Reset particle and link animations
+      setShowParticles(false);
+      setLinkDrawProgress([]);
+      particlesTriggered.current = false;
+      linksTriggered.current = false;
+      linksVisible.current = false;
+      linkAnimationStartTimes.current = [];
+      shuffledLinkOrder.current = [];
+      linkFadeOutStartTime.current = null;
+      linkEntryTime.current = null;
+    }
+
+    // Trigger particles after 1.5s delay (only in section >= 1)
+    if (enteredSection1Time.current !== null && !particlesTriggered.current) {
+      const elapsed = state.clock.elapsedTime - enteredSection1Time.current;
+      if (elapsed >= 1.5) {
+        setShowParticles(true);
+        particlesTriggered.current = true;
+      }
+    }
+
+    // Links visibility logic: show in skill overview (1) and skill detail sections (2-9)
+    const { DEVOPS_END: SKILLS_END } = SECTION_BOUNDARIES;
+    const isInSkillSection = currentSection >= 1 && currentSection <= SKILLS_END;
+
+    // Track when we enter skill section
+    if (isInSkillSection && linkEntryTime.current === null && !linksVisible.current) {
+      linkEntryTime.current = state.clock.elapsedTime;
+      linkFadeOutStartTime.current = null;
+    }
+
+    // Reset entry time when leaving skill section
+    if (!isInSkillSection && linkEntryTime.current !== null && !linksVisible.current) {
+      linkEntryTime.current = null;
+    }
+
+    // Start link animation after delay
+    if (isInSkillSection && linkEntryTime.current !== null && !linksVisible.current) {
+      const elapsed = state.clock.elapsedTime - linkEntryTime.current;
+      if (elapsed >= linkAppearDelay) {
+        linksVisible.current = true;
+        linksTriggered.current = true;
+
+        // Create shuffled array of link indices
+        const indices = Array.from({ length: totalLinks }, (_, i) => i);
+        for (let i = indices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [indices[i], indices[j]] = [indices[j], indices[i]];
+        }
+        shuffledLinkOrder.current = indices;
+
+        // Set start times for each link based on shuffled order
+        const startTimes = new Array(totalLinks).fill(0);
+        indices.forEach((linkIndex, order) => {
+          startTimes[linkIndex] = state.clock.elapsedTime + order * linkStaggerDelay;
+        });
+        linkAnimationStartTimes.current = startTimes;
+        setLinkDrawProgress(new Array(totalLinks).fill(0));
+      }
+    }
+
+    // Start fade out when leaving skill section
+    if (!isInSkillSection && linksVisible.current && linkFadeOutStartTime.current === null) {
+      linkFadeOutStartTime.current = state.clock.elapsedTime;
+    }
+
+    // Animate link draw progress (fade in)
+    if (linksTriggered.current && linkAnimationStartTimes.current.length > 0 && isInSkillSection) {
+      const now = state.clock.elapsedTime;
+      const newProgress = linkAnimationStartTimes.current.map((startTime) => {
+        if (now < startTime) return 0;
+        const elapsed = now - startTime;
+        return Math.min(elapsed / linkDrawDuration, 1);
+      });
+      setLinkDrawProgress(newProgress);
+    }
+
+    // Animate link fade out
+    if (linkFadeOutStartTime.current !== null && !isInSkillSection) {
+      const now = state.clock.elapsedTime;
+      const fadeElapsed = now - linkFadeOutStartTime.current;
+      const fadeProgress = Math.min(fadeElapsed / linkFadeOutDuration, 1);
+
+      // Fade out all links simultaneously
+      const newProgress = linkDrawProgress.map((p) => Math.max(0, p * (1 - fadeProgress)));
+      setLinkDrawProgress(newProgress);
+
+      // Reset when fade out is complete
+      if (fadeProgress >= 1) {
+        linksVisible.current = false;
+        linksTriggered.current = false;
+        linkAnimationStartTimes.current = [];
+        shuffledLinkOrder.current = [];
+        linkFadeOutStartTime.current = null;
+        setLinkDrawProgress([]);
+      }
     }
 
     // ============ CATEGORY BOX FADE-IN ============
@@ -83,29 +209,29 @@ export function useAnimations({ currentSection, refs }: UseAnimationsProps) {
       categoryBoxOpacity.current = easeOutCubic(fadeProgress);
 
       const baseOpacity = categoryBoxOpacity.current;
-      const isFrontendActive = currentSection >= 2 && currentSection <= 5;
-      const isBackendActive = currentSection >= 6 && currentSection <= 8;
-      const isDevopsActive = currentSection >= 9 && currentSection <= 12;
+      const { FRONTEND_START, FRONTEND_END, BACKEND_START, BACKEND_END, DEVOPS_START, DEVOPS_END } = SECTION_BOUNDARIES;
 
-      const isInDetailSection =
-        (currentSection >= 3 && currentSection <= 5) ||
-        (currentSection >= 7 && currentSection <= 8) ||
-        (currentSection >= 10 && currentSection <= 12);
+      const isFrontendActive = currentSection >= FRONTEND_START && currentSection <= FRONTEND_END;
+      const isBackendActive = currentSection >= BACKEND_START && currentSection <= BACKEND_END;
+      const isDevopsActive = currentSection >= DEVOPS_START && currentSection <= DEVOPS_END;
+
+      // All skill sections (2-9) are now detail views
+      const isInDetailSection = currentSection >= FRONTEND_START && currentSection <= DEVOPS_END;
 
       const dimmedOpacity = 0.08;
 
       if (refs.frontendBoxMatRef.current) {
-        const activeOpacity = isFrontendActive ? 0.7 : 0.4;
+        const activeOpacity = isFrontendActive ? 1 : 0.8;
         const finalOpacity = isInDetailSection && !isFrontendActive ? dimmedOpacity : activeOpacity;
         refs.frontendBoxMatRef.current.opacity = finalOpacity * baseOpacity;
       }
       if (refs.backendBoxMatRef.current) {
-        const activeOpacity = isBackendActive ? 0.7 : 0.4;
+        const activeOpacity = isBackendActive ? 1 : 0.8;
         const finalOpacity = isInDetailSection && !isBackendActive ? dimmedOpacity : activeOpacity;
         refs.backendBoxMatRef.current.opacity = finalOpacity * baseOpacity;
       }
       if (refs.devopsBoxMatRef.current) {
-        const activeOpacity = isDevopsActive ? 0.7 : 0.4;
+        const activeOpacity = isDevopsActive ? 1 : 0.8;
         const finalOpacity = isInDetailSection && !isDevopsActive ? dimmedOpacity : activeOpacity;
         refs.devopsBoxMatRef.current.opacity = finalOpacity * baseOpacity;
       }
@@ -130,7 +256,8 @@ export function useAnimations({ currentSection, refs }: UseAnimationsProps) {
       delaySeconds: number,
       durationSeconds: number = 0.6,
       fromZ: number = 4,
-      fromX: number = 0
+      fromX: number = 0,
+      targetX?: number // Use constant position instead of reading from ref
     ) => {
       if (!ref.current || enteredSection1Time.current === null) {
         if (ref.current) {
@@ -144,11 +271,13 @@ export function useAnimations({ currentSection, refs }: UseAnimationsProps) {
       const eased = easeOutCubic(progress);
 
       ref.current.position.z = THREE.MathUtils.lerp(fromZ, 0, eased);
-      if (fromX !== 0) {
-        const originalX = ref.current.userData.originalX ?? ref.current.position.x;
-        ref.current.userData.originalX = originalX;
-        ref.current.position.x = THREE.MathUtils.lerp(originalX + fromX, originalX, eased);
+
+      // Only animate X position during the animation (progress < 1)
+      // Once animation is complete, don't touch X - let JSX position take over
+      if (fromX !== 0 && targetX !== undefined && progress < 1) {
+        ref.current.position.x = THREE.MathUtils.lerp(targetX + fromX, targetX, eased);
       }
+
       ref.current.scale.setScalar(eased);
     };
 
@@ -172,19 +301,19 @@ export function useAnimations({ currentSection, refs }: UseAnimationsProps) {
     // ============ STAGGERED ENTRY ANIMATIONS ============
     const initialDelay = 0.3;
 
-    // Frontend group (LEFT column)
-    animateElementByTime(refs.frontendRef, initialDelay + 0.0, 0.8, 4, -3);
-    animateElementByTime(refs.mobileRef, initialDelay + 0.12, 0.8, 4, -3);
-    animateElementByTime(refs.backofficeRef, initialDelay + 0.24, 0.8, 4, -3);
+    // Frontend group (LEFT column) - elements fly in from the front
+    animateElementByTime(refs.frontendRef, initialDelay + 0.0, 0.8, 4);
+    animateElementByTime(refs.mobileRef, initialDelay + 0.12, 0.8, 4);
+    animateElementByTime(refs.backofficeRef, initialDelay + 0.24, 0.8, 4);
 
-    // Backend group (CENTER)
+    // Backend group (CENTER) - elements fly in from the front
     animateElementByTime(refs.serverRef, initialDelay + 0.08, 0.9, 5);
     animateElementByTime(refs.databaseRef, initialDelay + 0.2, 0.8, 5);
 
-    // DevOps group (RIGHT column)
-    animateElementByTime(refs.cicdRef, initialDelay + 0.16, 0.8, 4, 3);
-    animateElementByTime(refs.cloudRef, initialDelay + 0.28, 0.8, 4, 3);
-    animateElementByTime(refs.archiRef, initialDelay + 0.4, 0.8, 4, 3);
+    // DevOps group (RIGHT column) - elements fly in from the front
+    animateElementByTime(refs.cicdRef, initialDelay + 0.16, 0.8, 4);
+    animateElementByTime(refs.cloudRef, initialDelay + 0.28, 0.8, 4);
+    animateElementByTime(refs.archiRef, initialDelay + 0.4, 0.8, 4);
 
     // Frontend UI blocks fly-in
     flyInByTime(refs.uiBlock1, initialDelay + 0.5, 0.5, 1.5);
@@ -387,11 +516,9 @@ export function useAnimations({ currentSection, refs }: UseAnimationsProps) {
       }
     }
 
-    // Element dimming in detail view
-    const isDetailView =
-      (currentSection >= 3 && currentSection <= 5) ||
-      (currentSection >= 7 && currentSection <= 8) ||
-      (currentSection >= 10 && currentSection <= 12);
+    // Element dimming in detail view (all skill sections 2-9 are now detail views)
+    const { FRONTEND_START: FS, DEVOPS_END: DE } = SECTION_BOUNDARIES;
+    const isDetailView = currentSection >= FS && currentSection <= DE;
 
     const skillRefs = [
       { section: SECTION_MAP.FRONTEND, ref: refs.frontendRef },
@@ -442,5 +569,5 @@ export function useAnimations({ currentSection, refs }: UseAnimationsProps) {
     });
   });
 
-  return { scroll };
+  return { scroll, showParticles, linkDrawProgress };
 }

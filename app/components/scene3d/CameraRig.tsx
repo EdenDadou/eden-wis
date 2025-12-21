@@ -43,6 +43,8 @@ export default function CameraRig({
   const scrollHistory = useRef<number[]>([]);
   const isSnapping = useRef(false);
   const snapTarget = useRef<number | null>(null);
+  const lastScrollDirection = useRef<'up' | 'down' | null>(null);
+  const scrollDirectionAccumulator = useRef(0);
 
   // Animation state for menu navigation
   const navAnimationProgress = useRef(0);
@@ -62,7 +64,7 @@ export default function CameraRig({
       scrollHistory.current.shift();
     }
 
-    // Calculate scroll velocity
+    // Calculate scroll velocity and direction
     const velocity =
       scrollHistory.current.length > 1
         ? Math.abs(
@@ -71,9 +73,23 @@ export default function CameraRig({
           ) / scrollHistory.current.length
         : 0;
 
+    // Track scroll direction
+    if (scrollHistory.current.length > 1) {
+      const delta = scrollHistory.current[scrollHistory.current.length - 1] -
+                    scrollHistory.current[scrollHistory.current.length - 2];
+      if (Math.abs(delta) > 0.0001) {
+        scrollDirectionAccumulator.current += delta;
+        // Only update direction if we've accumulated enough movement
+        if (Math.abs(scrollDirectionAccumulator.current) > 0.003) {
+          lastScrollDirection.current = scrollDirectionAccumulator.current > 0 ? 'down' : 'up';
+        }
+      }
+    }
+
     // Natural snap: only trigger when scroll velocity is very low
     const currentSec = getSectionFromOffset(currentOffset);
-    const isInSkillsSection = currentSec >= 1 && currentSec <= 12;
+    // Skills sections are now 1-9 (no more transition slides)
+    const isInSkillsSection = currentSec >= 1 && currentSec <= 9;
 
     if (
       isInSkillsSection &&
@@ -81,18 +97,44 @@ export default function CameraRig({
       forcedOffset.current === null
     ) {
       if (velocity < 0.0003 && !isSnapping.current) {
-        const targetSnapOffset = SECTION_SNAP_OFFSETS[currentSec];
+        // Determine target section based on scroll direction
+        let targetSection = currentSec;
+        const currentSectionOffset = SECTION_SNAP_OFFSETS[currentSec];
+        const distanceFromCurrentSection = currentOffset - currentSectionOffset;
+
+        // If we scrolled in a direction, prefer to continue in that direction
+        if (lastScrollDirection.current === 'down' && distanceFromCurrentSection > 0.002) {
+          // Scrolling down and past current section center - go to next
+          const nextSection = Math.min(9, currentSec + 1);
+          if (SECTION_SNAP_OFFSETS[nextSection] !== undefined) {
+            targetSection = nextSection;
+          }
+        } else if (lastScrollDirection.current === 'up' && distanceFromCurrentSection < -0.002) {
+          // Scrolling up and before current section center - go to previous
+          const prevSection = Math.max(1, currentSec - 1);
+          if (SECTION_SNAP_OFFSETS[prevSection] !== undefined) {
+            targetSection = prevSection;
+          }
+        }
+
+        const targetSnapOffset = SECTION_SNAP_OFFSETS[targetSection];
         const distanceToSnap = Math.abs(currentOffset - targetSnapOffset);
 
-        if (distanceToSnap > 0.008) {
+        if (distanceToSnap > 0.005) {
           isSnapping.current = true;
           snapTarget.current = targetSnapOffset;
+          scrollDirectionAccumulator.current = 0; // Reset accumulator after snap
           onRequestSnap(targetSnapOffset);
         }
       }
     }
 
-    // Smooth snap animation
+    // Reset direction accumulator when not actively scrolling
+    if (velocity < 0.0001) {
+      scrollDirectionAccumulator.current = 0;
+    }
+
+    // Smooth snap animation - gentler movement between skills
     if (
       snapOffset !== null &&
       scroll.el &&
@@ -105,11 +147,12 @@ export default function CameraRig({
       const diff = targetScrollTop - currentScrollTop;
 
       const distance = Math.abs(diff);
-      const baseSpeed = 0.06;
-      const adaptiveSpeed = baseSpeed + Math.min(0.08, distance * 0.00008);
+      // Slower, smoother snap animation
+      const baseSpeed = 0.03; // Reduced from 0.06
+      const adaptiveSpeed = baseSpeed + Math.min(0.04, distance * 0.00004); // Reduced adaptive speed
       const decay = 1 - Math.exp(-adaptiveSpeed * 60);
 
-      if (distance > 0.5) {
+      if (distance > 0.3) { // Reduced threshold for smoother finish
         scroll.el.scrollTop = currentScrollTop + diff * decay;
       } else {
         scroll.el.scrollTop = targetScrollTop;
@@ -145,7 +188,8 @@ export default function CameraRig({
       navStartLookAt.current.copy(currentLookAt);
 
       const distance = navStartPos.current.distanceTo(navTargetPos.current);
-      const isSkillNavigation = targetSection >= 1 && targetSection <= 12;
+      // Skills sections are now 1-9
+      const isSkillNavigation = targetSection >= 1 && targetSection <= 9;
       const baseDuration = isSkillNavigation ? 0.7 : 1.0;
       const maxDuration = isSkillNavigation ? 1.0 : 1.8;
       navAnimationDuration.current = Math.min(
@@ -278,7 +322,8 @@ export default function CameraRig({
     const targetPos = new THREE.Vector3(x, y, z);
     const lookAt = new THREE.Vector3(lookX, lookY, lookZ);
 
-    const dampFactor = isSnapping.current ? 0.06 : 0.08;
+    // Smoother damping during snap for gentler camera movement
+    const dampFactor = isSnapping.current ? 0.15 : 0.08; // Increased from 0.06 for softer snap
 
     if (forcedOffset.current !== null) {
       easing.damp3(state.camera.position, targetPos, 0.05, delta);
@@ -286,7 +331,16 @@ export default function CameraRig({
       easing.damp3(state.camera.position, targetPos, dampFactor, delta);
     }
 
-    state.camera.lookAt(lookAt);
+    // Smooth lookAt transition during snap
+    if (isSnapping.current) {
+      const currentLookAt = new THREE.Vector3();
+      state.camera.getWorldDirection(currentLookAt);
+      currentLookAt.multiplyScalar(10).add(state.camera.position);
+      currentLookAt.lerp(lookAt, 0.08);
+      state.camera.lookAt(currentLookAt);
+    } else {
+      state.camera.lookAt(lookAt);
+    }
   });
 
   return null;

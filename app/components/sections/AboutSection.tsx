@@ -26,7 +26,8 @@ export function AboutSection({ section, showCard, targetSection, isNavigating }:
   const { t } = useTranslation("common");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const isVisible = section === 15 && (targetSection === null || showCard) && !isNavigating;
+  // About is now section 12
+  const isVisible = section === 12 && (targetSection === null || showCard) && !isNavigating;
 
   useEffect(() => {
     if (!isVisible) return;

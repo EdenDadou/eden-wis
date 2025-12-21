@@ -12,7 +12,8 @@
       "Bash(cat:*)",
       "Bash(lsof:*)",
       "Bash(mkdir:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(npm install:*)"
     ]
   }
 }

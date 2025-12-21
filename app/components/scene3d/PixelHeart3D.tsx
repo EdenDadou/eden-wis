@@ -26,11 +26,11 @@ function getBoxGeometry(): THREE.BoxGeometry {
 function getHeartMaterial(): THREE.MeshStandardMaterial {
   if (!cachedHeartMaterial) {
     cachedHeartMaterial = new THREE.MeshStandardMaterial({
-      color: 0x15803d,
-      emissive: 0x15803d,
-      emissiveIntensity: 0.1,
+      color: 0x22c55e,
+      emissive: 0x22c55e,
+      emissiveIntensity: 0.3,
       metalness: 0.3,
-      roughness: 0.5,
+      roughness: 0.4,
     });
   }
   return cachedHeartMaterial;
@@ -259,8 +259,10 @@ export default memo(function PixelHeart3D() {
 
   return (
     <group>
+      {/* Lumière au-dessus du coeur */}
+      <pointLight position={[0, 8, 2]} intensity={2} color="#ffffff" distance={15} decay={2} />
       <HeartParticles />
-      <group ref={heartRef} scale={1.5}>
+      <group ref={heartRef} scale={2}>
         <HeartVoxels />
       </group>
       <OrbitRings />

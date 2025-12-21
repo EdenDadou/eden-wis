@@ -67,7 +67,7 @@ export const CategoryBox = forwardRef<THREE.Group, CategoryBoxProps>(
             ref={materialRef}
             color={isActive ? config.glowColor : config.color}
             transparent
-            opacity={0}
+            opacity={0.5}
             depthWrite={false}
           />
         </RoundedBox>

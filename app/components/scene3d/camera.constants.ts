@@ -3,22 +3,30 @@ export const GRID_X = 3.2;
 export const GRID_Y = 2.5;
 
 // Circular layout constants
-// 4 main sections arranged at 90° intervals around Y axis
-export const ORBIT_RADIUS = 20; // Distance from center to each section
-export const CAMERA_DISTANCE = 8; // Distance camera sits from the content
+export const ORBIT_RADIUS = 20;
+export const CAMERA_DISTANCE = 8;
 
 // Section angles (in radians) - 4 sections at 90° apart
 export const SECTION_ANGLES = {
-  skills: 0, // Front (0°)
-  experience: Math.PI / 2, // 90°
-  portfolio: Math.PI, // 180°
-  about: (Math.PI * 3) / 2, // 270°
+  skills: 0,
+  experience: Math.PI / 2,
+  portfolio: Math.PI,
+  about: (Math.PI * 3) / 2,
 } as const;
 
 // Camera X offset to center view between card and 3D elements
 const CAM_X_OFFSET = -0.5;
 
+// Skills container X offset (from WebsiteBuilder)
+const SKILLS_X_OFFSET = 3;
+
+// Closer camera distance for skill detail views
+const SKILL_DETAIL_Z = 4;
+
 // Camera positions for each section
+// New structure without transition slides:
+// 0: Intro, 1: Overview, 2-4: Frontend details, 5-6: Backend details, 7-9: DevOps details
+// 10: Timeline, 11: Portfolio, 12: About
 export const SECTION_CAMERA_POSITIONS: Record<
   number,
   {
@@ -33,7 +41,7 @@ export const SECTION_CAMERA_POSITIONS: Record<
   // Intro - far back view
   0: { x: 0, y: 0, z: ORBIT_RADIUS + 12, lookX: 0, lookY: 0, lookZ: 0 },
 
-  // Skills sections - camera.x === lookX for perfectly frontal view
+  // Skills Overview - wide view of all skills
   1: {
     x: CAM_X_OFFSET,
     y: 0,
@@ -42,97 +50,88 @@ export const SECTION_CAMERA_POSITIONS: Record<
     lookY: 0,
     lookZ: ORBIT_RADIUS,
   },
+
+  // ===== FRONTEND GROUP (sections 2-4) =====
+  // Frontend (Site Web) - section 2
   2: {
-    x: -GRID_X + CAM_X_OFFSET,
-    y: 0,
-    z: ORBIT_RADIUS + CAMERA_DISTANCE,
-    lookX: -GRID_X + CAM_X_OFFSET,
-    lookY: 0,
-    lookZ: ORBIT_RADIUS,
-  },
-  3: {
-    x: -GRID_X + CAM_X_OFFSET,
+    x: -GRID_X + SKILLS_X_OFFSET,
     y: GRID_Y,
-    z: ORBIT_RADIUS + 4,
-    lookX: -GRID_X + CAM_X_OFFSET,
+    z: ORBIT_RADIUS + SKILL_DETAIL_Z,
+    lookX: -GRID_X + SKILLS_X_OFFSET,
     lookY: GRID_Y,
     lookZ: ORBIT_RADIUS,
   },
-  4: {
-    x: -GRID_X + CAM_X_OFFSET,
+  // Mobile - section 3
+  3: {
+    x: -GRID_X + SKILLS_X_OFFSET,
     y: 0,
-    z: ORBIT_RADIUS + 4,
-    lookX: -GRID_X + CAM_X_OFFSET,
+    z: ORBIT_RADIUS + SKILL_DETAIL_Z,
+    lookX: -GRID_X + SKILLS_X_OFFSET,
     lookY: 0,
     lookZ: ORBIT_RADIUS,
   },
-  5: {
-    x: -GRID_X + CAM_X_OFFSET,
+  // Backoffice - section 4
+  4: {
+    x: -GRID_X + SKILLS_X_OFFSET,
     y: -GRID_Y,
-    z: ORBIT_RADIUS + 4,
-    lookX: -GRID_X + CAM_X_OFFSET,
+    z: ORBIT_RADIUS + SKILL_DETAIL_Z,
+    lookX: -GRID_X + SKILLS_X_OFFSET,
     lookY: -GRID_Y,
     lookZ: ORBIT_RADIUS,
   },
-  6: {
-    x: CAM_X_OFFSET,
-    y: 0,
-    z: ORBIT_RADIUS + CAMERA_DISTANCE,
-    lookX: CAM_X_OFFSET,
-    lookY: 0,
-    lookZ: ORBIT_RADIUS,
-  },
-  7: {
-    x: CAM_X_OFFSET,
+
+  // ===== BACKEND GROUP (sections 5-6) =====
+  // Server - section 5
+  5: {
+    x: SKILLS_X_OFFSET,
     y: GRID_Y * 0.5,
-    z: ORBIT_RADIUS + 4,
-    lookX: CAM_X_OFFSET,
+    z: ORBIT_RADIUS + SKILL_DETAIL_Z,
+    lookX: SKILLS_X_OFFSET,
     lookY: GRID_Y * 0.5,
     lookZ: ORBIT_RADIUS,
   },
-  8: {
-    x: CAM_X_OFFSET,
+  // Database - section 6
+  6: {
+    x: SKILLS_X_OFFSET,
     y: -GRID_Y * 0.5,
-    z: ORBIT_RADIUS + 4,
-    lookX: CAM_X_OFFSET,
+    z: ORBIT_RADIUS + SKILL_DETAIL_Z,
+    lookX: SKILLS_X_OFFSET,
     lookY: -GRID_Y * 0.5,
     lookZ: ORBIT_RADIUS,
   },
-  9: {
-    x: GRID_X + CAM_X_OFFSET,
-    y: 0,
-    z: ORBIT_RADIUS + CAMERA_DISTANCE,
-    lookX: GRID_X + CAM_X_OFFSET,
-    lookY: 0,
-    lookZ: ORBIT_RADIUS,
-  },
-  10: {
-    x: GRID_X + CAM_X_OFFSET,
+
+  // ===== DEVOPS GROUP (sections 7-9) =====
+  // CI/CD - section 7
+  7: {
+    x: GRID_X + SKILLS_X_OFFSET,
     y: GRID_Y,
-    z: ORBIT_RADIUS + 4,
-    lookX: GRID_X + CAM_X_OFFSET,
+    z: ORBIT_RADIUS + SKILL_DETAIL_Z,
+    lookX: GRID_X + SKILLS_X_OFFSET,
     lookY: GRID_Y,
     lookZ: ORBIT_RADIUS,
   },
-  11: {
-    x: GRID_X + CAM_X_OFFSET,
+  // Cloud - section 8
+  8: {
+    x: GRID_X + SKILLS_X_OFFSET,
     y: 0,
-    z: ORBIT_RADIUS + 4,
-    lookX: GRID_X + CAM_X_OFFSET,
+    z: ORBIT_RADIUS + SKILL_DETAIL_Z,
+    lookX: GRID_X + SKILLS_X_OFFSET,
     lookY: 0,
     lookZ: ORBIT_RADIUS,
   },
-  12: {
-    x: GRID_X + CAM_X_OFFSET,
+  // Architecture - section 9
+  9: {
+    x: GRID_X + SKILLS_X_OFFSET,
     y: -GRID_Y,
-    z: ORBIT_RADIUS + 4,
-    lookX: GRID_X + CAM_X_OFFSET,
+    z: ORBIT_RADIUS + SKILL_DETAIL_Z,
+    lookX: GRID_X + SKILLS_X_OFFSET,
     lookY: -GRID_Y,
     lookZ: ORBIT_RADIUS,
   },
 
-  // Experience section
-  13: {
+  // ===== OTHER SECTIONS =====
+  // Experience/Timeline section - 10
+  10: {
     x: 0,
     y: 0,
     z: ORBIT_RADIUS + CAMERA_DISTANCE,
@@ -141,8 +140,8 @@ export const SECTION_CAMERA_POSITIONS: Record<
     lookZ: ORBIT_RADIUS,
   },
 
-  // Portfolio section
-  14: {
+  // Portfolio section - 11
+  11: {
     x: 0,
     y: 0,
     z: ORBIT_RADIUS + CAMERA_DISTANCE,
@@ -151,8 +150,8 @@ export const SECTION_CAMERA_POSITIONS: Record<
     lookZ: ORBIT_RADIUS,
   },
 
-  // About section
-  15: {
+  // About section - 12
+  12: {
     x: 0,
     y: 0,
     z: ORBIT_RADIUS + CAMERA_DISTANCE,
@@ -163,24 +162,37 @@ export const SECTION_CAMERA_POSITIONS: Record<
 };
 
 // Scroll offset snap points for each section
+// Smooth distribution across the scroll range
 export const SECTION_SNAP_OFFSETS: number[] = [
-  0.0, // 0: Intro
-  0.04, // 1: FullStack Overview
-  0.1, // 2: Frontend Slide
-  0.14, // 3: Site Web
-  0.18, // 4: Mobile
-  0.22, // 5: Backoffice
-  0.26, // 6: Backend Slide
-  0.3, // 7: Server
-  0.34, // 8: Database
-  0.38, // 9: DevOps Slide
-  0.42, // 10: CI/CD
-  0.46, // 11: Cloud
-  0.5, // 12: Architecture
-  0.58, // 13: Timeline
-  0.72, // 14: Portfolio
-  0.88, // 15: About
+  0.0,   // 0: Intro
+  0.05,  // 1: Skills Overview
+  0.10,  // 2: Frontend (Site Web)
+  0.15,  // 3: Mobile
+  0.20,  // 4: Backoffice
+  0.26,  // 5: Server
+  0.32,  // 6: Database
+  0.38,  // 7: CI/CD
+  0.44,  // 8: Cloud
+  0.50,  // 9: Architecture
+  0.60,  // 10: Timeline
+  0.75,  // 11: Portfolio
+  0.90,  // 12: About
 ];
 
-// Sections that are group overview slides (require zoom-out transition)
-export const GROUP_TRANSITION_SECTIONS = new Set([2, 6, 9, 13]);
+// Sections that trigger zoom-out transition effect
+// Now only Timeline (section 10) triggers this for the skills→experience transition
+export const GROUP_TRANSITION_SECTIONS = new Set([10]);
+
+// Section boundaries for camera smooth transitions
+export const SKILL_SECTION_BOUNDARIES = {
+  FRONTEND_START: 2,
+  FRONTEND_END: 4,
+  BACKEND_START: 5,
+  BACKEND_END: 6,
+  DEVOPS_START: 7,
+  DEVOPS_END: 9,
+  SKILLS_END: 9,
+  TIMELINE: 10,
+  PORTFOLIO: 11,
+  ABOUT: 12,
+} as const;
