@@ -38,14 +38,14 @@ export const C_CLOUD = "#1e3a5f"; // Dark Blue (Cloud)
 export const C_ARCHI = "#06b6d4"; // Cyan (Architecture)
 
 // Group Colors for category boxes
-export const C_GROUP_FRONTEND = "#3b82f6";
-export const C_GROUP_BACKEND = "#10b981";
+export const C_GROUP_FRONTEND = "#1e3a8a";
+export const C_GROUP_BACKEND = "#065f46";
 export const C_GROUP_DEVOPS = "#ff6600";
 
 // Highlight/Glow Colors
 export const C_HIGHLIGHT = "#ffffff";
-export const C_GLOW_FRONTEND = "#60a5fa";
-export const C_GLOW_BACKEND = "#34d399";
+export const C_GLOW_FRONTEND = "#2563eb";
+export const C_GLOW_BACKEND = "#059669";
 export const C_GLOW_DEVOPS = "#ff8c00";
 
 // Element appearance thresholds (for scroll-based animations)

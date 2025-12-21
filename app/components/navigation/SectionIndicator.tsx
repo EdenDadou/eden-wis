@@ -29,11 +29,16 @@ function LiquidSegment({
 
   // Valeurs animées avec spring
   const targetFill = isFilled ? 1 : isCurrentlyFilling ? fillProgress : 0;
-  const animatedFill = useSpring(targetFill, {
+  const animatedFill = useSpring(0, {
     stiffness: 60,
     damping: 12,
     mass: 0.8
   });
+
+  // Mettre à jour la valeur cible quand elle change
+  useEffect(() => {
+    animatedFill.set(targetFill);
+  }, [targetFill, animatedFill]);
 
   // Écouter les changements de animatedFill pour mettre à jour le state
   useEffect(() => {
@@ -366,6 +371,8 @@ export function SectionIndicator({
   const scrollAccumulatorRef = useRef(0);
   const waveOffset = useMotionValue(0);
   const [currentWaveOffset, setCurrentWaveOffset] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+  const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Animation continue des vagues
   useEffect(() => {
@@ -385,6 +392,19 @@ export function SectionIndicator({
   // Écouter le scroll
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
+      // Afficher l'indicateur lors du scroll
+      setIsVisible(true);
+
+      // Réinitialiser le timeout de masquage
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current);
+      }
+
+      // Masquer après 1.5s d'inactivité
+      hideTimeoutRef.current = setTimeout(() => {
+        setIsVisible(false);
+      }, 1500);
+
       if (e.deltaY > 0) {
         scrollAccumulatorRef.current += e.deltaY * 0.003;
         const newProgress = Math.min(1.3, scrollAccumulatorRef.current);
@@ -398,7 +418,12 @@ export function SectionIndicator({
     };
 
     window.addEventListener("wheel", handleWheel, { passive: true });
-    return () => window.removeEventListener("wheel", handleWheel);
+    return () => {
+      window.removeEventListener("wheel", handleWheel);
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current);
+      }
+    };
   }, []);
 
   // Changement de section
@@ -427,7 +452,15 @@ export function SectionIndicator({
   };
 
   return (
-    <div className="fixed right-4 top-1/2 -translate-y-1/2 z-50">
+    <motion.div
+      className="fixed right-4 top-1/2 -translate-y-1/2 z-50"
+      initial={{ opacity: 0, x: 20 }}
+      animate={{
+        opacity: isVisible ? 1 : 0,
+        x: isVisible ? 0 : 20,
+      }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+    >
       <div className="relative flex flex-col gap-1">
         {/* Ligne de connexion subtile */}
         <div
@@ -486,6 +519,6 @@ export function SectionIndicator({
           {String(totalSections).padStart(2, "0")}
         </span>
       </motion.div>
-    </div>
+    </motion.div>
   );
 }

@@ -31,23 +31,17 @@ export const FrontendSkill = forwardRef<THREE.Group, FrontendSkillProps>(
           document.body.style.cursor = "auto";
         }}
       >
+        {/* Label en dessous de l'élément */}
         <Text
-          position={[0, 0.85, 0]}
-          fontSize={isActive ? 0.12 : 0.1}
-          color={getLabelColor(C_FRONT)}
+          position={[0, -0.85, 0]}
+          fontSize={isActive ? 0.22 : 0.2}
+          color="#ffffff"
           anchorX="center"
-          outlineWidth={isActive ? 0.015 : 0}
-          outlineColor={C_FRONT}
+          anchorY="top"
+          outlineWidth={0.02}
+          outlineColor="#000000"
         >
           APP WEB
-        </Text>
-        <Text
-          position={[0, 0.73, 0]}
-          fontSize={0.04}
-          color={isActive ? "#aaa" : "#666"}
-          anchorX="center"
-        >
-          React / Remix
         </Text>
 
         {/* Wireframe Mode hint */}
@@ -59,12 +53,12 @@ export const FrontendSkill = forwardRef<THREE.Group, FrontendSkillProps>(
 
         {/* Main Monitor */}
         <RoundedBox args={[1.8, 1.3, 0.06]} radius={0.04} smoothness={4} position={[0, 0, -0.03]}>
-          <meshStandardMaterial color="#1e1e2e" metalness={0.6} roughness={0.3} />
+          <meshStandardMaterial color="#1e1e2e" metalness={0.6} roughness={0.3} transparent opacity={0.9} />
         </RoundedBox>
 
         {/* Screen Content */}
         <RoundedBox args={[1.68, 1.18, 0.02]} radius={0.03} smoothness={4} position={[0, 0, 0]}>
-          <meshStandardMaterial color="#0a0a18" />
+          <meshStandardMaterial color="#0a0a18" transparent opacity={0.9} />
         </RoundedBox>
 
         {/* Animated UI Blocks */}

@@ -29,28 +29,22 @@ export const ServerSkill = forwardRef<THREE.Group, ServerSkillProps>(
           document.body.style.cursor = "auto";
         }}
       >
+        {/* Label en dessous de l'élément */}
         <Text
-          position={[0, 0.85, 0]}
-          fontSize={isActive ? 0.11 : 0.09}
-          color={getLabelColor(C_SERVER)}
+          position={[0, -0.9, 0]}
+          fontSize={isActive ? 0.22 : 0.2}
+          color="#ffffff"
           anchorX="center"
-          outlineWidth={isActive ? 0.015 : 0}
-          outlineColor={C_SERVER}
+          anchorY="top"
+          outlineWidth={0.02}
+          outlineColor="#000000"
         >
           SERVEUR
-        </Text>
-        <Text
-          position={[0, 0.73, 0]}
-          fontSize={0.04}
-          color={isActive ? "#aaa" : "#666"}
-          anchorX="center"
-        >
-          Node.js
         </Text>
 
         {/* Main Cabinet Frame */}
         <RoundedBox args={[0.9, 1.4, 0.5]} radius={0.02} smoothness={4}>
-          <meshStandardMaterial color="#050505" metalness={0.8} roughness={0.2} />
+          <meshStandardMaterial color="#050505" metalness={0.8} roughness={0.2} transparent opacity={0.9} />
         </RoundedBox>
 
         {/* Internal Glow */}

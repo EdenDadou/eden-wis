@@ -11,7 +11,8 @@
       "Bash(rm:*)",
       "Bash(cat:*)",
       "Bash(lsof:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(curl:*)"
     ]
   }
 }

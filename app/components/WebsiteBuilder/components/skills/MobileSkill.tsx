@@ -29,33 +29,27 @@ export const MobileSkill = forwardRef<THREE.Group, MobileSkillProps>(
           document.body.style.cursor = "auto";
         }}
       >
+        {/* Label en dessous de l'élément */}
         <Text
-          position={[0, 1.1, 0]}
-          fontSize={isActive ? 0.11 : 0.09}
-          color={getLabelColor(C_MOBILE)}
+          position={[0, -0.95, 0]}
+          fontSize={isActive ? 0.22 : 0.2}
+          color="#ffffff"
           anchorX="center"
-          outlineWidth={isActive ? 0.015 : 0}
-          outlineColor={C_MOBILE}
+          anchorY="top"
+          outlineWidth={0.02}
+          outlineColor="#000000"
         >
           MOBILE
-        </Text>
-        <Text
-          position={[0, 0.98, 0]}
-          fontSize={0.04}
-          color={isActive ? "#aaa" : "#666"}
-          anchorX="center"
-        >
-          Native App
         </Text>
 
         {/* Phone Body */}
         <RoundedBox args={[0.8, 1.5, 0.08]} radius={0.08} smoothness={4}>
-          <meshStandardMaterial color="#1a1a2e" metalness={0.8} roughness={0.2} />
+          <meshStandardMaterial color="#1a1a2e" metalness={0.8} roughness={0.2} transparent opacity={0.9} />
         </RoundedBox>
 
         {/* Screen */}
         <RoundedBox args={[0.72, 1.38, 0.01]} radius={0.06} position={[0, 0, 0.05]}>
-          <meshStandardMaterial color="#000000" />
+          <meshStandardMaterial color="#000000" transparent opacity={0.9} />
         </RoundedBox>
 
         {/* App UI */}

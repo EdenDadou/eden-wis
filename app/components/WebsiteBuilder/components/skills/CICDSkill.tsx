@@ -29,28 +29,22 @@ export const CICDSkill = forwardRef<THREE.Group, CICDSkillProps>(
           document.body.style.cursor = "auto";
         }}
       >
+        {/* Label en dessous de l'élément */}
         <Text
-          position={[0, 0.85, 0]}
-          fontSize={isActive ? 0.11 : 0.09}
-          color={getLabelColor(C_CICD)}
+          position={[0, -0.85, 0]}
+          fontSize={isActive ? 0.22 : 0.2}
+          color="#ffffff"
           anchorX="center"
-          outlineWidth={isActive ? 0.015 : 0}
-          outlineColor={C_CICD}
+          anchorY="top"
+          outlineWidth={0.02}
+          outlineColor="#000000"
         >
           CI/CD
-        </Text>
-        <Text
-          position={[0, 0.73, 0]}
-          fontSize={0.04}
-          color={isActive ? "#aaa" : "#666"}
-          anchorX="center"
-        >
-          Pipeline
         </Text>
 
         {/* Main Pipeline Container */}
         <RoundedBox args={[1.8, 1.3, 0.08]} radius={0.04} smoothness={4}>
-          <meshStandardMaterial color="#1a1008" metalness={0.7} roughness={0.3} />
+          <meshStandardMaterial color="#1a1008" metalness={0.7} roughness={0.3} transparent opacity={0.9} />
         </RoundedBox>
 
         {/* Orange border glow */}

@@ -29,31 +29,25 @@ export const DatabaseSkill = forwardRef<THREE.Group, DatabaseSkillProps>(
           document.body.style.cursor = "auto";
         }}
       >
+        {/* Label en dessous de l'élément */}
         <Billboard>
           <Text
-            position={[0, 1.0, 0]}
-            fontSize={isActive ? 0.11 : 0.09}
-            color={getLabelColor(C_DB)}
+            position={[0, -0.7, 0]}
+            fontSize={isActive ? 0.22 : 0.2}
+            color="#ffffff"
             anchorX="center"
-            outlineWidth={isActive ? 0.015 : 0}
-            outlineColor={C_DB}
+            anchorY="top"
+            outlineWidth={0.02}
+            outlineColor="#000000"
           >
             DATABASE
-          </Text>
-          <Text
-            position={[0, 0.88, 0]}
-            fontSize={0.04}
-            color={isActive ? "#aaa" : "#666"}
-            anchorX="center"
-          >
-            PostgreSQL
           </Text>
         </Billboard>
 
         {/* Core cylinder */}
         <mesh>
           <cylinderGeometry args={[0.55, 0.55, 1.0, 32]} />
-          <meshStandardMaterial color="#1a0b2e" metalness={0.8} roughness={0.2} />
+          <meshStandardMaterial color="#1a0b2e" metalness={0.8} roughness={0.2} transparent opacity={0.9} />
         </mesh>
 
         {/* Glowing Rings - Animated */}

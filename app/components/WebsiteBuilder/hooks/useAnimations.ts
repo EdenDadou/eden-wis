@@ -95,17 +95,17 @@ export function useAnimations({ currentSection, refs }: UseAnimationsProps) {
       const dimmedOpacity = 0.08;
 
       if (refs.frontendBoxMatRef.current) {
-        const activeOpacity = isFrontendActive ? 0.35 : 0.15;
+        const activeOpacity = isFrontendActive ? 0.7 : 0.4;
         const finalOpacity = isInDetailSection && !isFrontendActive ? dimmedOpacity : activeOpacity;
         refs.frontendBoxMatRef.current.opacity = finalOpacity * baseOpacity;
       }
       if (refs.backendBoxMatRef.current) {
-        const activeOpacity = isBackendActive ? 0.35 : 0.15;
+        const activeOpacity = isBackendActive ? 0.7 : 0.4;
         const finalOpacity = isInDetailSection && !isBackendActive ? dimmedOpacity : activeOpacity;
         refs.backendBoxMatRef.current.opacity = finalOpacity * baseOpacity;
       }
       if (refs.devopsBoxMatRef.current) {
-        const activeOpacity = isDevopsActive ? 0.35 : 0.15;
+        const activeOpacity = isDevopsActive ? 0.7 : 0.4;
         const finalOpacity = isInDetailSection && !isDevopsActive ? dimmedOpacity : activeOpacity;
         refs.devopsBoxMatRef.current.opacity = finalOpacity * baseOpacity;
       }

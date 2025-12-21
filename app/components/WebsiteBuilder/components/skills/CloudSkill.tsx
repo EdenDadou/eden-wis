@@ -29,28 +29,22 @@ export const CloudSkill = forwardRef<THREE.Group, CloudSkillProps>(
           document.body.style.cursor = "auto";
         }}
       >
+        {/* Label en dessous de l'élément */}
         <Text
-          position={[0, 0.85, 0]}
-          fontSize={isActive ? 0.11 : 0.09}
-          color={getLabelColor("#4a90d9")}
+          position={[0, -0.85, 0]}
+          fontSize={isActive ? 0.22 : 0.2}
+          color="#ffffff"
           anchorX="center"
-          outlineWidth={isActive ? 0.015 : 0}
-          outlineColor="#4a90d9"
+          anchorY="top"
+          outlineWidth={0.02}
+          outlineColor="#000000"
         >
           CLOUD
-        </Text>
-        <Text
-          position={[0, 0.73, 0]}
-          fontSize={0.04}
-          color={isActive ? "#aaa" : "#666"}
-          anchorX="center"
-        >
-          AWS / Infrastructure
         </Text>
 
         {/* Main Container */}
         <RoundedBox args={[1.8, 1.3, 0.1]} radius={0.04} smoothness={4}>
-          <meshStandardMaterial color="#0a1628" metalness={0.8} roughness={0.3} />
+          <meshStandardMaterial color="#0a1628" metalness={0.8} roughness={0.3} transparent opacity={0.9} />
         </RoundedBox>
 
         {/* Blue border glow */}

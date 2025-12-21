@@ -75,11 +75,11 @@ export const CategoryBox = forwardRef<THREE.Group, CategoryBoxProps>(
           ref={labelRef}
           position={config.labelPosition}
           fontSize={isActive ? 0.4 : 0.35}
-          color={isActive ? "#ffffff" : config.labelColor}
+          color={isActive ? config.glowColor : config.labelColor}
           anchorX="center"
           anchorY="middle"
-          outlineWidth={0.03}
-          outlineColor={config.outlineColor}
+          outlineWidth={0.02}
+          outlineColor="#000000"
           fillOpacity={0}
         >
           {config.label}
