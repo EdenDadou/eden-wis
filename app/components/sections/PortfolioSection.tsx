@@ -8,6 +8,7 @@ interface PortfolioSectionProps {
   section: number;
   showCard: boolean;
   targetSection: number | null;
+  isNavigating: boolean;
   projects: Project[];
   selectedProject: Project | null;
   onSelectProject: (project: Project | null) => void;
@@ -18,6 +19,7 @@ export function PortfolioSection({
   section,
   showCard,
   targetSection,
+  isNavigating,
   projects,
   selectedProject,
   onSelectProject,
@@ -25,7 +27,7 @@ export function PortfolioSection({
 }: PortfolioSectionProps) {
   const { t } = useTranslation("common");
 
-  const isVisible = section === 14 && (targetSection === null || showCard);
+  const isVisible = section === 14 && (targetSection === null || showCard) && !isNavigating;
 
   return (
     <>
@@ -33,9 +35,23 @@ export function PortfolioSection({
         {isVisible && (
           <motion.div
             ref={scrollRef}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              filter: "blur(0px)",
+              transition: {
+                duration: 0.6,
+                ease: [0.25, 0.1, 0.25, 1],
+                delay: 0.1
+              }
+            }}
+            exit={{
+              opacity: 0,
+              y: -20,
+              filter: "blur(8px)",
+              transition: { duration: 0.3, ease: [0.4, 0, 1, 1] }
+            }}
             className="absolute inset-0 z-10 overflow-y-auto pointer-events-auto"
           >
             {/* Background overlay */}
@@ -45,8 +61,9 @@ export function PortfolioSection({
               <div className="max-w-6xl mx-auto">
                 {/* Header */}
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
                   className="text-center mb-12"
                 >
                   <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-4">

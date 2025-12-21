@@ -8,6 +8,7 @@ import {
   TypewriterText,
 } from "../GlitchText";
 import { ParticleText } from "../ParticleText";
+import { RotatingParticleText } from "../RotatingParticleText";
 
 interface HeroSectionProps {
   isVisible: boolean;
@@ -20,20 +21,30 @@ export function HeroSection({ isVisible }: HeroSectionProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 0 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
+      animate={{
+        opacity: 1,
+        y: 0,
+        filter: "blur(0px)",
+        transition: {
+          duration: 0.8,
+          ease: [0.25, 0.1, 0.25, 1],
+        },
+      }}
       exit={{
         opacity: 0,
-        y: "-100vh",
+        y: "-30vh",
+        scale: 0.95,
+        filter: "blur(15px)",
         transition: {
-          duration: 0.4,
-          ease: [0.4, 0, 0.6, 1]
-        }
+          duration: 0.5,
+          ease: [0.4, 0, 0.2, 1],
+        },
       }}
       className="absolute inset-0 w-full h-screen z-20 pointer-events-none flex flex-col items-center px-4 justify-between py-6"
     >
       {/* Name - TOP with ParticleText */}
-      <div className="pt-24 pointer-events-none">
+      <div className="pt-24 pointer-events-none flex flex-col items-center">
         <ParticleText
           text="Eden Wisniewski"
           fontSize={80}
@@ -41,6 +52,23 @@ export function HeroSection({ isVisible }: HeroSectionProps) {
           particleGap={3}
           mouseRadius={40}
           returnSpeed={0.05}
+        />
+        <RotatingParticleText
+          texts={[
+            "developer",
+            "freelance",
+            "digital lover",
+            "consultant",
+            "bug whisperer",
+            "digital nomad",
+            "coffee to code converter",
+          ]}
+          fontSize={40}
+          particleSize={2}
+          particleGap={3}
+          mouseRadius={40}
+          returnSpeed={0.05}
+          rotationInterval={2500}
         />
       </div>
 

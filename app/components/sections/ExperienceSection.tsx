@@ -30,10 +30,19 @@ export function ExperienceSection({
       <AnimatePresence>
         {selectedExperience && isInExperienceSection && (
           <motion.button
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3 }}
+            initial={{ opacity: 0, x: -30, filter: "blur(5px)" }}
+            animate={{
+              opacity: 1,
+              x: 0,
+              filter: "blur(0px)",
+              transition: { duration: 0.4, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }
+            }}
+            exit={{
+              opacity: 0,
+              x: -20,
+              filter: "blur(5px)",
+              transition: { duration: 0.25 }
+            }}
             onClick={onBackToTimeline}
             className="fixed top-20 left-4 z-50 flex items-center gap-2 px-4 py-2 bg-black/40 backdrop-blur-md rounded-full border border-white/20 text-white/80 hover:text-white hover:border-white/40 transition-all group"
           >
@@ -59,9 +68,19 @@ export function ExperienceSection({
       <AnimatePresence>
         {selectedExperience && isInExperienceSection && (
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 0, x: 30, filter: "blur(5px)" }}
+            animate={{
+              opacity: 1,
+              x: 0,
+              filter: "blur(0px)",
+              transition: { duration: 0.4, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }
+            }}
+            exit={{
+              opacity: 0,
+              x: 20,
+              filter: "blur(5px)",
+              transition: { duration: 0.25 }
+            }}
             className="fixed right-6 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-3"
           >
             {selectedExperience.projects.map((_, i) => {
@@ -104,9 +123,17 @@ export function ExperienceSection({
           detailScrollOffset < 0.1 &&
           selectedExperience.projects.length > 1 && (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{
+                opacity: 1,
+                y: 0,
+                transition: { duration: 0.4, delay: 0.5, ease: [0.25, 0.1, 0.25, 1] }
+              }}
+              exit={{
+                opacity: 0,
+                y: 10,
+                transition: { duration: 0.2 }
+              }}
               className="fixed bottom-8 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center text-white/40"
             >
               <span className="text-xs mb-2">

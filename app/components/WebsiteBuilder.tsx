@@ -223,24 +223,41 @@ export default function WebsiteBuilder({ currentSection = 0, onSkillClick }: Web
       const isBackendActive = currentSection >= 6 && currentSection <= 8;
       const isDevopsActive = currentSection >= 9 && currentSection <= 12;
 
+      // Check if we're in a detail section (not overview or group slides)
+      const isInDetailSection = (currentSection >= 3 && currentSection <= 5) ||
+                                 (currentSection >= 7 && currentSection <= 8) ||
+                                 (currentSection >= 10 && currentSection <= 12);
+
+      // Dimmed opacity for non-active categories when in detail view
+      const dimmedOpacity = 0.08;
+
       if (frontendBoxMatRef.current) {
-        frontendBoxMatRef.current.opacity = (isFrontendActive ? 0.35 : 0.15) * baseOpacity;
+        const activeOpacity = isFrontendActive ? 0.35 : 0.15;
+        const finalOpacity = isInDetailSection && !isFrontendActive ? dimmedOpacity : activeOpacity;
+        frontendBoxMatRef.current.opacity = finalOpacity * baseOpacity;
       }
       if (backendBoxMatRef.current) {
-        backendBoxMatRef.current.opacity = (isBackendActive ? 0.35 : 0.15) * baseOpacity;
+        const activeOpacity = isBackendActive ? 0.35 : 0.15;
+        const finalOpacity = isInDetailSection && !isBackendActive ? dimmedOpacity : activeOpacity;
+        backendBoxMatRef.current.opacity = finalOpacity * baseOpacity;
       }
       if (devopsBoxMatRef.current) {
-        devopsBoxMatRef.current.opacity = (isDevopsActive ? 0.35 : 0.15) * baseOpacity;
+        const activeOpacity = isDevopsActive ? 0.35 : 0.15;
+        const finalOpacity = isInDetailSection && !isDevopsActive ? dimmedOpacity : activeOpacity;
+        devopsBoxMatRef.current.opacity = finalOpacity * baseOpacity;
       }
-      // Update label opacities
+      // Update label opacities - dim non-active categories in detail view
       if (frontendLabelRef.current) {
-        frontendLabelRef.current.fillOpacity = baseOpacity;
+        const labelOpacity = isInDetailSection && !isFrontendActive ? 0.3 : 1;
+        frontendLabelRef.current.fillOpacity = labelOpacity * baseOpacity;
       }
       if (backendLabelRef.current) {
-        backendLabelRef.current.fillOpacity = baseOpacity;
+        const labelOpacity = isInDetailSection && !isBackendActive ? 0.3 : 1;
+        backendLabelRef.current.fillOpacity = labelOpacity * baseOpacity;
       }
       if (devopsLabelRef.current) {
-        devopsLabelRef.current.fillOpacity = baseOpacity;
+        const labelOpacity = isInDetailSection && !isDevopsActive ? 0.3 : 1;
+        devopsLabelRef.current.fillOpacity = labelOpacity * baseOpacity;
       }
     }
 
@@ -550,6 +567,65 @@ export default function WebsiteBuilder({ currentSection = 0, onSkillClick }: Web
         }
     }
 
+    // --- ELEMENT DIMMING IN DETAIL VIEW ---
+    // When in a detail section (3-5, 7-8, 10-12), dim non-selected elements
+    const isDetailView = (currentSection >= 3 && currentSection <= 5) ||
+                         (currentSection >= 7 && currentSection <= 8) ||
+                         (currentSection >= 10 && currentSection <= 12);
+
+    // Map of section to ref
+    const skillRefs = [
+      { section: 3, ref: frontendRef },
+      { section: 4, ref: mobileRef },
+      { section: 5, ref: backofficeRef },
+      { section: 7, ref: serverRef },
+      { section: 8, ref: databaseRef },
+      { section: 10, ref: cicdRef },
+      { section: 11, ref: cloudRef },
+      { section: 12, ref: archiRef },
+    ];
+
+    skillRefs.forEach(({ section, ref }) => {
+      if (!ref.current) return;
+
+      const isSelected = currentSection === section;
+      const targetOpacity = isDetailView ? (isSelected ? 1 : 0.1) : 1;
+
+      // Initialize or update smooth opacity
+      if (ref.current.userData._smoothOp === undefined) {
+        ref.current.userData._smoothOp = 1;
+      }
+      ref.current.userData._smoothOp = THREE.MathUtils.lerp(
+        ref.current.userData._smoothOp,
+        targetOpacity,
+        0.1
+      );
+
+      const finalOp = ref.current.userData._smoothOp;
+
+      // Apply opacity to the entire group by setting visible or modifying materials
+      ref.current.traverse((child) => {
+        const mesh = child as THREE.Mesh;
+        if (mesh.material) {
+          const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+          materials.forEach((mat) => {
+            // Cast to any to access opacity
+            const m = mat as THREE.MeshStandardMaterial;
+            if (m) {
+              // Store original values
+              if ((m as any).__baseOpacity === undefined) {
+                (m as any).__baseOpacity = m.opacity !== undefined ? m.opacity : 1;
+                (m as any).__wasTransparent = m.transparent;
+              }
+              m.opacity = (m as any).__baseOpacity * finalOp;
+              m.transparent = true;
+              m.needsUpdate = true;
+            }
+          });
+        }
+      });
+    });
+
   });
 
   const offset = scroll?.offset || 0;
@@ -648,9 +724,24 @@ export default function WebsiteBuilder({ currentSection = 0, onSkillClick }: Web
   // Determine which specific element is active
   const isElementActive = (elementSection: number) => currentSection === elementSection;
 
+  // Check if we're in a detail section (not overview or group slides)
+  const isInDetailSection = (currentSection >= 3 && currentSection <= 5) ||
+                             (currentSection >= 7 && currentSection <= 8) ||
+                             (currentSection >= 10 && currentSection <= 12);
+
   // Get element label color with highlight
   const getElementLabelColor = (elementSection: number, baseColor: string) => {
-    return isElementActive(elementSection) ? C_HIGHLIGHT : baseColor;
+    if (!isInDetailSection) {
+      return isElementActive(elementSection) ? C_HIGHLIGHT : baseColor;
+    }
+    // In detail section: bright for active, very dim for others
+    return isElementActive(elementSection) ? C_HIGHLIGHT : "#444444";
+  };
+
+  // Get element opacity - full for selected, dimmed for others in detail view
+  const getElementOpacity = (elementSection: number) => {
+    if (!isInDetailSection) return 1;
+    return currentSection === elementSection ? 1 : 0.15;
   };
 
 

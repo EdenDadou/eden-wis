@@ -33,8 +33,8 @@ const GRID_X = 3.2;
 const GRID_Y = 2.5;
 
 // Circular layout constants
-// 3 main sections arranged at 120° intervals around Y axis
-const ORBIT_RADIUS = 15; // Distance from center to each section
+// 4 main sections arranged at 90° intervals around Y axis
+const ORBIT_RADIUS = 20; // Distance from center to each section (larger circle)
 const CAMERA_DISTANCE = 8; // Distance camera sits from the content
 
 // Section angles (in radians) - 4 sections at 90° apart
@@ -68,7 +68,7 @@ const SECTION_CAMERA_POSITIONS: Record<number, { x: number; y: number; z: number
   11: { x: GRID_X + SKILLS_X_OFFSET, y: 0, z: ORBIT_RADIUS + 4, lookX: GRID_X + SKILLS_X_OFFSET, lookY: 0, lookZ: ORBIT_RADIUS }, // Cloud
   12: { x: GRID_X + SKILLS_X_OFFSET, y: -GRID_Y, z: ORBIT_RADIUS + 4, lookX: GRID_X + SKILLS_X_OFFSET, lookY: -GRID_Y, lookZ: ORBIT_RADIUS }, // Architecture
 
-  // Experience section - camera stays in front, world rotates to bring experience to front
+  // Experience section
   13: { x: 0, y: 0, z: ORBIT_RADIUS + CAMERA_DISTANCE, lookX: 0, lookY: 0, lookZ: ORBIT_RADIUS },
 
   // Portfolio section - camera stays in front, world rotates to bring portfolio to front
@@ -98,9 +98,14 @@ const SECTION_SNAP_OFFSETS: number[] = [
   0.88,   // 15: About
 ];
 
-// Easing function for smooth camera interpolation
-function easeInOutCubic(x: number): number {
-  return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+// Smoother easing for section transitions - quintic curve
+function easeInOutQuint(x: number): number {
+  return x < 0.5 ? 16 * x * x * x * x * x : 1 - Math.pow(-2 * x + 2, 5) / 2;
+}
+
+// Very smooth easing for major transitions - custom bezier-like curve
+function easeOutExpo(x: number): number {
+  return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
 }
 
 // Map section number to scroll offset
@@ -146,28 +151,48 @@ function getInterpolatedCameraPosition(offset: number) {
     return { ...SECTION_CAMERA_POSITIONS[0], lookZ: 0 };
   }
 
-  // Smooth easing for professional feel
-  const t = easeInOutCubic(progress);
+  // Use quintic easing for smoother, more professional motion
+  const t = easeInOutQuint(progress);
 
   // Check if this is a group transition (needs zoom-out effect)
   const isGroupTransition = GROUP_TRANSITION_SECTIONS.has(nextSection);
 
-  // For transitions between major sections (skills->experience, experience->portfolio)
-  // Camera pulls back while world rotates
-  const isMajorTransition = (section <= 12 && nextSection === 13) || (section === 13 && nextSection === 14);
+  // For transitions between major sections (skills->experience, experience->portfolio, etc.)
+  // Camera pulls back smoothly while world rotates
+  const isMajorTransition =
+    (section <= 12 && nextSection === 13) ||
+    (section === 13 && nextSection === 14) ||
+    (section === 14 && nextSection === 15) ||
+    (section === 13 && section > nextSection) ||
+    (section === 14 && section > nextSection) ||
+    (section === 15 && section > nextSection);
 
-  // Calculate zoom-out curve for transitions
+  // Calculate zoom-out curve for transitions with ultra-smooth bell curve
   let zoomOffset = 0;
   if ((isGroupTransition || isMajorTransition) && progress > 0) {
-    // Bell curve: peaks at 50% progress, camera pulls back
-    const zoomCurve = Math.sin(progress * Math.PI);
-    zoomOffset = zoomCurve * (isMajorTransition ? 12 : 4); // Much more pullback for major transitions
+    // Use smoothstep for silky smooth acceleration and deceleration
+    // smoothstep: 3t² - 2t³ gives S-curve with zero velocity at start/end
+    const smoothstep = progress * progress * (3 - 2 * progress);
+    // Apply sine for bell shape, then smooth the result
+    const bellBase = Math.sin(smoothstep * Math.PI);
+    // Extra smoothing with power curve for gentler attack/release
+    const zoomCurve = Math.pow(bellBase, 0.8);
+    zoomOffset = zoomCurve * (isMajorTransition ? 12 : 4);
+  }
+
+  // Special zoom-in effect for Experience section (13)
+  // Camera zooms in closer as user scrolls through the section
+  let experienceZoomIn = 0;
+  if (section === 13) {
+    // Zoom in progressively - get closer to the content
+    // Start at current distance and zoom in by 4 units as we progress
+    experienceZoomIn = -4 * easeOutExpo(progress);
   }
 
   return {
     x: THREE.MathUtils.lerp(currentPos.x, nextPos.x, t),
     y: THREE.MathUtils.lerp(currentPos.y, nextPos.y, t),
-    z: THREE.MathUtils.lerp(currentPos.z, nextPos.z, t) + zoomOffset,
+    z: THREE.MathUtils.lerp(currentPos.z, nextPos.z, t) + zoomOffset + experienceZoomIn,
     lookX: THREE.MathUtils.lerp(currentPos.lookX, nextPos.lookX, t),
     lookY: THREE.MathUtils.lerp(currentPos.lookY, nextPos.lookY, t),
     lookZ: THREE.MathUtils.lerp(currentPos.lookZ ?? 0, nextPos.lookZ ?? 0, t),
@@ -235,17 +260,20 @@ function CameraRig({
       }
     }
 
-    // Smooth snap animation - uses spring-like easing
+    // Smooth snap animation - uses exponential easing for silky motion
     if (snapOffset !== null && scroll.el && !navAnimationActive.current && forcedOffset.current === null) {
       const targetScrollTop = snapOffset * (scroll.el.scrollHeight - scroll.el.clientHeight);
       const currentScrollTop = scroll.el.scrollTop;
       const diff = targetScrollTop - currentScrollTop;
 
-      // Spring-like easing: faster when far, slower when close
-      const springFactor = 0.08 + Math.min(0.12, Math.abs(diff) * 0.0001);
+      // Exponential decay for ultra-smooth snap with adaptive speed
+      const distance = Math.abs(diff);
+      const baseSpeed = 0.06;
+      const adaptiveSpeed = baseSpeed + Math.min(0.08, distance * 0.00008);
+      const decay = 1 - Math.exp(-adaptiveSpeed * 60); // Frame-rate independent
 
-      if (Math.abs(diff) > 1) {
-        scroll.el.scrollTop = currentScrollTop + diff * springFactor;
+      if (distance > 0.5) {
+        scroll.el.scrollTop = currentScrollTop + diff * decay;
       } else {
         // Snap complete
         scroll.el.scrollTop = targetScrollTop;
@@ -281,11 +309,11 @@ function CameraRig({
       navStartLookAt.current.copy(currentLookAt);
 
       const distance = navStartPos.current.distanceTo(navTargetPos.current);
-      // Faster animation for skill sections (1-12)
+      // Smoother, slightly longer animations for better visual quality
       const isSkillNavigation = targetSection >= 1 && targetSection <= 12;
-      const baseDuration = isSkillNavigation ? 0.5 : 0.8;
-      const maxDuration = isSkillNavigation ? 0.8 : 1.5;
-      navAnimationDuration.current = Math.min(maxDuration, Math.max(baseDuration, baseDuration + distance * 0.03));
+      const baseDuration = isSkillNavigation ? 0.7 : 1.0;
+      const maxDuration = isSkillNavigation ? 1.0 : 1.8;
+      navAnimationDuration.current = Math.min(maxDuration, Math.max(baseDuration, baseDuration + distance * 0.025));
 
       navAnimationProgress.current = 0;
       navAnimationActive.current = true;
@@ -326,33 +354,37 @@ function CameraRig({
 
       const t = navAnimationProgress.current;
 
-      // Custom easing: slow start, smooth middle, gentle end
-      // Using a combination of ease-in-out with extra smoothness
-      const easeInOutQuart =
-        t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2;
+      // Use exponential easing for smooth deceleration into position
+      // Combined with quintic for initial acceleration
+      const easeCustom = t < 0.3
+        ? easeInOutQuint(t / 0.3) * 0.4  // Smooth start (40% of motion in first 30%)
+        : 0.4 + easeOutExpo((t - 0.3) / 0.7) * 0.6;  // Smooth exponential finish
 
       // Calculate distance for adaptive zoom
       const distance = navStartPos.current.distanceTo(navTargetPos.current);
       // More zoom for longer distances, less for short ones
-      const zoomOutAmount = Math.min(5, Math.max(2, distance * 0.3));
+      const zoomOutAmount = Math.min(6, Math.max(2, distance * 0.25));
 
-      // Use a smoother bell curve for zoom
-      const zoomCurve = Math.sin(t * Math.PI) * Math.sin(t * Math.PI * 0.5);
+      // Ultra-smooth bell curve using smootherstep (Ken Perlin's improved version)
+      // 6t⁵ - 15t⁴ + 10t³ gives even smoother S-curve
+      const smootherstep = t * t * t * (t * (t * 6 - 15) + 10);
+      const bellBase = Math.sin(smootherstep * Math.PI);
+      const zoomCurve = Math.pow(bellBase, 0.7);
 
       const x = THREE.MathUtils.lerp(
         navStartPos.current.x,
         navTargetPos.current.x,
-        easeInOutQuart
+        easeCustom
       );
       const y = THREE.MathUtils.lerp(
         navStartPos.current.y,
         navTargetPos.current.y,
-        easeInOutQuart
+        easeCustom
       );
       const baseZ = THREE.MathUtils.lerp(
         navStartPos.current.z,
         navTargetPos.current.z,
-        easeInOutQuart
+        easeCustom
       );
       const z = baseZ + zoomCurve * zoomOutAmount;
 
@@ -360,17 +392,17 @@ function CameraRig({
       const lookAtX = THREE.MathUtils.lerp(
         navStartLookAt.current.x,
         navTargetLookAt.current.x,
-        easeInOutQuart
+        easeCustom
       );
       const lookAtY = THREE.MathUtils.lerp(
         navStartLookAt.current.y,
         navTargetLookAt.current.y,
-        easeInOutQuart
+        easeCustom
       );
       const lookAtZ = THREE.MathUtils.lerp(
         navStartLookAt.current.z,
         navTargetLookAt.current.z,
-        easeInOutQuart
+        easeCustom
       );
 
       state.camera.position.set(x, y, z);
@@ -411,12 +443,12 @@ function CameraRig({
     const targetPos = new THREE.Vector3(x, y, z);
     const lookAt = new THREE.Vector3(lookX, lookY, lookZ);
 
-    // Smooth camera movement - adjust damping based on state
-    const dampFactor = isSnapping.current ? 0.08 : 0.12;
+    // Smooth camera movement - use lower damping for silkier motion
+    const dampFactor = isSnapping.current ? 0.06 : 0.08;
 
     if (forcedOffset.current !== null) {
-      // During menu navigation, move camera smoothly but faster
-      easing.damp3(state.camera.position, targetPos, 0.06, delta);
+      // During menu navigation, move camera smoothly
+      easing.damp3(state.camera.position, targetPos, 0.05, delta);
     } else {
       easing.damp3(state.camera.position, targetPos, dampFactor, delta);
     }
@@ -869,7 +901,7 @@ function ScrollUpdater({
     // Detect when section 1 starts - trigger immediately when entering section 1
     // This triggers the FullStack card to appear quickly
     if (
-      offset >= 0.02 &&
+      offset >= 0.001 &&
       !firstSectionAnimationFired.current &&
       lastSection.current === 1
     ) {
@@ -915,6 +947,31 @@ const getRotationForSection = (majorSection: 'skills' | 'experience' | 'portfoli
   }
 };
 
+// Helper to normalize angle to [0, 2PI)
+const normalizeAngle = (angle: number): number => {
+  const TWO_PI = Math.PI * 2;
+  let normalized = angle % TWO_PI;
+  if (normalized < 0) normalized += TWO_PI;
+  return normalized;
+};
+
+// Helper to find shortest angular distance (returns signed value)
+const shortestAngleDist = (from: number, to: number): number => {
+  const TWO_PI = Math.PI * 2;
+  // Normalize both angles to [0, 2PI)
+  const fromNorm = normalizeAngle(from);
+  const toNorm = normalizeAngle(to);
+
+  // Calculate direct distance
+  let diff = toNorm - fromNorm;
+
+  // Wrap to [-PI, PI] for shortest path
+  if (diff > Math.PI) diff -= TWO_PI;
+  if (diff < -Math.PI) diff += TWO_PI;
+
+  return diff;
+};
+
 // Component that rotates all content based on current major section
 // Camera stays in place, world rotates to bring content to front
 function RotatingWorld({
@@ -929,10 +986,11 @@ function RotatingWorld({
   onAnimatingChange?: (isAnimating: boolean) => void;
 }) {
   const groupRef = useRef<THREE.Group>(null);
-  const targetRotation = useRef(0);
+  const currentMajorSection = useRef<'skills' | 'experience' | 'portfolio' | 'about'>('skills');
   const isAnimating = useRef(false);
   const animationProgress = useRef(0);
   const startRotation = useRef(0);
+  const endRotation = useRef(0);
   const lastAnimatingState = useRef(false);
 
   useFrame((_, delta) => {
@@ -941,34 +999,41 @@ function RotatingWorld({
     // Determine target section for rotation
     const effectiveSection = targetSection ?? currentSection;
     const majorSection = getMajorSection(effectiveSection);
-    const newTargetRotation = getRotationForSection(majorSection);
 
-    // Check if we need to start a new rotation animation
-    if (Math.abs(newTargetRotation - targetRotation.current) > 0.01) {
+    // Check if major section changed
+    if (majorSection !== currentMajorSection.current && !isAnimating.current) {
+      currentMajorSection.current = majorSection;
+
+      const newTargetRotation = getRotationForSection(majorSection);
       startRotation.current = groupRef.current.rotation.y;
-      targetRotation.current = newTargetRotation;
+
+      // Calculate shortest path
+      const shortestDist = shortestAngleDist(startRotation.current, newTargetRotation);
+      endRotation.current = startRotation.current + shortestDist;
+
       isAnimating.current = true;
       animationProgress.current = 0;
     }
 
-    // Animate rotation
+    // Animate rotation with smoother timing
     if (isAnimating.current) {
-      animationProgress.current += delta * 0.8; // Animation speed
+      animationProgress.current += delta * 0.6; // Slower for smoother rotation
 
       if (animationProgress.current >= 1) {
         animationProgress.current = 1;
         isAnimating.current = false;
+        groupRef.current.rotation.y = endRotation.current;
+      } else {
+        // Use quintic easing for ultra-smooth rotation
+        const t = animationProgress.current;
+        const smoothEase = easeInOutQuint(t);
+
+        groupRef.current.rotation.y = THREE.MathUtils.lerp(
+          startRotation.current,
+          endRotation.current,
+          smoothEase
+        );
       }
-
-      // Easing function
-      const t = animationProgress.current;
-      const easeInOutCubic = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-
-      groupRef.current.rotation.y = THREE.MathUtils.lerp(
-        startRotation.current,
-        targetRotation.current,
-        easeInOutCubic
-      );
     }
 
     // Notify parent of animation state changes
@@ -1024,15 +1089,20 @@ function FadingOrbitRings({ isAnimating, currentSection }: { isAnimating: boolea
 
   return (
     <group ref={groupRef}>
-      {/* Main orbit ring */}
+      {/* Main orbit ring - larger and more visible */}
       <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[ORBIT_RADIUS, 0.03, 16, 100]} />
-        <meshBasicMaterial color="#06b6d4" transparent opacity={0.3} />
+        <torusGeometry args={[ORBIT_RADIUS, 0.04, 16, 120]} />
+        <meshBasicMaterial color="#06b6d4" transparent opacity={0.35} />
       </mesh>
       {/* Secondary tilted ring */}
       <mesh rotation={[Math.PI / 2.2, 0.2, 0]}>
-        <torusGeometry args={[ORBIT_RADIUS * 0.95, 0.015, 16, 100]} />
-        <meshBasicMaterial color="#8b5cf6" transparent opacity={0.1} />
+        <torusGeometry args={[ORBIT_RADIUS * 0.92, 0.02, 16, 120]} />
+        <meshBasicMaterial color="#8b5cf6" transparent opacity={0.15} />
+      </mesh>
+      {/* Third decorative ring */}
+      <mesh rotation={[Math.PI / 2.5, -0.15, 0.1]}>
+        <torusGeometry args={[ORBIT_RADIUS * 1.05, 0.015, 16, 120]} />
+        <meshBasicMaterial color="#00d4ff" transparent opacity={0.08} />
       </mesh>
     </group>
   );
@@ -1059,15 +1129,17 @@ function FadingSection({
     // Target opacity: full if active OR animating, otherwise invisible
     const targetOpacity = (isActive || isAnimating) ? 1 : 0;
 
-    // Linear fade - constant speed, no slowdown at end
-    const fadeSpeed = isAnimating ? 6 : 4; // Units per second (1 = full fade in 1s)
+    // Smooth exponential fade for natural feel
+    const fadeSpeed = isAnimating ? 4 : 3; // Slower for smoother transitions
     const diff = targetOpacity - currentOpacity.current;
-    const step = delta * fadeSpeed;
 
-    if (Math.abs(diff) <= step) {
+    // Use exponential decay for smooth fade (never truly linear)
+    const decay = 1 - Math.exp(-delta * fadeSpeed);
+    currentOpacity.current += diff * decay;
+
+    // Snap to target when very close
+    if (Math.abs(diff) < 0.01) {
       currentOpacity.current = targetOpacity;
-    } else {
-      currentOpacity.current += Math.sign(diff) * step;
     }
 
     // Apply opacity to all materials in the group

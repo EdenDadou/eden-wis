@@ -19,13 +19,14 @@ interface AboutSectionProps {
   section: number;
   showCard: boolean;
   targetSection: number | null;
+  isNavigating: boolean;
 }
 
-export function AboutSection({ section, showCard, targetSection }: AboutSectionProps) {
+export function AboutSection({ section, showCard, targetSection, isNavigating }: AboutSectionProps) {
   const { t } = useTranslation("common");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const isVisible = section === 15 && (targetSection === null || showCard);
+  const isVisible = section === 15 && (targetSection === null || showCard) && !isNavigating;
 
   useEffect(() => {
     if (!isVisible) return;
@@ -41,17 +42,38 @@ export function AboutSection({ section, showCard, targetSection }: AboutSectionP
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          initial={{ opacity: 0, filter: "blur(10px)" }}
+          animate={{
+            opacity: 1,
+            filter: "blur(0px)",
+            transition: { duration: 0.5, delay: 0.1 }
+          }}
+          exit={{
+            opacity: 0,
+            filter: "blur(8px)",
+            transition: { duration: 0.3 }
+          }}
           className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none"
         >
           {/* About Card */}
           <motion.div
             initial={{ opacity: 0, y: 50, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -30, scale: 0.95 }}
-            transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              transition: {
+                duration: 0.7,
+                ease: [0.25, 0.1, 0.25, 1],
+                delay: 0.15
+              }
+            }}
+            exit={{
+              opacity: 0,
+              y: -30,
+              scale: 0.95,
+              transition: { duration: 0.3, ease: [0.4, 0, 1, 1] }
+            }}
             className="max-w-xl w-full mx-4 pointer-events-auto"
           >
             {/* Liquid Glass Container */}

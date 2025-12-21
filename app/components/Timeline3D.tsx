@@ -245,7 +245,7 @@ export default function Timeline3D({ onExperienceSelect, selectedId }: Timeline3
   };
 
   // Position on circle at 90° (experience section)
-  const ORBIT_RADIUS = 15;
+  const ORBIT_RADIUS = 20;
   const angle = Math.PI / 2; // 90°
   const posX = Math.sin(angle) * ORBIT_RADIUS;
   const posZ = Math.cos(angle) * ORBIT_RADIUS;
@@ -256,7 +256,7 @@ export default function Timeline3D({ onExperienceSelect, selectedId }: Timeline3
   const rotationY = angle;
 
   return (
-    <group position={[posX, 0, posZ]} rotation={[0, rotationY, 0]}>
+    <group position={[posX, 0, posZ]} rotation={[0, rotationY, 0]} scale={1.15}>
       {/* Title */}
       <TimelineTitle
         position={[0, 3, 0]}

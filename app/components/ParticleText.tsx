@@ -59,21 +59,26 @@ export function ParticleText({
       const textHeight = fontSize * 1.2;
 
       // Set canvas size
-      const padding = mouseRadius * 2;
-      canvas.width = (textWidth + padding * 2) * dpr;
-      canvas.height = (textHeight + padding * 2) * dpr;
-      canvas.style.width = `${textWidth + padding * 2}px`;
-      canvas.style.height = `${textHeight + padding * 2}px`;
+      const paddingX = mouseRadius * 2;
+      const paddingTop = mouseRadius * 2;
+      const paddingBottom = mouseRadius * 0.5;
+      const totalWidth = textWidth + paddingX * 2;
+      const totalHeight = textHeight + paddingTop + paddingBottom;
+
+      canvas.width = totalWidth * dpr;
+      canvas.height = totalHeight * dpr;
+      canvas.style.width = `${totalWidth}px`;
+      canvas.style.height = `${totalHeight}px`;
 
       // Set offscreen canvas size
-      offscreen.width = textWidth + padding * 2;
-      offscreen.height = textHeight + padding * 2;
+      offscreen.width = totalWidth;
+      offscreen.height = totalHeight;
 
       // Draw text on offscreen canvas
       offCtx.fillStyle = "white";
       offCtx.font = `bold ${fontSize}px Inter, system-ui, sans-serif`;
       offCtx.textBaseline = "middle";
-      offCtx.fillText(text, padding, (textHeight + padding * 2) / 2);
+      offCtx.fillText(text, paddingX, paddingTop + textHeight / 2);
 
       // Get pixel data
       const imageData = offCtx.getImageData(

@@ -31,6 +31,7 @@ export default function Home() {
   const [showCard, setShowCard] = useState(true);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isFirstCardReady, setIsFirstCardReady] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
   const prevSectionRef = useRef(0);
 
   // Handle when section 1 3D animation is complete
@@ -51,12 +52,11 @@ export default function Home() {
     setSection(sectionNumber);
     setTargetSection(sectionNumber);
     setShowCard(false);
+    setIsNavigating(true);
 
-    // Faster card appearance for Skills section (section 1)
-    const cardDelay = sectionNumber === 1 ? 150 : 200;
     setTimeout(() => {
       setShowCard(true);
-    }, cardDelay);
+    }, 200);
   }, []);
 
   // Handle skill click - navigate to that skill's detail view
@@ -79,6 +79,7 @@ export default function Home() {
 
   const handleNavigationComplete = useCallback(() => {
     setTargetSection(null);
+    setIsNavigating(false);
   }, []);
 
   // Handle scroll for project detail view with snap
@@ -255,6 +256,8 @@ export default function Home() {
         showCard={showCard}
         targetSection={targetSection}
         isFirstCardReady={isFirstCardReady}
+        isNavigating={isNavigating}
+        onBackToSkillsMenu={() => navigateToSection(1)}
       />
 
       {/* Section 13 - Expérience */}
@@ -272,6 +275,7 @@ export default function Home() {
         section={section}
         showCard={showCard}
         targetSection={targetSection}
+        isNavigating={isNavigating}
         projects={projects}
         selectedProject={selectedProject}
         onSelectProject={setSelectedProject}
@@ -283,6 +287,7 @@ export default function Home() {
         section={section}
         showCard={showCard}
         targetSection={targetSection}
+        isNavigating={isNavigating}
       />
     </main>
   );

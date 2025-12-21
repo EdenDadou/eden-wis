@@ -1,5 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
+import type { Variants } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
 import PixelHeart from "../PixelHeart";
 
 interface TopNavProps {
@@ -7,8 +9,69 @@ interface TopNavProps {
   onNavigate: (section: number) => void;
 }
 
+const NAV_ITEMS = [
+  { key: "about", sectionCheck: (s: number) => s === 15, targetSection: 15 },
+  { key: "skills", sectionCheck: (s: number) => s >= 1 && s <= 12, targetSection: 1 },
+  { key: "experience", sectionCheck: (s: number) => s === 13, targetSection: 13 },
+  { key: "portfolio", sectionCheck: (s: number) => s === 14, targetSection: 14 },
+];
+
+type Direction = "left" | "right";
+
+// Variants pour l'indicateur - utilise custom pour la direction
+const indicatorVariants: Variants = {
+  initial: (direction: Direction) => ({
+    x: direction === "right" ? "-100%" : "100%",
+    opacity: 0,
+  }),
+  animate: {
+    x: "0%",
+    opacity: 1,
+  },
+  exit: (direction: Direction) => ({
+    x: direction === "right" ? "100%" : "-100%",
+    opacity: 0,
+  }),
+};
+
 export function TopNav({ section, onNavigate }: TopNavProps) {
   const { t, i18n } = useTranslation("common");
+  const [direction, setDirection] = useState<Direction>("right");
+  const prevIndexRef = useRef(-1);
+
+  const activeIndex = NAV_ITEMS.findIndex((item) => item.sectionCheck(section));
+
+  // Calculer la direction optimale (chemin le plus court en circulaire)
+  useEffect(() => {
+    if (activeIndex === -1 || prevIndexRef.current === -1) {
+      prevIndexRef.current = activeIndex;
+      return;
+    }
+
+    const prevIndex = prevIndexRef.current;
+    const total = NAV_ITEMS.length;
+
+    // Distance directe (sans wrap)
+    const directDistance = activeIndex - prevIndex;
+
+    // Distance en faisant le tour
+    const wrapDistance = directDistance > 0
+      ? directDistance - total  // wrap par la gauche
+      : directDistance + total; // wrap par la droite
+
+    // Choisir le chemin le plus court
+    let newDirection: Direction;
+    if (Math.abs(directDistance) <= Math.abs(wrapDistance)) {
+      // Chemin direct est plus court
+      newDirection = directDistance > 0 ? "right" : "left";
+    } else {
+      // Faire le tour est plus court
+      newDirection = wrapDistance > 0 ? "right" : "left";
+    }
+
+    setDirection(newDirection);
+    prevIndexRef.current = activeIndex;
+  }, [activeIndex]);
 
   const changeLanguage = () => {
     i18n.changeLanguage(i18n.language === "fr" ? "en" : "fr");
@@ -34,27 +97,39 @@ export function TopNav({ section, onNavigate }: TopNavProps) {
         </motion.button>
 
         {/* Navigation Links */}
-        <div className="flex items-center gap-8">
-          <NavLink
-            label={t("nav.about")}
-            isActive={section === 15}
-            onClick={() => onNavigate(15)}
-          />
-          <NavLink
-            label={t("nav.skills")}
-            isActive={section >= 1 && section <= 12}
-            onClick={() => onNavigate(1)}
-          />
-          <NavLink
-            label={t("nav.experience")}
-            isActive={section === 13}
-            onClick={() => onNavigate(13)}
-          />
-          <NavLink
-            label={t("nav.portfolio")}
-            isActive={section === 14}
-            onClick={() => onNavigate(14)}
-          />
+        <div className="relative flex items-center gap-8">
+          {NAV_ITEMS.map((item) => (
+            <motion.button
+              key={item.key}
+              onClick={() => onNavigate(item.targetSection)}
+              className={`relative text-sm font-medium tracking-wide transition-colors duration-300 cursor-pointer overflow-hidden ${
+                item.sectionCheck(section) ? "text-cyan-400" : "text-white/70 hover:text-cyan-400"
+              }`}
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {t(`nav.${item.key}`)}
+              {/* Indicateur sous chaque bouton avec AnimatePresence */}
+              <AnimatePresence mode="wait" custom={direction}>
+                {item.sectionCheck(section) && (
+                  <motion.div
+                    key={`indicator-${item.key}`}
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-400 rounded-full"
+                    variants={indicatorVariants}
+                    custom={direction}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    transition={{
+                      type: "spring",
+                      stiffness: 500,
+                      damping: 35,
+                    }}
+                  />
+                )}
+              </AnimatePresence>
+            </motion.button>
+          ))}
 
           {/* Language Switcher */}
           <div className="relative ml-4">
@@ -106,34 +181,5 @@ export function TopNav({ section, onNavigate }: TopNavProps) {
         </div>
       </div>
     </motion.nav>
-  );
-}
-
-interface NavLinkProps {
-  label: string;
-  isActive: boolean;
-  onClick: () => void;
-}
-
-function NavLink({ label, isActive, onClick }: NavLinkProps) {
-  return (
-    <motion.button
-      onClick={onClick}
-      className={`text-sm font-medium tracking-wide transition-colors duration-300 cursor-pointer ${
-        isActive ? "text-cyan-400" : "text-white/70 hover:text-cyan-400"
-      }`}
-      whileHover={{ y: -2 }}
-      whileTap={{ scale: 0.95 }}
-    >
-      {label}
-      {isActive && (
-        <motion.div
-          layoutId="nav-indicator"
-          className="h-0.5 bg-cyan-400 mt-1 rounded-full"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-        />
-      )}
-    </motion.button>
   );
 }

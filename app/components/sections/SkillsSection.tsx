@@ -8,9 +8,11 @@ interface SkillsSectionProps {
   showCard: boolean;
   targetSection: number | null;
   isFirstCardReady: boolean;
+  isNavigating: boolean;
+  onBackToSkillsMenu?: () => void;
 }
 
-export function SkillsSection({ section, showCard, targetSection, isFirstCardReady }: SkillsSectionProps) {
+export function SkillsSection({ section, showCard, targetSection, isFirstCardReady, isNavigating, onBackToSkillsMenu }: SkillsSectionProps) {
   const { t, i18n } = useTranslation("common");
   const textPosition = getTextPosition(section);
   const positionClass = getPositionClass(textPosition);
@@ -22,6 +24,10 @@ export function SkillsSection({ section, showCard, targetSection, isFirstCardRea
   // Determine if this is a group slide section (2, 6, 9) - these get special treatment
   const isGroupSlide = section === 2 || section === 6 || section === 9;
 
+  // Determine if we're in a detail skill section (not overview, not group slides)
+  // These are sections 3, 4, 5 (Frontend details), 7, 8 (Backend details), 10, 11, 12 (DevOps details)
+  const isDetailSection = section >= 3 && section <= 12 && !isGroupSlide;
+
   // Calculate entrance direction based on position
   // Cards slide in from the opposite side of where they'll end up
   const getEntranceX = () => {
@@ -31,44 +37,73 @@ export function SkillsSection({ section, showCard, targetSection, isFirstCardRea
     return 0;
   };
 
-  // Only show for sections 1-12 (skills sections)
-  // For section 1, wait for isFirstCardReady (after 3D animation completes)
-  const isVisible = section > 0 && section < 13 && (targetSection === null || showCard) && (!isFirstSection || isFirstCardReady);
+  // Check if we're in skills section range
+  const isInSkillsRange = section > 0 && section < 13;
 
-  if (!isVisible) return null;
+  // Card should be visible when in skills range, ready, and not navigating
+  const shouldShowCard = isInSkillsRange && (targetSection === null || showCard) && (!isFirstSection || isFirstCardReady) && !isNavigating;
 
   return (
     <div
       className={`absolute inset-0 w-full h-full z-10 pointer-events-none flex items-center ${positionClass}`}
     >
       <AnimatePresence mode="wait">
-        <motion.div
-          key={`${section}-${i18n.language}-${showCard}`}
-          initial={{
-            opacity: 0,
-            x: getEntranceX(),
-            y: isFirstSection ? "50vh" : 0,
-            scale: 0.9
-          }}
-          animate={{
-            opacity: 1,
-            x: 0,
-            y: 0,
-            scale: 1,
-            transition: {
-              duration: isFirstSection ? 0.7 : isGroupSlide ? 0.6 : 0.5,
-              ease: [0.25, 0.1, 0.25, 1],
-              delay: isGroupSlide ? 0.2 : 0 // Slight delay for group slides to let camera settle
-            }
-          }}
-          exit={{
-            opacity: 0,
-            x: textPosition === "left" ? "-50%" : textPosition === "right" ? "50%" : 0,
-            scale: 0.9,
-            transition: { duration: 0.3, ease: "easeIn" }
-          }}
-          className="max-w-lg"
-        >
+        {shouldShowCard && (
+          <motion.div
+            key={`${section}-${i18n.language}`}
+            initial={{
+              opacity: 0,
+              x: getEntranceX(),
+              y: isFirstSection ? "50vh" : 20,
+              scale: 0.9,
+              filter: "blur(10px)"
+            }}
+            animate={{
+              opacity: 1,
+              x: 0,
+              y: 0,
+              scale: 1,
+              filter: "blur(0px)",
+              transition: {
+                duration: isFirstSection ? 0.8 : isGroupSlide ? 0.7 : 0.6,
+                ease: [0.25, 0.1, 0.25, 1],
+                delay: 0.1, // Small delay after navigation completes
+                filter: { duration: 0.4 }
+              }
+            }}
+            exit={{
+              opacity: 0,
+              x: textPosition === "left" ? "-50%" : textPosition === "right" ? "50%" : 0,
+              y: isFirstSection ? "30vh" : -20,
+              scale: 0.9,
+              filter: "blur(8px)",
+              transition: { duration: 0.3, ease: [0.4, 0, 1, 1] }
+            }}
+            className="max-w-lg"
+          >
+          {/* Back arrow for detail sections */}
+          {isDetailSection && onBackToSkillsMenu && (
+            <motion.button
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0, transition: { delay: 0.3 } }}
+              whileHover={{ x: -5 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={onBackToSkillsMenu}
+              className="flex items-center gap-2 mb-4 text-cyan-400 hover:text-cyan-300 transition-colors pointer-events-auto group"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-5 h-5 group-hover:-translate-x-1 transition-transform"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              <span className="text-sm font-medium">{t("skills.backToMenu", "Compétences")}</span>
+            </motion.button>
+          )}
+
           <div className="backdrop-blur-md bg-black/40 px-8 py-8 rounded-2xl border border-white/10 shadow-2xl">
             <AnimatePresence mode="wait">
               <motion.span
@@ -144,6 +179,7 @@ export function SkillsSection({ section, showCard, targetSection, isFirstCardRea
             )}
           </div>
         </motion.div>
+        )}
       </AnimatePresence>
     </div>
   );
