@@ -10,7 +10,8 @@
       "Bash(echo:*)",
       "Bash(rm:*)",
       "Bash(cat:*)",
-      "Bash(lsof:*)"
+      "Bash(lsof:*)",
+      "Bash(mkdir:*)"
     ]
   }
 }
