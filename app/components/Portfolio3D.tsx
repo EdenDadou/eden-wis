@@ -190,12 +190,15 @@ function ProjectCard3D({ project, index, total }: { project: Project; index: num
   const contentRef = useRef<THREE.Group>(null);
   const { t } = useTranslation('common');
 
-  // Position cards in an arc
-  const angle = ((index - (total - 1) / 2) / total) * Math.PI * 0.5;
-  const radius = 4.5;
+  // Position cards in an arc - more spread out
+  const angle = ((index - (total - 1) / 2) / total) * Math.PI * 0.65;
+  const radius = 6;
   const xPos = Math.sin(angle) * radius;
   const zPos = -Math.cos(angle) * radius + radius;
   const rotationY = -angle * 0.7;
+
+  // Scale factor for bigger devices
+  const deviceScale = 1.25;
 
   useFrame((state) => {
     if (!groupRef.current) return;
@@ -212,7 +215,7 @@ function ProjectCard3D({ project, index, total }: { project: Project; index: num
 
   return (
     <group ref={groupRef} position={[xPos, 0, zPos]} rotation={[0, rotationY, 0]}>
-      <group ref={contentRef}>
+      <group ref={contentRef} scale={deviceScale}>
         {/* Device frame */}
         {project.type === 'mobile' ? (
           <PhoneFrame3D color={project.color} />
