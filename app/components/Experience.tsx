@@ -1,12 +1,5 @@
-import {
-  ScrollControls,
-  Float,
-  Environment,
-  GradientTexture,
-  Sphere,
-} from "@react-three/drei";
+import { ScrollControls, Float } from "@react-three/drei";
 import { useState, useCallback } from "react";
-import * as THREE from "three";
 import WebsiteBuilder from "./WebsiteBuilder";
 import Timeline3D, {
   type Experience as ExperienceType,
@@ -29,6 +22,8 @@ import {
   FadingSection,
   ShootingStar,
   ShootingStarBright,
+  GradientSky,
+  SceneLighting,
   ORBIT_RADIUS,
   getMajorSection,
 } from "./scene3d";
@@ -75,18 +70,14 @@ export default function Experience({
   };
 
   const activeMajorSection = getMajorSection(currentSection);
+  // Calculate incoming section during animation (based on targetSection)
+  const targetMajorSection = targetSection !== null && targetSection !== undefined
+    ? getMajorSection(targetSection)
+    : null;
 
   return (
     <>
-      {/* Gradient Background Sphere */}
-      <Sphere args={[50, 64, 64]} scale={[-1, 1, 1]}>
-        <meshBasicMaterial side={THREE.BackSide}>
-          <GradientTexture
-            stops={[0, 0.4, 0.7, 1]}
-            colors={["#0a192f", "#0d2847", "#164e63", "#0891b2"]}
-          />
-        </meshBasicMaterial>
-      </Sphere>
+      <GradientSky />
 
       {/* Animated background elements */}
       <AnimatedStars />
@@ -110,20 +101,7 @@ export default function Experience({
       <Satellite radius={22} speed={0.1} offset={Math.PI} tilt={-0.5} />
       <Satellite radius={15} speed={0.2} offset={Math.PI / 2} tilt={0.8} />
 
-      {/* Lighting */}
-      <ambientLight intensity={0.6} />
-      {/* <directionalLight
-        position={[10, 10, 5]}
-        intensity={1.2}
-        color="#00f0ff"
-      />
-      <directionalLight
-        position={[-10, 5, -5]}
-        intensity={0.8}
-        color="#06b6d4"
-      />
-      <directionalLight position={[0, 5, 0]} intensity={0.5} color="#ffffff" /> */}
-      <Environment preset="forest" />
+      <SceneLighting />
 
       <ScrollControls pages={25} damping={0.25}>
         <CameraRig
@@ -150,6 +128,7 @@ export default function Experience({
             <FadingSection
               isActive={activeMajorSection === "skills"}
               isAnimating={isWorldAnimating}
+              isIncoming={targetMajorSection === "skills"}
               sectionType="skills"
             >
               <group position={[0, 0, ORBIT_RADIUS]}>
@@ -166,6 +145,7 @@ export default function Experience({
             <FadingSection
               isActive={activeMajorSection === "experience"}
               isAnimating={isWorldAnimating}
+              isIncoming={targetMajorSection === "experience"}
               sectionType="experience"
             >
               <Timeline3D
@@ -178,6 +158,7 @@ export default function Experience({
             <FadingSection
               isActive={activeMajorSection === "portfolio"}
               isAnimating={isWorldAnimating}
+              isIncoming={targetMajorSection === "portfolio"}
               sectionType="portfolio"
             >
               <Portfolio3D />
@@ -187,6 +168,7 @@ export default function Experience({
             <FadingSection
               isActive={activeMajorSection === "about"}
               isAnimating={isWorldAnimating}
+              isIncoming={targetMajorSection === "about"}
               sectionType="about"
             >
               <About3D />

@@ -7,6 +7,9 @@ export * from "./camera.utils";
 // Background elements
 export * from "./background";
 
+// Lighting
+export { default as SceneLighting } from "./SceneLighting";
+
 // World components
 export * from "./world";
 

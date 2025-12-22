@@ -108,8 +108,8 @@ function getRingGeometries(): [THREE.TorusGeometry, THREE.TorusGeometry, THREE.T
   if (!cachedRingGeo1) {
     // Reduced segments: 8 radial, 64 tubular (was 16, 120)
     cachedRingGeo1 = new THREE.TorusGeometry(ORBIT_RADIUS, 0.04, 8, 64);
-    cachedRingGeo2 = new THREE.TorusGeometry(ORBIT_RADIUS * 0.92, 0.02, 8, 64);
-    cachedRingGeo3 = new THREE.TorusGeometry(ORBIT_RADIUS * 1.05, 0.015, 8, 64);
+    cachedRingGeo2 = new THREE.TorusGeometry(ORBIT_RADIUS * 0.75, 0.02, 8, 64);
+    cachedRingGeo3 = new THREE.TorusGeometry(ORBIT_RADIUS * 0.82, 0.015, 8, 64);
   }
   return [cachedRingGeo1, cachedRingGeo2!, cachedRingGeo3!];
 }

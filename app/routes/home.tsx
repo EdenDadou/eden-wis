@@ -39,11 +39,18 @@ export default function Home() {
     setIsFirstCardReady(true);
   }, []);
 
-  // Reset isFirstCardReady when leaving section 1
+  // Reset isFirstCardReady only when going to section 0 (hero)
+  // Keep it true when navigating between skills sections (1-9)
   useEffect(() => {
-    if (section !== 1) {
+    // Only reset when leaving skills range entirely (going to section 0)
+    if (section === 0) {
       setIsFirstCardReady(false);
     }
+    // When returning to section 1 from skill details (2-9), set ready immediately
+    else if (section === 1 && prevSectionRef.current >= 2 && prevSectionRef.current <= 9) {
+      setIsFirstCardReady(true);
+    }
+
     prevSectionRef.current = section;
   }, [section]);
 
@@ -57,6 +64,15 @@ export default function Home() {
     setTimeout(() => {
       setShowCard(true);
     }, 200);
+  }, []);
+
+  // Fast navigation back to skills menu - instant card display
+  const navigateBackToSkillsMenu = useCallback(() => {
+    setSection(1);
+    setTargetSection(1);
+    setShowCard(true);
+    setIsNavigating(false);
+    setIsFirstCardReady(true);
   }, []);
 
   // Handle skill click - navigate to that skill's detail view
@@ -85,7 +101,12 @@ export default function Home() {
   const handleNavigationComplete = useCallback(() => {
     setTargetSection(null);
     setIsNavigating(false);
-  }, []);
+    setShowCard(true);
+    // If arriving at section 1, show card immediately
+    if (section === 1) {
+      setIsFirstCardReady(true);
+    }
+  }, [section]);
 
   // Handle scroll for project detail view with snap
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -264,7 +285,7 @@ export default function Home() {
         targetSection={targetSection}
         isFirstCardReady={isFirstCardReady}
         isNavigating={isNavigating}
-        onBackToSkillsMenu={() => navigateToSection(1)}
+        onBackToSkillsMenu={navigateBackToSkillsMenu}
         onNavigateSkill={handleSkillClick}
         onNavigateToPortfolio={() => navigateToSection(11)}
       />

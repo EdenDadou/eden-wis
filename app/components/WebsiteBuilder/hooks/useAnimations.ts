@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useScroll } from "@react-three/drei";
 import * as THREE from "three";
+import { useFadeOpacity } from "../../scene3d/world";
 import {
   DEZOOM_START,
   DEZOOM_END,
@@ -56,6 +57,7 @@ interface UseAnimationsProps {
 
 export function useAnimations({ currentSection, refs }: UseAnimationsProps) {
   const scroll = useScroll();
+  const fadeOpacity = useFadeOpacity();
 
   // Time tracking refs
   const enteredSection1Time = useRef<number | null>(null);
@@ -220,33 +222,46 @@ export function useAnimations({ currentSection, refs }: UseAnimationsProps) {
 
       const dimmedOpacity = 0.08;
 
+      // Apply section fade opacity for orbital navigation
+      const sectionFade = fadeOpacity.current;
+
       if (refs.frontendBoxMatRef.current) {
-        const activeOpacity = isFrontendActive ? 1 : 0.8;
-        const finalOpacity = isInDetailSection && !isFrontendActive ? dimmedOpacity : activeOpacity;
-        refs.frontendBoxMatRef.current.opacity = finalOpacity * baseOpacity;
+        const mat = refs.frontendBoxMatRef.current as any;
+        mat._externallyManaged = true; // Prevent FadingSection from modifying
+        // Keep active category at 0.8, dim inactive ones
+        const finalOpacity = isInDetailSection && !isFrontendActive ? dimmedOpacity : 0.8;
+        mat.opacity = finalOpacity * baseOpacity * sectionFade;
       }
       if (refs.backendBoxMatRef.current) {
-        const activeOpacity = isBackendActive ? 1 : 0.8;
-        const finalOpacity = isInDetailSection && !isBackendActive ? dimmedOpacity : activeOpacity;
-        refs.backendBoxMatRef.current.opacity = finalOpacity * baseOpacity;
+        const mat = refs.backendBoxMatRef.current as any;
+        mat._externallyManaged = true;
+        const finalOpacity = isInDetailSection && !isBackendActive ? dimmedOpacity : 0.8;
+        mat.opacity = finalOpacity * baseOpacity * sectionFade;
       }
       if (refs.devopsBoxMatRef.current) {
-        const activeOpacity = isDevopsActive ? 1 : 0.8;
-        const finalOpacity = isInDetailSection && !isDevopsActive ? dimmedOpacity : activeOpacity;
-        refs.devopsBoxMatRef.current.opacity = finalOpacity * baseOpacity;
+        const mat = refs.devopsBoxMatRef.current as any;
+        mat._externallyManaged = true;
+        const finalOpacity = isInDetailSection && !isDevopsActive ? dimmedOpacity : 0.8;
+        mat.opacity = finalOpacity * baseOpacity * sectionFade;
       }
 
       if (refs.frontendLabelRef.current) {
         const labelOpacity = isInDetailSection && !isFrontendActive ? 0.3 : 1;
-        refs.frontendLabelRef.current.fillOpacity = labelOpacity * baseOpacity;
+        const finalLabelOp = labelOpacity * baseOpacity * sectionFade;
+        refs.frontendLabelRef.current.fillOpacity = finalLabelOp;
+        refs.frontendLabelRef.current.outlineOpacity = finalLabelOp;
       }
       if (refs.backendLabelRef.current) {
         const labelOpacity = isInDetailSection && !isBackendActive ? 0.3 : 1;
-        refs.backendLabelRef.current.fillOpacity = labelOpacity * baseOpacity;
+        const finalLabelOp = labelOpacity * baseOpacity * sectionFade;
+        refs.backendLabelRef.current.fillOpacity = finalLabelOp;
+        refs.backendLabelRef.current.outlineOpacity = finalLabelOp;
       }
       if (refs.devopsLabelRef.current) {
         const labelOpacity = isInDetailSection && !isDevopsActive ? 0.3 : 1;
-        refs.devopsLabelRef.current.fillOpacity = labelOpacity * baseOpacity;
+        const finalLabelOp = labelOpacity * baseOpacity * sectionFade;
+        refs.devopsLabelRef.current.fillOpacity = finalLabelOp;
+        refs.devopsLabelRef.current.outlineOpacity = finalLabelOp;
       }
     }
 
@@ -531,6 +546,9 @@ export function useAnimations({ currentSection, refs }: UseAnimationsProps) {
       { section: SECTION_MAP.ARCHITECTURE, ref: refs.archiRef },
     ];
 
+    // Get section fade for orbital navigation
+    const sectionFade = fadeOpacity.current;
+
     skillRefs.forEach(({ section, ref }) => {
       if (!ref.current) return;
 
@@ -540,26 +558,54 @@ export function useAnimations({ currentSection, refs }: UseAnimationsProps) {
       if (ref.current.userData._smoothOp === undefined) {
         ref.current.userData._smoothOp = 1;
       }
-      ref.current.userData._smoothOp = THREE.MathUtils.lerp(
-        ref.current.userData._smoothOp,
-        targetOpacity,
-        0.1
-      );
+      // When leaving detail view, snap to full opacity immediately
+      // Only use smooth transition when in detail view
+      if (!isDetailView) {
+        ref.current.userData._smoothOp = 1;
+      } else {
+        // Use faster lerp when returning to full opacity (going back)
+        const lerpSpeed = targetOpacity > ref.current.userData._smoothOp ? 0.25 : 0.1;
+        ref.current.userData._smoothOp = THREE.MathUtils.lerp(
+          ref.current.userData._smoothOp,
+          targetOpacity,
+          lerpSpeed
+        );
+      }
 
       const finalOp = ref.current.userData._smoothOp;
 
-      ref.current.traverse((child) => {
+      ref.current.traverse((child: any) => {
+        // Handle troika Text components
+        if (child.text !== undefined && child.material) {
+          if (child._baseOutlineOpacity === undefined) {
+            child._baseOutlineOpacity = child.outlineOpacity ?? 1;
+            child._baseFillOpacity = child.fillOpacity ?? 1;
+          }
+          child.outlineOpacity = child._baseOutlineOpacity * finalOp * sectionFade;
+          if (child._baseFillOpacity > 0) {
+            child.fillOpacity = child._baseFillOpacity * finalOp * sectionFade;
+          }
+          if (child.sync) child.sync();
+        }
+
         const mesh = child as THREE.Mesh;
         if (mesh.material) {
           const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
           materials.forEach((mat) => {
             const m = mat as THREE.MeshStandardMaterial;
             if (m) {
+              // Mark as externally managed so FadingSection doesn't double-apply
+              (m as any)._externallyManaged = true;
+
+              // Capture base opacity on first encounter only
               if ((m as any).__baseOpacity === undefined) {
                 (m as any).__baseOpacity = m.opacity !== undefined ? m.opacity : 1;
                 (m as any).__wasTransparent = m.transparent;
               }
-              m.opacity = (m as any).__baseOpacity * finalOp;
+
+              // Apply both detail dimming AND section fade for orbital navigation
+              const baseOp = (m as any).__baseOpacity;
+              m.opacity = baseOp * finalOp * sectionFade;
               m.transparent = true;
               m.needsUpdate = true;
             }
@@ -567,7 +613,7 @@ export function useAnimations({ currentSection, refs }: UseAnimationsProps) {
         }
       });
     });
-  });
+  }, -2); // Priority -2 to run BEFORE FadingSection (-1) so _externallyManaged is set first
 
   return { scroll, showParticles, linkDrawProgress };
 }

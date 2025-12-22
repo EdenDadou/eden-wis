@@ -330,31 +330,11 @@ function ExperienceCard() {
 
 // CTA Button
 function CTAButton() {
-  const buttonRef = useRef<THREE.Group>(null);
-  const glowRef = useRef<THREE.Mesh>(null);
-
-  useFrame((state) => {
-    if (glowRef.current) {
-      const mat = glowRef.current.material as THREE.MeshBasicMaterial;
-      mat.opacity = 0.1 + Math.sin(state.clock.elapsedTime * 2) * 0.05;
-    }
-    if (buttonRef.current) {
-      buttonRef.current.position.y =
-        -2.3 + Math.sin(state.clock.elapsedTime * 1.5) * 0.02;
-    }
-  });
-
   return (
-    <group ref={buttonRef} position={[0, -2.3, 0.1]}>
-      {/* Glow */}
-      <mesh ref={glowRef} position={[0, 0, -0.02]}>
-        <planeGeometry args={[3.8, 0.7]} />
-        <meshBasicMaterial color="#ffffff" transparent opacity={0.1} />
-      </mesh>
-
+    <group position={[0, -2.3, 0.1]}>
       {/* Button background */}
       <RoundedBox args={[3.5, 0.55, 0.03]} radius={0.12} smoothness={4}>
-        <meshBasicMaterial color="#ffffff" transparent opacity={0.08} />
+        <meshBasicMaterial color="#ffffff" transparent opacity={0.1} />
       </RoundedBox>
 
       {/* Button border */}

@@ -230,6 +230,11 @@ export default function CameraRig({
       if (navAnimationProgress.current >= 1) {
         navAnimationProgress.current = 1;
         navAnimationActive.current = false;
+        // Call navigation complete immediately when camera animation ends
+        if (!navigationCompleted.current && onNavigationComplete) {
+          navigationCompleted.current = true;
+          onNavigationComplete();
+        }
       }
 
       const t = navAnimationProgress.current;

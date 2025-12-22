@@ -81,17 +81,12 @@ export function HeroSection({ isVisible }: HeroSectionProps) {
         />
 
         <h1
-          className="relative text-2xl md:text-3xl lg:text-5xl font-lucky text-white"
+          className="relative text-2xl md:text-3xl lg:text-5xl font-inter font-bold text-white"
           style={{
-            textShadow: `
-              0 0 5px #00d4ff,
-              0 0 2px #00d4ff,
-              0 0 5px #0066ff
-            `,
-            letterSpacing: "0.08em",
+            letterSpacing: "-2px",
           }}
         >
-          <RevealText text={`${t("sections.letsGoReal")}!`} delay={1} />
+          <ShimmerText text={`${t("sections.letsGoReal")}!`} delay={1} />
         </h1>
       </div>
 

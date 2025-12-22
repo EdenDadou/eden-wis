@@ -3,6 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { Line } from "@react-three/drei";
 import * as THREE from "three";
 import type { ParticleStreamProps } from "../types";
+import type { Line2 } from "three-stdlib";
 
 export function ParticleStream({
   start,
@@ -13,6 +14,10 @@ export function ParticleStream({
   drawProgress = 1,
 }: ParticleStreamProps) {
   const particlesRef = useRef<THREE.InstancedMesh>(null);
+  const outerGlowRef = useRef<Line2>(null);
+  const coreLineRef = useRef<Line2>(null);
+  const centerLineRef = useRef<Line2>(null);
+  const particleMaterialRef = useRef<THREE.MeshBasicMaterial>(null);
   const startVec = useMemo(() => new THREE.Vector3(...start), [start]);
   const endVec = useMemo(() => new THREE.Vector3(...end), [end]);
   const color1 = useMemo(() => new THREE.Color(startColor), [startColor]);
@@ -109,12 +114,27 @@ export function ParticleStream({
     if (particlesRef.current.instanceColor) {
       particlesRef.current.instanceColor.needsUpdate = true;
     }
+
+    // Update line opacities smoothly
+    if (outerGlowRef.current?.material) {
+      (outerGlowRef.current.material as any).opacity = opacity * 0.4;
+    }
+    if (coreLineRef.current?.material) {
+      (coreLineRef.current.material as any).opacity = opacity * 1;
+    }
+    if (centerLineRef.current?.material) {
+      (centerLineRef.current.material as any).opacity = opacity * 0.5;
+    }
+    if (particleMaterialRef.current) {
+      particleMaterialRef.current.opacity = opacity * 0.8;
+    }
   });
 
   return (
     <group>
       {/* Outer glow */}
       <Line
+        ref={outerGlowRef}
         points={linePoints}
         color={midColor}
         lineWidth={6}
@@ -124,6 +144,7 @@ export function ParticleStream({
 
       {/* Core neon line with gradient */}
       <Line
+        ref={coreLineRef}
         points={linePoints}
         vertexColors={vertexColors}
         lineWidth={2}
@@ -133,6 +154,7 @@ export function ParticleStream({
 
       {/* Bright center */}
       <Line
+        ref={centerLineRef}
         points={linePoints}
         color="white"
         lineWidth={0.5}
@@ -144,6 +166,7 @@ export function ParticleStream({
       <instancedMesh ref={particlesRef} args={[undefined, undefined, particleCount]}>
         <sphereGeometry args={[1, 6, 6]} />
         <meshBasicMaterial
+          ref={particleMaterialRef}
           transparent
           opacity={opacity * 0.8}
           blending={THREE.AdditiveBlending}

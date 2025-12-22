@@ -345,12 +345,6 @@ export default function Portfolio3D() {
         <ProjectCard3D key={project.id} project={project} index={index} total={projects.length} />
       ))}
 
-      {/* Floor plane */}
-      <mesh position={[0, -2.5, 1.5]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[15, 12]} />
-        <meshBasicMaterial color="#06b6d4" transparent opacity={0.015} />
-      </mesh>
-
       {/* Lights */}
       <pointLight position={[0, 1.5, 1.5]} intensity={0.4} color="#06b6d4" />
       <pointLight position={[-3, 1, 2]} intensity={0.25} color="#8B5CF6" />

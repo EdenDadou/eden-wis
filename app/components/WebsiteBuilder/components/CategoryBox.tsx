@@ -80,6 +80,7 @@ export const CategoryBox = forwardRef<THREE.Group, CategoryBoxProps>(
           anchorY="middle"
           outlineWidth={0.02}
           outlineColor="#000000"
+          outlineOpacity={1}
           fillOpacity={0}
         >
           {config.label}

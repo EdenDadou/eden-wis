@@ -246,6 +246,7 @@ export default function WebsiteBuilder({
           showElements={showElements}
           showParticles={showParticles}
           linkDrawProgress={linkDrawProgress}
+          isInDetailSection={isInDetailSection}
         />
       </group>
     </group>

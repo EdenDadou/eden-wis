@@ -231,40 +231,88 @@ export function FloatingText({
   );
 }
 
-// Shimmer text effect
+// Shimmer text effect - letter by letter with reveal
 export function ShimmerText({
   text,
   className = "",
   delay = 0,
   style,
+  staggerDelay = 0.03,
 }: {
   text: string;
   className?: string;
   delay?: number;
   style?: React.CSSProperties;
+  staggerDelay?: number;
 }) {
+  const letters = text.split("");
+
+  const container = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: staggerDelay,
+        delayChildren: delay,
+      },
+    },
+  };
+
+  const child = {
+    hidden: {
+      opacity: 0,
+      y: 20,
+      filter: "blur(10px)",
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: {
+        type: "spring" as const,
+        damping: 12,
+        stiffness: 100,
+      },
+    },
+  };
+
   return (
     <motion.span
-      className={`relative inline-block overflow-hidden ${className}`}
-      style={style}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5, delay }}
+      className={`inline-flex flex-wrap justify-center ${className}`}
+      style={{ fontFamily: "inherit", ...style }}
+      variants={container}
+      initial="hidden"
+      animate="visible"
     >
-      <span className="relative z-10">{text}</span>
-      <motion.span
-        className="absolute inset-0 z-20 bg-linear-to-r from-transparent via-white/30 to-transparent"
-        style={{ transform: "skewX(-20deg)" }}
-        initial={{ x: "-100%" }}
-        animate={{ x: "200%" }}
-        transition={{
-          duration: 2,
-          delay: delay + 0.5,
-          repeat: Infinity,
-          repeatDelay: 3,
-          ease: "easeInOut",
-        }}
-      />
+      {letters.map((letter, index) => (
+        <motion.span
+          key={index}
+          className="inline-block relative"
+          style={{
+            whiteSpace: letter === " " ? "pre" : "normal",
+            fontFamily: "inherit",
+          }}
+          variants={child}
+          animate={{
+            textShadow: [
+              "0 0 0px rgba(255,255,255,0)",
+              "0 0 8px rgba(255,255,255,0.8)",
+              "0 0 0px rgba(255,255,255,0)",
+            ],
+          }}
+          transition={{
+            textShadow: {
+              duration: 1.5,
+              delay: delay + 1 + index * 0.08,
+              repeat: Infinity,
+              repeatDelay: text.length * 0.08 + 2,
+              ease: "easeInOut",
+            },
+          }}
+        >
+          {letter === " " ? "\u00A0" : letter}
+        </motion.span>
+      ))}
     </motion.span>
   );
 }

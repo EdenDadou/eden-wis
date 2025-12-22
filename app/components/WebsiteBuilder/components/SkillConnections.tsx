@@ -23,6 +23,7 @@ interface SkillConnectionsProps {
   showElements: boolean;
   showParticles: boolean;
   linkDrawProgress: number[];
+  isInDetailSection: boolean;
 }
 
 export function SkillConnections({
@@ -30,6 +31,7 @@ export function SkillConnections({
   showElements,
   showParticles,
   linkDrawProgress,
+  isInDetailSection,
 }: SkillConnectionsProps) {
   if (!showElements) return null;
 
@@ -69,7 +71,7 @@ export function SkillConnections({
             startColor={link.startColor}
             endColor={link.endColor}
             showParticles={showParticles && progress === 1}
-            opacity={1}
+            opacity={isInDetailSection ? 0.15 : 1}
             drawProgress={progress}
           />
         );
