@@ -10,6 +10,7 @@ import {
   ExperienceSection,
   PortfolioSection,
   AboutSection,
+  ContactSection,
 } from "../components/sections";
 import type { Experience } from "../components/Timeline3D";
 import type { Project } from "../types";
@@ -314,6 +315,15 @@ export default function Home() {
 
       {/* Section 12 - About */}
       <AboutSection
+        section={section}
+        showCard={showCard}
+        targetSection={targetSection}
+        isNavigating={isNavigating}
+        onNavigateToContact={() => navigateToSection(13)}
+      />
+
+      {/* Section 13 - Contact */}
+      <ContactSection
         section={section}
         showCard={showCard}
         targetSection={targetSection}

@@ -15,6 +15,8 @@ function getRotationForSection(majorSection: MajorSection): number {
       return -SECTION_ANGLES.portfolio;
     case "about":
       return -SECTION_ANGLES.about;
+    case "contact":
+      return -SECTION_ANGLES.contact;
   }
 }
 

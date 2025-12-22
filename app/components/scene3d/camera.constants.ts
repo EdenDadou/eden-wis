@@ -6,12 +6,13 @@ export const GRID_Y = 2.5;
 export const ORBIT_RADIUS = 20;
 export const CAMERA_DISTANCE = 8;
 
-// Section angles (in radians) - 4 sections at 90° apart
+// Section angles (in radians) - 5 sections at 72° apart
 export const SECTION_ANGLES = {
   skills: 0,
-  experience: Math.PI / 2,
-  portfolio: Math.PI,
-  about: (Math.PI * 3) / 2,
+  experience: (Math.PI * 2) / 5,        // 72°
+  portfolio: (Math.PI * 4) / 5,          // 144°
+  about: (Math.PI * 6) / 5,              // 216°
+  contact: (Math.PI * 8) / 5,            // 288°
 } as const;
 
 // Camera X offset to center view between card and 3D elements
@@ -159,6 +160,16 @@ export const SECTION_CAMERA_POSITIONS: Record<
     lookY: 0,
     lookZ: ORBIT_RADIUS,
   },
+
+  // Contact section - 13
+  13: {
+    x: 0,
+    y: 0,
+    z: ORBIT_RADIUS + CAMERA_DISTANCE,
+    lookX: 0,
+    lookY: 0,
+    lookZ: ORBIT_RADIUS,
+  },
 };
 
 // Scroll offset snap points for each section
@@ -167,16 +178,17 @@ export const SECTION_SNAP_OFFSETS: number[] = [
   0.0,   // 0: Intro
   0.05,  // 1: Skills Overview
   0.10,  // 2: Frontend (Site Web)
-  0.15,  // 3: Mobile
-  0.20,  // 4: Backoffice
-  0.26,  // 5: Server
-  0.32,  // 6: Database
-  0.38,  // 7: CI/CD
-  0.44,  // 8: Cloud
-  0.50,  // 9: Architecture
-  0.60,  // 10: Timeline
-  0.75,  // 11: Portfolio
-  0.90,  // 12: About
+  0.14,  // 3: Mobile
+  0.18,  // 4: Backoffice
+  0.23,  // 5: Server
+  0.28,  // 6: Database
+  0.33,  // 7: CI/CD
+  0.38,  // 8: Cloud
+  0.43,  // 9: Architecture
+  0.52,  // 10: Timeline
+  0.64,  // 11: Portfolio
+  0.78,  // 12: About
+  0.92,  // 13: Contact
 ];
 
 // Sections that trigger zoom-out transition effect
@@ -195,4 +207,5 @@ export const SKILL_SECTION_BOUNDARIES = {
   TIMELINE: 10,
   PORTFOLIO: 11,
   ABOUT: 12,
+  CONTACT: 13,
 } as const;

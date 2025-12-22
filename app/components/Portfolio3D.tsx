@@ -325,10 +325,12 @@ function CentralHub3D() {
   );
 }
 
+// Import section angles from scene3d
+import { SECTION_ANGLES, ORBIT_RADIUS } from "./scene3d";
+
 export default function Portfolio3D() {
-  // Position on circle at 180° (portfolio section)
-  const ORBIT_RADIUS = 15;
-  const angle = Math.PI; // 180°
+  // Position on circle at portfolio section angle (144° = 4π/5)
+  const angle = SECTION_ANGLES.portfolio;
   const posX = Math.sin(angle) * ORBIT_RADIUS;
   const posZ = Math.cos(angle) * ORBIT_RADIUS;
   // Rotate to be tangent to circle and face outward (toward where camera will be)

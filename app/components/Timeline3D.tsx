@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import { Text, RoundedBox, Float } from '@react-three/drei';
 import * as THREE from 'three';
 import { useTranslation } from 'react-i18next';
+import { SECTION_ANGLES, ORBIT_RADIUS } from './scene3d';
 
 export interface Project {
   name: string;
@@ -244,9 +245,8 @@ export default function Timeline3D({ onExperienceSelect, selectedId }: Timeline3
     }
   };
 
-  // Position on circle at 90° (experience section)
-  const ORBIT_RADIUS = 20;
-  const angle = Math.PI / 2; // 90°
+  // Position on circle at experience section angle (72° = 2π/5)
+  const angle = SECTION_ANGLES.experience;
   const posX = Math.sin(angle) * ORBIT_RADIUS;
   const posZ = Math.cos(angle) * ORBIT_RADIUS;
   // Rotate to be tangent to circle and face outward (toward where camera will be)

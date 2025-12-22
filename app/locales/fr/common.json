@@ -232,8 +232,27 @@
     "bio": "Passionné par le développement web et mobile depuis plus de 6 ans, je crée des solutions digitales sur-mesure qui allient performance, design et expérience utilisateur.",
     "experience": "De startups innovantes aux projets e-commerce d'envergure, j'accompagne mes clients de la conception à la mise en production. Mon expertise couvre le frontend, le backend, le mobile et le DevOps.",
     "cta": {
-      "contact": "Engagez-moi"
+      "contact": "Engagez-moi",
+      "hire": "Engagez-moi"
     }
+  },
+  "contact": {
+    "title": "Envoyer un message",
+    "subtitle": "Je vous répondrai dès que possible",
+    "heading": "Travaillons ensemble",
+    "description": "Vous avez un projet en tête ? Discutons de comment je peux vous aider à le concrétiser.",
+    "cta": "M'envoyer un message",
+    "name": "Nom",
+    "namePlaceholder": "Jean Dupont",
+    "email": "Email",
+    "emailPlaceholder": "jean@exemple.com",
+    "subject": "Sujet",
+    "subjectPlaceholder": "Demande de projet",
+    "message": "Message",
+    "messagePlaceholder": "Parlez-moi de votre projet...",
+    "send": "Envoyer le message",
+    "success": "Message envoyé !",
+    "successMessage": "Je vous répondrai bientôt."
   },
   "errors": {
     "oops": "Oups !",

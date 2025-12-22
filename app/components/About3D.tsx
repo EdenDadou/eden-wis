@@ -365,9 +365,9 @@ function CTAButton() {
   );
 }
 
-// Section angle for About (270° = 3π/2)
-const SECTION_ANGLE = (Math.PI * 3) / 2;
-const ORBIT_RADIUS = 15;
+// Section angle for About (216° = 6π/5) - imported from scene3d
+import { SECTION_ANGLES, ORBIT_RADIUS } from "./scene3d";
+const SECTION_ANGLE = SECTION_ANGLES.about;
 
 export default function About3D() {
   const posX = Math.sin(SECTION_ANGLE) * ORBIT_RADIUS;

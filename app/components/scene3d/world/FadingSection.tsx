@@ -14,7 +14,7 @@ interface FadingSectionProps {
   isActive: boolean;
   isAnimating: boolean;
   isIncoming?: boolean; // True if this section is the destination during animation
-  sectionType: "skills" | "experience" | "portfolio" | "about";
+  sectionType: "skills" | "experience" | "portfolio" | "about" | "contact";
 }
 
 export default function FadingSection({

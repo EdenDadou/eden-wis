@@ -126,14 +126,16 @@ function checkGroupTransition(currentSection: number, nextSection: number): bool
 }
 
 // Determine which major section we're in
-export type MajorSection = "skills" | "experience" | "portfolio" | "about";
+export type MajorSection = "skills" | "experience" | "portfolio" | "about" | "contact";
 
 export function getMajorSection(section: number): MajorSection {
-  const { SKILLS_END, TIMELINE, PORTFOLIO } = SKILL_SECTION_BOUNDARIES;
+  const { SKILLS_END, TIMELINE, PORTFOLIO, ABOUT, CONTACT } = SKILL_SECTION_BOUNDARIES;
 
   if (section <= SKILLS_END) return "skills";
   if (section === TIMELINE) return "experience";
   if (section === PORTFOLIO) return "portfolio";
+  if (section === ABOUT) return "about";
+  if (section === CONTACT) return "contact";
   return "about";
 }
 

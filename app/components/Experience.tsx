@@ -8,6 +8,7 @@ import Timeline3D, {
 import ExperienceDetail3D from "./ExperienceDetail3D";
 import Portfolio3D from "./Portfolio3D";
 import About3D from "./About3D";
+import Contact3D from "./Contact3D";
 import "../styles/global.css";
 
 // Scene3D components
@@ -164,7 +165,7 @@ export default function Experience({
               <Portfolio3D />
             </FadingSection>
 
-            {/* About 3D - at 270° */}
+            {/* About 3D - at 216° */}
             <FadingSection
               isActive={activeMajorSection === "about"}
               isAnimating={isWorldAnimating}
@@ -172,6 +173,16 @@ export default function Experience({
               sectionType="about"
             >
               <About3D />
+            </FadingSection>
+
+            {/* Contact 3D - at 288° */}
+            <FadingSection
+              isActive={activeMajorSection === "contact"}
+              isAnimating={isWorldAnimating}
+              isIncoming={targetMajorSection === "contact"}
+              sectionType="contact"
+            >
+              <Contact3D />
             </FadingSection>
 
             {/* Central decoration - 3D pixel heart */}

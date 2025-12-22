@@ -9,12 +9,13 @@ interface TopNavProps {
   onNavigate: (section: number) => void;
 }
 
-// Section mapping: 0=Intro, 1=Overview, 2-9=Skills, 10=Timeline, 11=Portfolio, 12=About
+// Section mapping: 0=Intro, 1=Overview, 2-9=Skills, 10=Timeline, 11=Portfolio, 12=About, 13=Contact
 const NAV_ITEMS = [
   { key: "skills", sectionCheck: (s: number) => s >= 1 && s <= 9, targetSection: 1 },
   { key: "experience", sectionCheck: (s: number) => s === 10, targetSection: 10 },
   { key: "portfolio", sectionCheck: (s: number) => s === 11, targetSection: 11 },
   { key: "about", sectionCheck: (s: number) => s === 12, targetSection: 12 },
+  { key: "contact", sectionCheck: (s: number) => s === 13, targetSection: 13 },
 ];
 
 type Direction = "left" | "right";

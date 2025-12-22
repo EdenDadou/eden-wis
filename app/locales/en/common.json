@@ -232,8 +232,27 @@
     "bio": "Passionate about web and mobile development for over 6 years, I create custom digital solutions that combine performance, design and user experience.",
     "experience": "From innovative startups to large-scale e-commerce projects, I support my clients from design to production. My expertise covers frontend, backend, mobile and DevOps.",
     "cta": {
-      "contact": "Hire me"
+      "contact": "Hire me",
+      "hire": "Hire Me"
     }
+  },
+  "contact": {
+    "title": "Send a message",
+    "subtitle": "I'll get back to you as soon as possible",
+    "heading": "Let's work together",
+    "description": "Have a project in mind? Let's discuss how I can help bring your ideas to life.",
+    "cta": "Send me a message",
+    "name": "Name",
+    "namePlaceholder": "John Doe",
+    "email": "Email",
+    "emailPlaceholder": "john@example.com",
+    "subject": "Subject",
+    "subjectPlaceholder": "Project inquiry",
+    "message": "Message",
+    "messagePlaceholder": "Tell me about your project...",
+    "send": "Send Message",
+    "success": "Message sent!",
+    "successMessage": "I'll get back to you soon."
   },
   "errors": {
     "oops": "Oops!",

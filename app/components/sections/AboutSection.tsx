@@ -20,9 +20,10 @@ interface AboutSectionProps {
   showCard: boolean;
   targetSection: number | null;
   isNavigating: boolean;
+  onNavigateToContact?: () => void;
 }
 
-export function AboutSection({ section, showCard, targetSection, isNavigating }: AboutSectionProps) {
+export function AboutSection({ section, showCard, targetSection, isNavigating, onNavigateToContact }: AboutSectionProps) {
   const { t } = useTranslation("common");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -268,25 +269,94 @@ export function AboutSection({ section, showCard, targetSection, isNavigating }:
                   </p>
                 </motion.div>
 
-                {/* CTA Button - Elegant glass style */}
+                {/* CTA Button - Sexy Hire Me */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.7 }}
                 >
                   <motion.button
-                    whileHover={{ scale: 1.02, y: -2 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="relative w-full group overflow-hidden rounded-2xl"
+                    onClick={onNavigateToContact}
+                    whileHover={{ scale: 1.03, y: -3 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="relative w-full group overflow-hidden rounded-2xl cursor-pointer"
                   >
-                    {/* Subtle glow */}
-                    <div className="absolute -inset-1 bg-gradient-to-r from-white/20 via-white/10 to-white/20 rounded-2xl opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />
+                    {/* Animated gradient glow on hover */}
+                    <motion.div
+                      className="absolute -inset-1 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                      style={{
+                        background: "linear-gradient(90deg, rgba(6, 182, 212, 0.5), rgba(16, 185, 129, 0.5))",
+                        filter: "blur(15px)",
+                      }}
+                      animate={{
+                        background: [
+                          "linear-gradient(90deg, rgba(6, 182, 212, 0.6), rgba(16, 185, 129, 0.4))",
+                          "linear-gradient(90deg, rgba(16, 185, 129, 0.4), rgba(6, 182, 212, 0.6))",
+                          "linear-gradient(90deg, rgba(6, 182, 212, 0.6), rgba(16, 185, 129, 0.4))",
+                        ],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
+                    />
 
-                    {/* Button glass */}
-                    <div className="relative px-6 py-4 bg-white/[0.08] backdrop-blur-md rounded-2xl border border-white/[0.15] shadow-[0_4px_24px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] group-hover:bg-white/[0.12] group-hover:border-white/[0.25] transition-all duration-300">
-                      <span className="text-white font-semibold text-base tracking-wide">
-                        {t("about.cta.contact")}
-                      </span>
+                    {/* Button with vertical gradient border - blue top, green bottom */}
+                    <div className="relative p-[2px] rounded-2xl bg-gradient-to-b from-cyan-400 via-teal-400 to-emerald-400 group-hover:from-cyan-300 group-hover:via-teal-300 group-hover:to-emerald-300 transition-all duration-300">
+                      {/* Inner button */}
+                      <div className="relative px-6 py-4 rounded-[14px] bg-gray-900/90 backdrop-blur-md group-hover:bg-gray-900/70 transition-all duration-300 overflow-hidden">
+                        {/* Shimmer effect on hover */}
+                        <motion.div
+                          className="absolute inset-0 opacity-0 group-hover:opacity-100"
+                          style={{
+                            background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%)",
+                          }}
+                          initial={{ x: "-100%" }}
+                          whileHover={{
+                            x: "100%",
+                            transition: { duration: 0.6, ease: "easeInOut" }
+                          }}
+                        />
+
+                        {/* Text with horizontal gradient */}
+                        <span
+                          className="relative text-lg font-bold tracking-wide"
+                          style={{
+                            background: "linear-gradient(90deg, #22d3ee 0%, #2dd4bf 50%, #10b981 100%)",
+                            WebkitBackgroundClip: "text",
+                            WebkitTextFillColor: "transparent",
+                          }}
+                        >
+                          {t("about.cta.hire")}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Floating particles on hover */}
+                    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                      {[...Array(6)].map((_, i) => (
+                        <motion.div
+                          key={i}
+                          className="absolute w-1 h-1 rounded-full"
+                          style={{
+                            left: `${15 + i * 15}%`,
+                            bottom: "20%",
+                            background: i % 2 === 0 ? "#22d3ee" : "#10b981",
+                          }}
+                          animate={{
+                            y: [-5, -25, -5],
+                            opacity: [0, 1, 0],
+                            scale: [0.5, 1, 0.5],
+                          }}
+                          transition={{
+                            duration: 1.5,
+                            repeat: Infinity,
+                            delay: i * 0.2,
+                            ease: "easeOut",
+                          }}
+                        />
+                      ))}
                     </div>
                   </motion.button>
                 </motion.div>
