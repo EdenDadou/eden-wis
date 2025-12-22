@@ -5,12 +5,14 @@ import * as THREE from "three";
 export default function AnimatedStars() {
   const starsRef = useRef<THREE.Points>(null);
   const bigStarsRef = useRef<THREE.Points>(null);
+  const lastUpdateRef = useRef(0);
 
   const [positions, bigPositions] = useMemo(() => {
-    const pos = new Float32Array(500 * 3);
-    const bigPos = new Float32Array(50 * 3);
+    // Reduced from 500 to 300 stars for better performance
+    const pos = new Float32Array(300 * 3);
+    const bigPos = new Float32Array(30 * 3);
 
-    for (let i = 0; i < 500; i++) {
+    for (let i = 0; i < 300; i++) {
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
       const r = 30 + Math.random() * 15;
@@ -19,7 +21,7 @@ export default function AnimatedStars() {
       pos[i * 3 + 2] = r * Math.cos(phi);
     }
 
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 30; i++) {
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
       const r = 25 + Math.random() * 10;
@@ -31,8 +33,12 @@ export default function AnimatedStars() {
     return [pos, bigPos];
   }, []);
 
+  // Throttle to ~30fps for background elements (update every ~33ms)
   useFrame((state) => {
     const time = state.clock.elapsedTime;
+    if (time - lastUpdateRef.current < 0.033) return;
+    lastUpdateRef.current = time;
+
     if (starsRef.current) {
       starsRef.current.rotation.y = time * 0.01;
       starsRef.current.rotation.x = Math.sin(time * 0.005) * 0.1;

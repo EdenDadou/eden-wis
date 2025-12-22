@@ -44,6 +44,8 @@ export function ProjectCard({ project, index, onClick }: ProjectCardProps) {
                     <img
                       src={project.image}
                       alt={t(project.titleKey)}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent" />
@@ -70,6 +72,8 @@ export function ProjectCard({ project, index, onClick }: ProjectCardProps) {
                   <img
                     src={project.image}
                     alt={t(project.titleKey)}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent" />

@@ -2,17 +2,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 
+// Optimized images (WebP with JPEG fallback, ~400KB total vs 12MB original)
 const profileImages = [
-  "/images/profile/1.JPG",
-  "/images/profile/2.jpg",
-  "/images/profile/3.JPG",
-  "/images/profile/4.jpg",
-  "/images/profile/5.jpg",
-  "/images/profile/6.jpg",
-  "/images/profile/7.jpg",
-  "/images/profile/8.jpg",
-  "/images/profile/9.jpg",
-  "/images/profile/10.jpg",
+  "/images/profile-optimized/1.webp",
+  "/images/profile-optimized/2.webp",
+  "/images/profile-optimized/3.webp",
+  "/images/profile-optimized/4.webp",
+  "/images/profile-optimized/5.webp",
+  "/images/profile-optimized/6.webp",
+  "/images/profile-optimized/7.webp",
+  "/images/profile-optimized/8.webp",
+  "/images/profile-optimized/9.webp",
+  "/images/profile-optimized/10.webp",
 ];
 
 interface AboutSectionProps {
@@ -179,6 +180,8 @@ export function AboutSection({ section, showCard, targetSection, isNavigating, o
                               key={currentImageIndex}
                               src={profileImages[currentImageIndex]}
                               alt="Eden Wisniewski"
+                              loading="lazy"
+                              decoding="async"
                               className="w-full h-full object-cover absolute inset-0"
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}

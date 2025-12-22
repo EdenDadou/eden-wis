@@ -13,7 +13,12 @@
       "Bash(lsof:*)",
       "Bash(mkdir:*)",
       "Bash(curl:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(ls:*)",
+      "Bash(xargs basename:*)",
+      "Bash(du:*)",
+      "Bash(find:*)",
+      "Bash(node scripts/optimize-images.js:*)"
     ]
   }
 }

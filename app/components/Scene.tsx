@@ -26,8 +26,18 @@ export default function Scene({ onSectionChange, onExperienceSelect, selectedExp
             near: 0.1,
             far: 1000
           }}
-          dpr={[1, 2]}
-          gl={{ antialias: true, alpha: true }}
+          // Limit DPR to 1.5 max for better performance (was [1, 2])
+          dpr={[1, 1.5]}
+          gl={{
+            antialias: true,
+            alpha: true,
+            // Performance optimizations
+            powerPreference: 'high-performance',
+            stencil: false,
+            depth: true,
+          }}
+          // Always render for animations
+          frameloop="always"
         >
           <Suspense fallback={null}>
             <Experience

@@ -1,8 +1,11 @@
 import type { Route } from "./+types/home";
-import Scene from "../components/Scene";
+import { lazy, Suspense } from "react";
 import "../styles/global.css";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { AnimatePresence } from "framer-motion";
+
+// Lazy load the heavy 3D Scene component
+const Scene = lazy(() => import("../components/Scene"));
 import { TopNav, SectionIndicator } from "../components/navigation";
 import {
   HeroSection,
@@ -257,16 +260,22 @@ export default function Home() {
 
   return (
     <main className="w-full h-screen bg-linear-to-b from-[#0a192f] via-[#0d2847] to-[#164e63] relative overflow-hidden">
-      <Scene
-        onSectionChange={setSection}
-        onExperienceSelect={setSelectedExperience}
-        selectedExperienceId={selectedExperience?.id || null}
-        detailScrollOffset={detailScrollOffset}
-        targetSection={targetSection}
-        onNavigationComplete={handleNavigationComplete}
-        onFirstSectionAnimationComplete={handleFirstSectionAnimationComplete}
-        onSkillClick={handleSkillClick}
-      />
+      <Suspense fallback={
+        <div className="fixed inset-0 z-0 flex items-center justify-center bg-linear-to-b from-[#0a192f] via-[#0d2847] to-[#164e63]">
+          <div className="w-12 h-12 border-4 border-cyan-500/30 border-t-cyan-500 rounded-full animate-spin" />
+        </div>
+      }>
+        <Scene
+          onSectionChange={setSection}
+          onExperienceSelect={setSelectedExperience}
+          selectedExperienceId={selectedExperience?.id || null}
+          detailScrollOffset={detailScrollOffset}
+          targetSection={targetSection}
+          onNavigationComplete={handleNavigationComplete}
+          onFirstSectionAnimationComplete={handleFirstSectionAnimationComplete}
+          onSkillClick={handleSkillClick}
+        />
+      </Suspense>
 
       {/* Top Navigation Menu */}
       <TopNav section={section} onNavigate={navigateToSection} />

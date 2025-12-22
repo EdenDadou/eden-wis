@@ -14,23 +14,17 @@ import "./lib/i18n";
 
 export const links: Route.LinksFunction = () => [
   { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+  // Preconnect to Google Fonts for decorative fonts only
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
     href: "https://fonts.gstatic.com",
     crossOrigin: "anonymous",
   },
+  // Only decorative fonts from Google (Inter & Outfit are loaded locally via fontsource)
   {
     rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Outfit:wght@300;400;700;900&display=swap",
-  },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Story+Script&display=swap",
-  },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap",
+    href: "https://fonts.googleapis.com/css2?family=Story+Script&family=Luckiest+Guy&display=swap",
   },
 ];
 
