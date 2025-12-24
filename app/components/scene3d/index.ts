@@ -16,3 +16,6 @@ export * from "./world";
 // Other 3D elements
 export { default as PixelHeart3D } from "./PixelHeart3D";
 export { default as ScrollUpdater } from "./ScrollUpdater";
+
+// Cache and preloading
+export * from "./cache";

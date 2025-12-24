@@ -1,6 +1,14 @@
 import { useFrame } from "@react-three/fiber";
-import { useRef } from "react";
+import { useRef, useMemo, memo } from "react";
 import * as THREE from "three";
+import {
+  getSatelliteBodyGeometry,
+  getSatellitePanelGeometry,
+  getSatelliteLightGeometry,
+  getSatelliteBodyMaterial,
+  getSatellitePanelMaterial,
+  getSatelliteLightMaterial,
+} from "../cache";
 
 interface SatelliteProps {
   radius: number;
@@ -9,9 +17,17 @@ interface SatelliteProps {
   tilt: number;
 }
 
-export default function Satellite({ radius, speed, offset, tilt }: SatelliteProps) {
+export default memo(function Satellite({ radius, speed, offset, tilt }: SatelliteProps) {
   const ref = useRef<THREE.Group>(null);
   const blinkRef = useRef<THREE.Mesh>(null);
+
+  // Use cached geometries and materials
+  const bodyGeo = useMemo(() => getSatelliteBodyGeometry(), []);
+  const panelGeo = useMemo(() => getSatellitePanelGeometry(), []);
+  const lightGeo = useMemo(() => getSatelliteLightGeometry(), []);
+  const bodyMat = useMemo(() => getSatelliteBodyMaterial(), []);
+  const panelMat = useMemo(() => getSatellitePanelMaterial(), []);
+  const lightMat = useMemo(() => getSatelliteLightMaterial(), []);
 
   useFrame((state) => {
     if (!ref.current) return;
@@ -37,24 +53,12 @@ export default function Satellite({ radius, speed, offset, tilt }: SatelliteProp
   return (
     <group ref={ref}>
       {/* Satellite body */}
-      <mesh>
-        <boxGeometry args={[0.1, 0.05, 0.05]} />
-        <meshStandardMaterial color="#888888" metalness={0.8} roughness={0.2} />
-      </mesh>
+      <mesh geometry={bodyGeo} material={bodyMat} />
       {/* Solar panels */}
-      <mesh position={[0.12, 0, 0]}>
-        <boxGeometry args={[0.15, 0.01, 0.08]} />
-        <meshStandardMaterial color="#1e3a5f" metalness={0.5} roughness={0.3} />
-      </mesh>
-      <mesh position={[-0.12, 0, 0]}>
-        <boxGeometry args={[0.15, 0.01, 0.08]} />
-        <meshStandardMaterial color="#1e3a5f" metalness={0.5} roughness={0.3} />
-      </mesh>
+      <mesh position={[0.12, 0, 0]} geometry={panelGeo} material={panelMat} />
+      <mesh position={[-0.12, 0, 0]} geometry={panelGeo} material={panelMat} />
       {/* Blinking light */}
-      <mesh ref={blinkRef} position={[0, 0.04, 0]}>
-        <sphereGeometry args={[0.015, 8, 8]} />
-        <meshBasicMaterial color="#ef4444" transparent opacity={1} />
-      </mesh>
+      <mesh ref={blinkRef} position={[0, 0.04, 0]} geometry={lightGeo} material={lightMat} />
     </group>
   );
-}
+});

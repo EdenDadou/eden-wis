@@ -2,128 +2,25 @@ import { useFrame } from "@react-three/fiber";
 import { useRef, useMemo, memo, useLayoutEffect } from "react";
 import * as THREE from "three";
 import { ORBIT_RADIUS } from "./camera.constants";
-
-// === CACHED GEOMETRY & MATERIALS (module-level singleton) ===
-let cachedGeometry: THREE.BoxGeometry | null = null;
-let cachedHeartMaterial: THREE.MeshStandardMaterial | null = null;
-let cachedRingMaterial1: THREE.MeshBasicMaterial | null = null;
-let cachedRingMaterial2: THREE.MeshBasicMaterial | null = null;
-let cachedRingMaterial3: THREE.MeshBasicMaterial | null = null;
-let cachedParticleMaterial: THREE.PointsMaterial | null = null;
-let cachedPositions: Float32Array | null = null;
-let cachedInstanceCount = 0;
-
-const SIZE = 0.36;
-
-function getBoxGeometry(): THREE.BoxGeometry {
-  if (!cachedGeometry) {
-    // Minimal segments for performance
-    cachedGeometry = new THREE.BoxGeometry(SIZE, SIZE, SIZE, 1, 1, 1);
-  }
-  return cachedGeometry;
-}
-
-function getHeartMaterial(): THREE.MeshStandardMaterial {
-  if (!cachedHeartMaterial) {
-    cachedHeartMaterial = new THREE.MeshStandardMaterial({
-      color: 0x22c55e,
-      emissive: 0x22c55e,
-      emissiveIntensity: 0.3,
-      metalness: 0.3,
-      roughness: 0.4,
-    });
-  }
-  return cachedHeartMaterial;
-}
-
-function getRingMaterials(): [THREE.MeshBasicMaterial, THREE.MeshBasicMaterial, THREE.MeshBasicMaterial] {
-  if (!cachedRingMaterial1) {
-    cachedRingMaterial1 = new THREE.MeshBasicMaterial({ color: 0x22c55e, transparent: true, opacity: 0.25 });
-    cachedRingMaterial2 = new THREE.MeshBasicMaterial({ color: 0x4ade80, transparent: true, opacity: 0.12 });
-    cachedRingMaterial3 = new THREE.MeshBasicMaterial({ color: 0x86efac, transparent: true, opacity: 0.06 });
-  }
-  return [cachedRingMaterial1, cachedRingMaterial2!, cachedRingMaterial3!];
-}
-
-function getParticleMaterial(opacity: number): THREE.PointsMaterial {
-  if (!cachedParticleMaterial) {
-    cachedParticleMaterial = new THREE.PointsMaterial({
-      size: 0.08,
-      color: 0x4ade80,
-      transparent: true,
-      opacity: 0.6 * opacity,
-      blending: THREE.AdditiveBlending,
-      sizeAttenuation: true,
-    });
-  }
-  return cachedParticleMaterial;
-}
-
-// Pre-compute heart positions once at module load
-function getHeartData(): { positions: Float32Array; count: number } {
-  if (cachedPositions) {
-    return { positions: cachedPositions, count: cachedInstanceCount };
-  }
-
-  const resolution = 12;
-  const scale = 0.38;
-  const tempPositions: number[] = [];
-
-  const isInsideHeart = (x: number, y: number, z: number): boolean => {
-    const x2 = x * x;
-    const y2 = y * y;
-    const z2 = z * z;
-    const a = x2 + 2.25 * z2 + y2 - 1; // 9/4 = 2.25
-    const value = a * a * a - x2 * y2 * y - 0.1125 * z2 * y2 * y; // 9/80 = 0.1125
-    return value <= 0;
-  };
-
-  for (let ix = -resolution; ix <= resolution; ix++) {
-    const x = (ix / resolution) * 1.3;
-    for (let iy = -resolution; iy <= resolution; iy++) {
-      const y = (iy / resolution) * 1.3;
-      for (let iz = -resolution; iz <= resolution; iz++) {
-        const z = (iz / resolution) * 1.3;
-        if (isInsideHeart(x, y, z)) {
-          tempPositions.push(ix * scale, iy * scale, iz * scale);
-        }
-      }
-    }
-  }
-
-  cachedPositions = new Float32Array(tempPositions);
-  cachedInstanceCount = tempPositions.length / 3;
-  return { positions: cachedPositions, count: cachedInstanceCount };
-}
-
-// Pre-generate on module load
-getHeartData();
-
-// === CACHED RING GEOMETRIES ===
-let cachedRingGeo1: THREE.TorusGeometry | null = null;
-let cachedRingGeo2: THREE.TorusGeometry | null = null;
-let cachedRingGeo3: THREE.TorusGeometry | null = null;
-
-function getRingGeometries(): [THREE.TorusGeometry, THREE.TorusGeometry, THREE.TorusGeometry] {
-  if (!cachedRingGeo1) {
-    // Reduced segments: 8 radial, 64 tubular (was 16, 120)
-    cachedRingGeo1 = new THREE.TorusGeometry(ORBIT_RADIUS, 0.04, 8, 64);
-    cachedRingGeo2 = new THREE.TorusGeometry(ORBIT_RADIUS * 0.75, 0.02, 8, 64);
-    cachedRingGeo3 = new THREE.TorusGeometry(ORBIT_RADIUS * 0.82, 0.015, 8, 64);
-  }
-  return [cachedRingGeo1, cachedRingGeo2!, cachedRingGeo3!];
-}
+import {
+  getHeartBoxGeometry,
+  getHeartMaterial,
+  getHeartPositionsData,
+  getHeartRingGeometries,
+  getHeartRingMaterials,
+  getHeartParticleMaterial,
+} from "./cache";
 
 // === OPTIMIZED HEART VOXELS ===
 const HeartVoxels = memo(function HeartVoxels() {
   const meshRef = useRef<THREE.InstancedMesh>(null);
-  const { count } = getHeartData();
-  const geometry = getBoxGeometry();
-  const material = getHeartMaterial();
+  const { count } = getHeartPositionsData();
+  const geometry = useMemo(() => getHeartBoxGeometry(), []);
+  const material = useMemo(() => getHeartMaterial(), []);
 
   // Pre-computed matrix array for initialization
   const matrices = useMemo(() => {
-    const { positions, count } = getHeartData();
+    const { positions, count } = getHeartPositionsData();
     const arr = new Float32Array(count * 16);
     const matrix = new THREE.Matrix4();
 
@@ -169,7 +66,7 @@ const PARTICLE_COUNT = 50; // Reduced from 100
 
 const HeartParticles = memo(function HeartParticles() {
   const particlesRef = useRef<THREE.Points>(null);
-  const material = getParticleMaterial(0.4);
+  const material = useMemo(() => getHeartParticleMaterial(), []);
 
   // Use Float32Array for velocities too (cache-friendly)
   const [positions, velocities, lifetimes] = useMemo(() => {
@@ -233,8 +130,8 @@ const HeartParticles = memo(function HeartParticles() {
 
 // === STATIC RINGS ===
 const OrbitRings = memo(function OrbitRings() {
-  const [, geo2, geo3] = getRingGeometries();
-  const [, mat2, mat3] = getRingMaterials();
+  const [, geo2, geo3] = useMemo(() => getHeartRingGeometries(ORBIT_RADIUS), []);
+  const [, mat2, mat3] = useMemo(() => getHeartRingMaterials(), []);
 
   return (
     <>

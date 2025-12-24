@@ -3,6 +3,7 @@ import { lazy, Suspense } from "react";
 import "../styles/global.css";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { AnimatePresence } from "framer-motion";
+import LoadingScreen from "../components/LoadingScreen";
 
 // Lazy load the heavy 3D Scene component
 const Scene = lazy(() => import("../components/Scene"));
@@ -27,6 +28,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
+  const [isLoading, setIsLoading] = useState(true);
   const [section, setSection] = useState(0);
   const [selectedExperience, setSelectedExperience] =
     useState<Experience | null>(null);
@@ -37,6 +39,10 @@ export default function Home() {
   const [isFirstCardReady, setIsFirstCardReady] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
   const prevSectionRef = useRef(0);
+
+  const handleLoadingComplete = useCallback(() => {
+    setIsLoading(false);
+  }, []);
 
   // Handle when section 1 3D animation is complete
   const handleFirstSectionAnimationComplete = useCallback(() => {
@@ -60,15 +66,28 @@ export default function Home() {
 
   // Navigation functions for menu
   const navigateToSection = useCallback((sectionNumber: number) => {
-    setSection(sectionNumber);
-    setTargetSection(sectionNumber);
+    // Don't change section immediately for cinematic navigation (from/to hero)
+    // Let the camera animation complete first
+    const isFromHero = section === 0;
+    const isToHero = sectionNumber === 0;
+    const isCinematicNavigation = isFromHero || isToHero;
+
+    if (isCinematicNavigation) {
+      // For cinematic navigation, only set targetSection
+      // section will be updated via onSectionChange from ScrollUpdater
+      setTargetSection(sectionNumber);
+    } else {
+      setSection(sectionNumber);
+      setTargetSection(sectionNumber);
+    }
+
     setShowCard(false);
     setIsNavigating(true);
 
     setTimeout(() => {
       setShowCard(true);
     }, 200);
-  }, []);
+  }, [section]);
 
   // Fast navigation back to skills menu - instant card display
   const navigateBackToSkillsMenu = useCallback(() => {
@@ -260,11 +279,10 @@ export default function Home() {
 
   return (
     <main className="w-full h-screen bg-linear-to-b from-[#0a192f] via-[#0d2847] to-[#164e63] relative overflow-hidden">
-      <Suspense fallback={
-        <div className="fixed inset-0 z-0 flex items-center justify-center bg-linear-to-b from-[#0a192f] via-[#0d2847] to-[#164e63]">
-          <div className="w-12 h-12 border-4 border-cyan-500/30 border-t-cyan-500 rounded-full animate-spin" />
-        </div>
-      }>
+      {/* Loading screen with preloading */}
+      {isLoading && <LoadingScreen onLoadingComplete={handleLoadingComplete} />}
+
+      <Suspense fallback={null}>
         <Scene
           onSectionChange={setSection}
           onExperienceSelect={setSelectedExperience}
@@ -303,6 +321,8 @@ export default function Home() {
       {/* Section 10 - Expérience */}
       <ExperienceSection
         section={section}
+        targetSection={targetSection}
+        isNavigating={isNavigating}
         selectedExperience={selectedExperience}
         detailScrollOffset={detailScrollOffset}
         targetOffsetRef={targetOffsetRef}

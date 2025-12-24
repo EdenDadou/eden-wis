@@ -220,7 +220,8 @@ export function useAnimations({ currentSection, refs }: UseAnimationsProps) {
       // All skill sections (2-9) are now detail views
       const isInDetailSection = currentSection >= FRONTEND_START && currentSection <= DEVOPS_END;
 
-      const dimmedOpacity = 0.08;
+      const dimmedOpacity = 0.1;
+      const activeOpacity = 0.45;
 
       // Apply section fade opacity for orbital navigation
       const sectionFade = fadeOpacity.current;
@@ -228,20 +229,20 @@ export function useAnimations({ currentSection, refs }: UseAnimationsProps) {
       if (refs.frontendBoxMatRef.current) {
         const mat = refs.frontendBoxMatRef.current as any;
         mat._externallyManaged = true; // Prevent FadingSection from modifying
-        // Keep active category at 0.8, dim inactive ones
-        const finalOpacity = isInDetailSection && !isFrontendActive ? dimmedOpacity : 0.8;
+        // Keep active category at lower opacity, dim inactive ones
+        const finalOpacity = isInDetailSection && !isFrontendActive ? dimmedOpacity : activeOpacity;
         mat.opacity = finalOpacity * baseOpacity * sectionFade;
       }
       if (refs.backendBoxMatRef.current) {
         const mat = refs.backendBoxMatRef.current as any;
         mat._externallyManaged = true;
-        const finalOpacity = isInDetailSection && !isBackendActive ? dimmedOpacity : 0.8;
+        const finalOpacity = isInDetailSection && !isBackendActive ? dimmedOpacity : activeOpacity;
         mat.opacity = finalOpacity * baseOpacity * sectionFade;
       }
       if (refs.devopsBoxMatRef.current) {
         const mat = refs.devopsBoxMatRef.current as any;
         mat._externallyManaged = true;
-        const finalOpacity = isInDetailSection && !isDevopsActive ? dimmedOpacity : 0.8;
+        const finalOpacity = isInDetailSection && !isDevopsActive ? dimmedOpacity : activeOpacity;
         mat.opacity = finalOpacity * baseOpacity * sectionFade;
       }
 
