@@ -18,7 +18,10 @@
       "Bash(xargs basename:*)",
       "Bash(du:*)",
       "Bash(find:*)",
-      "Bash(node scripts/optimize-images.js:*)"
+      "Bash(node scripts/optimize-images.js:*)",
+      "Bash(for f in *.png)",
+      "Bash(do echo \"$f\")",
+      "Bash(done)"
     ]
   }
 }

@@ -4,7 +4,7 @@ import * as THREE from "three";
 import { easing } from "maath";
 import type { Experience as ExperienceType } from "../Timeline3D";
 import { ORBIT_RADIUS } from "./camera.constants";
-import { getCameraPositionForSection } from "./camera.utils";
+import { getCameraPositionForSection, getSkillGroup } from "./camera.utils";
 
 export interface CameraRigProps {
   selectedExperience: ExperienceType | null;
@@ -29,6 +29,7 @@ export default function CameraRig({
   const navTargetLookAt = useRef(new THREE.Vector3());
   const navStartLookAt = useRef(new THREE.Vector3());
   const navAnimationDuration = useRef(1.2);
+  const navTransitionType = useRef<'skill-same' | 'skill-different' | 'hero' | 'major'>('major');
 
   useFrame((state, delta) => {
     // Handle navigation to target section
@@ -49,16 +50,45 @@ export default function CameraRig({
 
       const distance = navStartPos.current.distanceTo(navTargetPos.current);
 
-      // Longer, smoother duration for hero -> skills transition
+      // Calculate animation duration based on transition type
+      const prevSection = lastTargetSection.current ?? 0;
+      const isSkillTransition = prevSection >= 1 && prevSection <= 9 && targetSection >= 1 && targetSection <= 9;
+      const isSameSkillGroup = getSkillGroup(prevSection) === getSkillGroup(targetSection);
+      const isHeroTransition = prevSection === 0 || targetSection === 0;
+      const isMajorSectionTransition = !isSkillTransition && !isHeroTransition;
+
       let baseDuration: number;
       let maxDuration: number;
 
-      baseDuration = 1.0;
-      maxDuration = 1.8;
+      if (isSkillTransition && isSameSkillGroup) {
+        // Same skill group: quick, snappy transition
+        baseDuration = 0.5;
+        maxDuration = 0.8;
+        navTransitionType.current = 'skill-same';
+      } else if (isSkillTransition) {
+        // Different skill groups: smooth arc transition
+        baseDuration = 0.7;
+        maxDuration = 1.2;
+        navTransitionType.current = 'skill-different';
+      } else if (isHeroTransition) {
+        // Hero to/from skills: dramatic, slower
+        baseDuration = 1.2;
+        maxDuration = 2.0;
+        navTransitionType.current = 'hero';
+      } else if (isMajorSectionTransition) {
+        // Between major sections (Experience, Portfolio, etc.)
+        baseDuration = 1.0;
+        maxDuration = 1.5;
+        navTransitionType.current = 'major';
+      } else {
+        baseDuration = 1.0;
+        maxDuration = 1.8;
+        navTransitionType.current = 'major';
+      }
 
       navAnimationDuration.current = Math.min(
         maxDuration,
-        Math.max(baseDuration, baseDuration + distance * 0.02)
+        Math.max(baseDuration, baseDuration + distance * 0.015)
       );
 
       navAnimationProgress.current = 0;
@@ -79,42 +109,79 @@ export default function CameraRig({
       }
 
       const t = navAnimationProgress.current;
+      const transitionType = navTransitionType.current;
 
-      // Smooth ease-in-out cubic for all transitions (no abrupt changes)
-      const easeCustom =
-        t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      // Different easing curves based on transition type
+      let easePosition: number;
+      let easeLookAt: number;
 
-      // Direct interpolation without zoom-out arc effect
-      const x = THREE.MathUtils.lerp(
+      if (transitionType === 'skill-same') {
+        // Snappy ease-out for same group transitions
+        easePosition = 1 - Math.pow(1 - t, 3);
+        easeLookAt = 1 - Math.pow(1 - t, 2.5);
+      } else if (transitionType === 'skill-different') {
+        // Smooth ease-in-out with slight overshoot feel
+        easePosition = t < 0.5
+          ? 4 * t * t * t
+          : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        easeLookAt = t < 0.5
+          ? 2 * t * t
+          : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      } else if (transitionType === 'hero') {
+        // Dramatic ease-in-out quint for hero transitions
+        easePosition = t < 0.5
+          ? 16 * t * t * t * t * t
+          : 1 - Math.pow(-2 * t + 2, 5) / 2;
+        easeLookAt = easePosition;
+      } else {
+        // Standard smooth cubic for major section transitions
+        easePosition = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        easeLookAt = easePosition;
+      }
+
+      // Calculate base interpolated position
+      let x = THREE.MathUtils.lerp(
         navStartPos.current.x,
         navTargetPos.current.x,
-        easeCustom
+        easePosition
       );
-      const y = THREE.MathUtils.lerp(
+      let y = THREE.MathUtils.lerp(
         navStartPos.current.y,
         navTargetPos.current.y,
-        easeCustom
+        easePosition
       );
-      const z = THREE.MathUtils.lerp(
+      let z = THREE.MathUtils.lerp(
         navStartPos.current.z,
         navTargetPos.current.z,
-        easeCustom
+        easePosition
       );
+
+      // Add subtle arc effect for skill-different transitions (camera pulls back slightly)
+      if (transitionType === 'skill-different') {
+        const arcHeight = Math.sin(t * Math.PI) * 0.8; // Gentle arc
+        z += arcHeight;
+      }
+
+      // Add gentle sway for hero transitions
+      if (transitionType === 'hero') {
+        const sway = Math.sin(t * Math.PI) * 0.3;
+        x += sway * (navTargetPos.current.x > navStartPos.current.x ? 1 : -1);
+      }
 
       const lookAtX = THREE.MathUtils.lerp(
         navStartLookAt.current.x,
         navTargetLookAt.current.x,
-        easeCustom
+        easeLookAt
       );
       const lookAtY = THREE.MathUtils.lerp(
         navStartLookAt.current.y,
         navTargetLookAt.current.y,
-        easeCustom
+        easeLookAt
       );
       const lookAtZ = THREE.MathUtils.lerp(
         navStartLookAt.current.z,
         navTargetLookAt.current.z,
-        easeCustom
+        easeLookAt
       );
 
       state.camera.position.set(x, y, z);

@@ -51,26 +51,93 @@ export const projects: Project[] = [
     type: "dashboard",
   },
   {
-    id: "swift-delivery",
-    titleKey: "portfolio.projects.swiftDelivery.title",
-    descriptionKey: "portfolio.projects.swiftDelivery.description",
-    longDescriptionKey: "portfolio.projects.swiftDelivery.longDescription",
-    tags: ["React Native", "Firebase", "Google Maps", "Node.js", "Socket.io"],
-    color: "#10B981",
-    accentColor: "#6EE7B7",
-    image: "https://images.unsplash.com/photo-1526367790999-0150786686a2?w=1200&h=800&fit=crop",
+    id: "tchee",
+    titleKey: "portfolio.projects.tchee.title",
+    descriptionKey: "portfolio.projects.tchee.description",
+    longDescriptionKey: "portfolio.projects.tchee.longDescription",
+    tags: ["React Native", "Expo", "React Router", "Stripe", "Orange Money", "MySQL", "Google Maps", "Firebase", "GitHub Actions"],
+    color: "#5DD3F3",
+    accentColor: "#A7E8F9",
+    image: "/images/portfolio/tchee/tchee-1.png",
+    icon: "/images/portfolio/tchee/icon.png",
     mockups: [
-      "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1616348436168-de43ad0db179?w=800&h=600&fit=crop",
+      "/images/portfolio/tchee/tchee-2.png",
+      "/images/portfolio/tchee/tchee-3.png",
+      "/images/portfolio/tchee/tchee-4.png",
+      "/images/portfolio/tchee/tchee-5.png",
+      "/images/portfolio/tchee/tchee-6.png",
+      "/images/portfolio/tchee/tchee-7.png",
+      "/images/portfolio/tchee/tchee-dashboard-users.png",
     ],
-    year: "2023",
-    duration: "5 mois",
-    client: "Swift Logistics",
-    role: "Mobile Lead",
+    videos: [
+      { src: "/images/portfolio/tchee/tchee-dashboard.mov", title: "Dashboard Admin" },
+      { src: "/images/portfolio/tchee/tchee-notif-push.mov", title: "Notifications Push" },
+      { src: "/images/portfolio/tchee/tchee-orange-payment.mov", title: "Paiement Orange Money" },
+    ],
+    sections: [
+      {
+        key: "overview",
+        media: [
+          { type: "image", src: "/images/portfolio/tchee/tchee-1.png", title: "Écran d'accueil" },
+        ],
+      },
+      {
+        key: "passenger",
+        media: [
+          { type: "image", src: "/images/portfolio/tchee/tchee-2.png", title: "Recherche d'adresse" },
+          { type: "image", src: "/images/portfolio/tchee/tchee-3.png", title: "Estimation du trajet" },
+        ],
+      },
+      {
+        key: "tracking",
+        media: [
+          { type: "image", src: "/images/portfolio/tchee/tchee-4.png", title: "Suivi du chauffeur" },
+          { type: "image", src: "/images/portfolio/tchee/tchee-5.png", title: "Trajet en cours" },
+        ],
+      },
+      {
+        key: "payments",
+        media: [
+          { type: "video", src: "/images/portfolio/tchee/tchee-orange-payment.mov", title: "Paiement Orange Money" },
+        ],
+      },
+      {
+        key: "driver",
+        media: [
+          { type: "image", src: "/images/portfolio/tchee/tchee-6.png", title: "Interface chauffeur" },
+        ],
+      },
+      {
+        key: "dashboard",
+        media: [
+          { type: "image", src: "/images/portfolio/tchee/tchee-7.png", title: "Dashboard gains" },
+        ],
+      },
+      {
+        key: "notifications",
+        media: [
+          { type: "video", src: "/images/portfolio/tchee/tchee-notif-push.mov", title: "Notifications push en action" },
+        ],
+      },
+      {
+        key: "admin",
+        media: [
+          { type: "video", src: "/images/portfolio/tchee/tchee-dashboard.mov", title: "Dashboard administrateur" },
+          { type: "image", src: "/images/portfolio/tchee/tchee-dashboard-users.png", title: "Gestion des utilisateurs" },
+        ],
+      },
+      {
+        key: "technical",
+      },
+    ],
+    year: "2025",
+    duration: "6 mois",
+    client: "Tchee",
+    role: "Lead Developer Full-Stack",
     stats: [
-      { label: "Livraisons", value: "1M+" },
-      { label: "Rating", value: "4.9" },
-      { label: "Drivers", value: "2K+" },
+      { label: "Paiements", value: "3 types" },
+      { label: "Platforms", value: "iOS/Android" },
+      { label: "APIs", value: "20+" },
     ],
     type: "mobile",
   },

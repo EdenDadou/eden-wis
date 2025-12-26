@@ -31,11 +31,11 @@ const projects: Project[] = [
     type: 'dashboard',
   },
   {
-    id: 'swift-delivery',
-    titleKey: 'portfolio.projects.swiftDelivery.title',
-    color: '#10B981',
-    accentColor: '#6EE7B7',
-    tags: ['React Native', 'Firebase', 'Maps'],
+    id: 'tchee',
+    titleKey: 'portfolio.projects.tchee.title',
+    color: '#5DD3F3',
+    accentColor: '#A7E8F9',
+    tags: ['React Native', 'Expo', 'Stripe'],
     type: 'mobile',
   },
 ];
@@ -306,7 +306,7 @@ function CentralHub3D() {
       {[
         { radius: 0.8, color: '#8B5CF6' },
         { radius: 1.0, color: '#06B6D4' },
-        { radius: 1.2, color: '#10B981' },
+        { radius: 1.2, color: '#5DD3F3' },
       ].map((ring, i) => (
         <mesh key={i} rotation={[Math.PI / 2, 0, 0]}>
           <torusGeometry args={[ring.radius, 0.015, 8, 48]} />

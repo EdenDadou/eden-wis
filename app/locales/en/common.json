@@ -208,20 +208,58 @@
           "Kubernetes-orchestrated microservices architecture"
         ]
       },
-      "swiftDelivery": {
-        "title": "Swift Delivery",
-        "description": "Revolutionary last-mile delivery app with real-time tracking, AI route optimization, and seamless driver-customer communication.",
-        "longDescription": "Swift Delivery is a comprehensive logistics solution that has transformed last-mile delivery operations for a major logistics company. The mobile application features real-time GPS tracking accurate to 3 meters, AI-powered route optimization reducing delivery times by 35%, and instant push notifications keeping customers informed at every step. With over 1 million successful deliveries and a 4.9-star rating, the app has become the industry benchmark for delivery excellence.",
+      "tchee": {
+        "title": "Tchee",
+        "description": "Complete VTC/Taxi application for the African market with real-time GPS tracking, multi-provider payments and driver document verification.",
+        "longDescription": "Tchee is a ride-hailing application (Uber/Bolt style) designed specifically for the African market. It connects passengers looking to travel with professional drivers.",
         "features": [
-          "Real-time GPS tracking (3-meter accuracy)",
-          "AI route optimization (35% faster deliveries)",
-          "Instant push notifications for delivery updates",
-          "In-app chat between drivers and customers",
-          "Offline mode with automatic sync",
-          "Driver performance analytics dashboard",
-          "Photo proof of delivery with geotag",
-          "Multi-language support (12 languages)"
-        ]
+          "Real-time GPS tracking of driver on map",
+          "Real-time price and trip time estimation",
+          "3 payment methods: Cash, Stripe, Mobile Money",
+          "Address search with Google Places autocomplete",
+          "Driver document verification workflow",
+          "Driver financial dashboard (earnings, commissions)",
+          "Cross-platform push notifications (Firebase, Notifee)",
+          "Dynamic pricing with peak hour surcharges"
+        ],
+        "sections": {
+          "overview": {
+            "title": "Overview",
+            "content": "Tchee is a complete ride-hailing solution developed to meet the specific needs of the African market. The application connects passengers and professional drivers through a smooth and intuitive mobile experience, available on iOS and Android."
+          },
+          "passenger": {
+            "title": "Passenger Experience",
+            "content": "Passengers benefit from a clean interface allowing them to book a ride in seconds. Address search uses Google Places autocomplete for quick and accurate input. Once the ride is requested, price and trip time estimates are displayed in real-time before confirmation."
+          },
+          "tracking": {
+            "title": "Real-Time GPS Tracking",
+            "content": "The core of the application relies on an accurate GPS tracking system. Passengers can follow their driver's arrival on the map, then track the journey to their destination. Positions are continuously updated via an architecture optimized to minimize battery consumption."
+          },
+          "payments": {
+            "title": "Multi-Provider Payments",
+            "content": "Tchee supports 3 payment methods adapted to the African market: cash payment for unbanked users, credit card via Stripe for international payments, and Mobile Money (Orange Money) which represents the most popular payment method in the region. The system manages the complete transaction lifecycle with webhooks and automatic reconciliation."
+          },
+          "driver": {
+            "title": "Driver Space",
+            "content": "Drivers have a dedicated application with a complete registration process including document verification (driver's license, insurance, criminal record, vehicle photos). Each document is individually validated by administration before account activation."
+          },
+          "dashboard": {
+            "title": "Financial Dashboard",
+            "content": "Drivers access a comprehensive financial dashboard displaying their real-time earnings, trip history, deducted commissions, and available balance. Detailed statistics allow performance analysis over different periods."
+          },
+          "notifications": {
+            "title": "Push Notifications",
+            "content": "The cross-platform push notification system uses Firebase Cloud Messaging for distribution and Notifee for local display. Passengers are notified at each step: driver assigned, imminent arrival, trip completed. Drivers receive new ride requests in real-time."
+          },
+          "admin": {
+            "title": "Administration",
+            "content": "A web administration dashboard allows managing the entire platform: driver document validation, user management, rate configuration (price/km, price/minute, peak hour surcharges), trip monitoring, and driver payment processing."
+          },
+          "technical": {
+            "title": "Technical Architecture",
+            "content": "The mobile application is developed in React Native with Expo SDK 54, enabling deployment on iOS and Android from a single codebase. The backend uses React Router v7 in fullstack mode with MySQL database and Prisma ORM. Authentication relies on JWT with secure refresh tokens."
+          }
+        }
       }
     }
   },

@@ -96,7 +96,7 @@ export function useSectionContent(section: number): SectionContent {
       items: [
         t("portfolio.projects.novaFashion.title"),
         t("portfolio.projects.pulseAnalytics.title"),
-        t("portfolio.projects.swiftDelivery.title"),
+        t("portfolio.projects.tchee.title"),
       ],
     },
   };

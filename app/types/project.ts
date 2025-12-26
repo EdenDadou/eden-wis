@@ -1,3 +1,14 @@
+export interface ProjectMedia {
+  type: "image" | "video";
+  src: string;
+  title?: string;
+}
+
+export interface ProjectSection {
+  key: string;
+  media?: ProjectMedia[];
+}
+
 export interface Project {
   id: string;
   titleKey: string;
@@ -7,7 +18,10 @@ export interface Project {
   color: string;
   accentColor: string;
   image: string;
+  icon?: string;
   mockups: string[];
+  videos?: { src: string; title: string }[];
+  sections?: ProjectSection[];
   year: string;
   duration: string;
   client: string;

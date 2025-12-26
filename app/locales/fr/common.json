@@ -208,20 +208,58 @@
           "Architecture microservices orchestrée par Kubernetes"
         ]
       },
-      "swiftDelivery": {
-        "title": "Swift Delivery",
-        "description": "Application de livraison révolutionnaire avec suivi temps réel, optimisation de trajets IA et communication livreur-client seamless.",
-        "longDescription": "Swift Delivery est une solution logistique complète qui a transformé les opérations de livraison dernier kilomètre pour une grande entreprise de logistique. L'application mobile propose un suivi GPS temps réel précis à 3 mètres, une optimisation de trajets par IA réduisant les temps de livraison de 35%, et des notifications push instantanées tenant les clients informés à chaque étape. Avec plus d'1 million de livraisons réussies et une note de 4.9 étoiles, l'app est devenue la référence du secteur.",
+      "tchee": {
+        "title": "Tchee",
+        "description": "Application VTC/Taxi complète pour le marché africain avec suivi GPS temps réel, paiements multi-providers et vérification documents chauffeurs.",
+        "longDescription": "Tchee est une application de transport de personnes (type Uber/Bolt) conçue spécifiquement pour le marché africain. Elle met en relation des passagers souhaitant effectuer des trajets avec des chauffeurs professionnels.",
         "features": [
-          "Suivi GPS temps réel (précision 3 mètres)",
-          "Optimisation de trajets IA (livraisons 35% plus rapides)",
-          "Notifications push instantanées pour les updates",
-          "Chat in-app entre livreurs et clients",
-          "Mode hors-ligne avec sync automatique",
-          "Dashboard analytics performance livreurs",
-          "Preuve de livraison photo avec géotag",
-          "Support multi-langues (12 langues)"
-        ]
+          "Suivi GPS temps réel du chauffeur sur la carte",
+          "Estimation prix et temps de trajet en temps réel",
+          "3 moyens de paiement : Espèces, Stripe, Mobile Money",
+          "Recherche d'adresse avec autocomplétion Google Places",
+          "Workflow de vérification documents chauffeurs",
+          "Dashboard financier chauffeurs (gains, commissions)",
+          "Notifications push cross-platform (Firebase, Notifee)",
+          "Tarification dynamique avec majorations heures de pointe"
+        ],
+        "sections": {
+          "overview": {
+            "title": "Vue d'ensemble",
+            "content": "Tchee est une solution complète de VTC développée pour répondre aux besoins spécifiques du marché africain. L'application connecte passagers et chauffeurs professionnels via une expérience mobile fluide et intuitive, disponible sur iOS et Android."
+          },
+          "passenger": {
+            "title": "Expérience Passager",
+            "content": "Le passager bénéficie d'une interface épurée permettant de commander une course en quelques secondes. La recherche d'adresse utilise l'autocomplétion Google Places pour une saisie rapide et précise. Une fois la course demandée, l'estimation du prix et du temps de trajet s'affiche en temps réel avant confirmation."
+          },
+          "tracking": {
+            "title": "Suivi GPS Temps Réel",
+            "content": "Le coeur de l'application repose sur un système de tracking GPS précis. Le passager peut suivre l'arrivée de son chauffeur sur la carte, puis le trajet jusqu'à destination. Les positions sont mises à jour en continu via une architecture optimisée pour minimiser la consommation de batterie."
+          },
+          "payments": {
+            "title": "Paiements Multi-Providers",
+            "content": "Tchee supporte 3 moyens de paiement adaptés au marché africain : paiement en espèces pour les utilisateurs non bancarisés, carte bancaire via Stripe pour les paiements internationaux, et Mobile Money (Orange Money) qui représente le mode de paiement le plus populaire dans la région. Le système gère le cycle de vie complet des transactions avec webhooks et réconciliation automatique."
+          },
+          "driver": {
+            "title": "Espace Chauffeur",
+            "content": "Les chauffeurs disposent d'une application dédiée avec un processus d'inscription complet incluant la vérification de documents (permis de conduire, assurance, casier judiciaire, photos du véhicule). Chaque document est validé individuellement par l'administration avant activation du compte."
+          },
+          "dashboard": {
+            "title": "Dashboard Financier",
+            "content": "Les chauffeurs accèdent à un tableau de bord financier complet affichant leurs gains en temps réel, l'historique des courses, les commissions prélevées et le solde disponible. Des statistiques détaillées permettent d'analyser les performances sur différentes périodes."
+          },
+          "notifications": {
+            "title": "Notifications Push",
+            "content": "Le système de notifications push cross-platform utilise Firebase Cloud Messaging pour la distribution et Notifee pour l'affichage local. Les passagers sont notifiés à chaque étape : chauffeur assigné, arrivée imminente, course terminée. Les chauffeurs reçoivent les nouvelles demandes de course en temps réel."
+          },
+          "admin": {
+            "title": "Administration",
+            "content": "Un dashboard d'administration web permet de gérer l'ensemble de la plateforme : validation des documents chauffeurs, gestion des utilisateurs, configuration des tarifs (prix/km, prix/minute, majorations heures de pointe), suivi des courses et traitement des paiements aux chauffeurs."
+          },
+          "technical": {
+            "title": "Architecture Technique",
+            "content": "L'application mobile est développée en React Native avec Expo SDK 54, permettant un déploiement sur iOS et Android depuis une base de code unique. Le backend utilise React Router v7 en mode fullstack avec une base MySQL et Prisma ORM. L'authentification repose sur JWT avec refresh tokens sécurisés."
+          }
+        }
       }
     }
   },
