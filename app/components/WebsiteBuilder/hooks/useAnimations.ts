@@ -1,22 +1,11 @@
 import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
-import { useScroll } from "@react-three/drei";
 import * as THREE from "three";
 import { useFadeOpacity } from "../../scene3d/world";
 import {
-  DEZOOM_START,
-  DEZOOM_END,
   BASE_X_OFFSET,
   SECTION_MAP,
   SECTION_BOUNDARIES,
-  POS_FRONTEND,
-  POS_MOBILE,
-  POS_BACKOFFICE,
-  POS_SERVER,
-  POS_DATABASE,
-  POS_CICD,
-  POS_CLOUD,
-  POS_ARCHI,
 } from "../constants";
 
 function easeOutCubic(x: number): number {
@@ -56,7 +45,6 @@ interface UseAnimationsProps {
 }
 
 export function useAnimations({ currentSection, refs }: UseAnimationsProps) {
-  const scroll = useScroll();
   const fadeOpacity = useFadeOpacity();
 
   // Time tracking refs
@@ -92,7 +80,6 @@ export function useAnimations({ currentSection, refs }: UseAnimationsProps) {
 
   useFrame((state) => {
     if (!refs.sceneRef.current) return;
-    const offset = scroll.offset;
 
     // ============ TIME-BASED ENTRY ANIMATION FOR SECTION 1 ============
     if (currentSection >= 1 && enteredSection1Time.current === null) {
@@ -514,22 +501,9 @@ export function useAnimations({ currentSection, refs }: UseAnimationsProps) {
       });
     }
 
-    // Dezoom layout shift
-    if (offset > DEZOOM_START) {
-      const dezoomProgress = Math.min((offset - DEZOOM_START) / (DEZOOM_END - DEZOOM_START), 1);
-      const easedDezoom = easeOutCubic(dezoomProgress);
-
-      if (refs.skillsContainerRef.current) {
-        refs.skillsContainerRef.current.position.x = THREE.MathUtils.lerp(
-          BASE_X_OFFSET,
-          BASE_X_OFFSET + 3,
-          easedDezoom
-        );
-      }
-    } else {
-      if (refs.skillsContainerRef.current) {
-        refs.skillsContainerRef.current.position.x = BASE_X_OFFSET;
-      }
+    // Set skills container position
+    if (refs.skillsContainerRef.current) {
+      refs.skillsContainerRef.current.position.x = BASE_X_OFFSET;
     }
 
     // Element dimming in detail view (all skill sections 2-9 are now detail views)
@@ -616,5 +590,5 @@ export function useAnimations({ currentSection, refs }: UseAnimationsProps) {
     });
   }, -2); // Priority -2 to run BEFORE FadingSection (-1) so _externallyManaged is set first
 
-  return { scroll, showParticles, linkDrawProgress };
+  return { showParticles, linkDrawProgress };
 }

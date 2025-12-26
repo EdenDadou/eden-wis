@@ -25,9 +25,8 @@ const SKILLS_X_OFFSET = 3;
 const SKILL_DETAIL_Z = 4;
 
 // Camera positions for each section
-// New structure without transition slides:
 // 0: Intro, 1: Overview, 2-4: Frontend details, 5-6: Backend details, 7-9: DevOps details
-// 10: Timeline, 11: Portfolio, 12: About
+// 10: Timeline, 11: Portfolio, 12: About, 13: Contact
 export const SECTION_CAMERA_POSITIONS: Record<
   number,
   {
@@ -172,30 +171,7 @@ export const SECTION_CAMERA_POSITIONS: Record<
   },
 };
 
-// Scroll offset snap points for each section
-// Smooth distribution across the scroll range
-export const SECTION_SNAP_OFFSETS: number[] = [
-  0.0,   // 0: Intro
-  0.05,  // 1: Skills Overview
-  0.10,  // 2: Frontend (Site Web)
-  0.14,  // 3: Mobile
-  0.18,  // 4: Backoffice
-  0.23,  // 5: Server
-  0.28,  // 6: Database
-  0.33,  // 7: CI/CD
-  0.38,  // 8: Cloud
-  0.43,  // 9: Architecture
-  0.52,  // 10: Timeline
-  0.64,  // 11: Portfolio
-  0.78,  // 12: About
-  0.92,  // 13: Contact
-];
-
-// Sections that trigger zoom-out transition effect
-// Now only Timeline (section 10) triggers this for the skills→experience transition
-export const GROUP_TRANSITION_SECTIONS = new Set([10]);
-
-// Section boundaries for camera smooth transitions
+// Section boundaries for navigation
 export const SKILL_SECTION_BOUNDARIES = {
   FRONTEND_START: 2,
   FRONTEND_END: 4,

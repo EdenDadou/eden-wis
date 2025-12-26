@@ -50,9 +50,9 @@ export default function LoadingScreen({
         setProgress(70);
       }
 
-      // Phase 3: Preload main Experience component (70-90%)
+      // Phase 3: Preload main Scene3D component (70-90%)
       try {
-        await import("./Experience");
+        await import("./scene3d/Scene3D");
         setProgress(90);
       } catch (e) {
         setProgress(90);

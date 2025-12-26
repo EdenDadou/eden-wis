@@ -19,7 +19,6 @@ import {
 } from "../constants";
 
 interface SkillConnectionsProps {
-  offset: number;
   showElements: boolean;
   showParticles: boolean;
   linkDrawProgress: number[];
@@ -27,7 +26,6 @@ interface SkillConnectionsProps {
 }
 
 export function SkillConnections({
-  offset,
   showElements,
   showParticles,
   linkDrawProgress,

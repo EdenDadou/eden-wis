@@ -70,7 +70,7 @@ export default function WebsiteBuilder({
   const uiBlock3 = useRef<THREE.Group>(null);
 
   // Initialize animations
-  const { scroll, showParticles, linkDrawProgress } = useAnimations({
+  const { showParticles, linkDrawProgress } = useAnimations({
     currentSection,
     refs: {
       sceneRef,
@@ -101,8 +101,6 @@ export default function WebsiteBuilder({
       uiBlock3,
     },
   });
-
-  const offset = scroll?.offset || 0;
 
   // Visibility
   const showElements = currentSection >= 1;
@@ -242,7 +240,6 @@ export default function WebsiteBuilder({
 
         {/* Skill Connections */}
         <SkillConnections
-          offset={offset}
           showElements={showElements}
           showParticles={showParticles}
           linkDrawProgress={linkDrawProgress}

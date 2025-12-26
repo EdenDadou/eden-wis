@@ -1,3 +1,8 @@
+// Main Scene component
+export { default as Scene3D } from "./Scene3D";
+export { default as SceneEnvironment } from "./SceneEnvironment";
+export { default as SceneContent } from "./SceneContent";
+
 // Camera
 export { default as CameraRig } from "./CameraRig";
 export type { CameraRigProps } from "./CameraRig";
@@ -15,7 +20,6 @@ export * from "./world";
 
 // Other 3D elements
 export { default as PixelHeart3D } from "./PixelHeart3D";
-export { default as ScrollUpdater } from "./ScrollUpdater";
 
 // Cache and preloading
 export * from "./cache";
