@@ -178,20 +178,59 @@
       "button": "Me Contacter"
     },
     "projects": {
-      "novaFashion": {
-        "title": "Nova Fashion",
-        "description": "Une plateforme e-commerce luxe révolutionnant le retail de mode en ligne avec recommandations IA et expériences shopping immersives.",
-        "longDescription": "Nova Fashion représente l'apogée du développement e-commerce luxe. Ce projet a impliqué la création d'un écosystème digital complet pour une marque de mode haut de gamme, intégrant des capacités de recherche avancées avec Elasticsearch, une gestion d'inventaire temps réel sur 50+ entrepôts, et une expérience de paiement multi-devises fluide supportant 15+ méthodes de paiement. La plateforme a atteint une augmentation de 340% du taux de conversion et gère plus de 50 000 utilisateurs actifs quotidiennement.",
+      "sayyes": {
+        "title": "SayYes",
+        "description": "Application web full-stack de type portfolio/agence avec CMS custom, constructeur de landing pages modulaires et back-office complet.",
+        "longDescription": "SayYes est une application web full-stack de type portfolio/site d'agence avec un système de gestion de contenu (CMS) custom. Elle permet de présenter des projets clients via une galerie dynamique avec filtrage par catégories, animations au scroll et vues détaillées riches. L'application intègre un constructeur de landing pages modulaires avec 7 types de blocs différents, un back-office admin complet avec authentification sécurisée, et un système d'optimisation d'images à la volée avec cache dual-layer.",
         "features": [
-          "Recommandations produits IA avec 95% de précision",
-          "Sync inventaire temps réel sur 50+ entrepôts",
-          "Checkout multi-devises avec 15+ méthodes de paiement",
-          "Filtrage avancé Elasticsearch (requêtes < 100ms)",
-          "Visualisation 3D des produits et essayage AR",
-          "Dashboard admin avec analytics prédictifs",
-          "SEO optimisé avec score Lighthouse 98/100",
-          "Design responsive avec animations 60fps"
-        ]
+          "Design fourni par le client (agence de communication digitale)",
+          "Galerie portfolio dynamique avec filtrage temps réel",
+          "Constructeur de landing pages avec 7 blocs modulaires",
+          "Grille Bento configurable avec 6 formats différents",
+          "Optimisation images à la volée (WebP/AVIF, 20px → 1920px)",
+          "Cache dual-layer (mémoire 1h + disque 7j)",
+          "Back-office admin avec authentification sécurisée",
+          "SEO avancé avec Schema.org JSON-LD",
+          "Animations scroll-driven avec Framer Motion"
+        ],
+        "sections": {
+          "design": {
+            "title": "Design Client",
+            "content": "Le design a été fourni par SayYes Agency, une agence de communication digitale. Mon rôle était de transformer leur vision créative en une application web performante et fonctionnelle, en respectant fidèlement les maquettes et l'identité visuelle de la marque."
+          },
+          "overview": {
+            "title": "Vue d'ensemble",
+            "content": "SayYes est une application web full-stack permettant de présenter des projets clients et de créer des landing pages marketing personnalisées. Développée avec Remix et React, elle offre une expérience utilisateur fluide grâce aux animations Framer Motion et au smooth scrolling Lenis.\n\nL'architecture moderne combine TypeScript pour la robustesse du code, Prisma ORM pour la gestion des données, et un système de cache optimisé pour des performances maximales."
+          },
+          "portfolio": {
+            "title": "Galerie Portfolio",
+            "content": "La galerie portfolio propose un affichage en grille responsive (2-4 colonnes) avec filtrage par catégories en temps réel. Chaque projet dispose d'une vue détaillée comprenant un hero image avec effet parallax, un témoignage client, la liste des livrables, une grille Bento pour les photos et un carrousel de projets similaires."
+          },
+          "landingBuilder": {
+            "title": "Constructeur de Landing Pages",
+            "content": "Le système de blocs modulaires permet de créer des landing pages personnalisées avec 7 types de composants : blocIntro (hero), cards (produits/services), chiffresCles (métriques animées), testimonial (avis clients), methods (étapes de processus), faq (accordéon) et useCase (showcase de portfolios)."
+          },
+          "backoffice": {
+            "title": "Back-Office Admin",
+            "content": "Le back-office complet offre une authentification par session sécurisée, un CRUD complet pour les portfolios, un upload d'images avec preview, et un constructeur visuel de landing pages. La gestion SEO inclut les meta tags et le Schema.org JSON-LD pour un référencement optimal."
+          },
+          "bentoGrid": {
+            "title": "Grille Bento",
+            "content": "L'éditeur de grille Bento permet de configurer la mise en page des images de chaque projet avec 6 formats différents. L'interface drag & drop facilite l'organisation visuelle des contenus pour créer des présentations uniques et engageantes."
+          },
+          "performance": {
+            "title": "Optimisations Performance",
+            "content": "Le système de cache d'images dual-layer combine un cache mémoire (1h TTL) et un cache disque (7 jours TTL). Les images responsives sont générées à la demande de 20px à 1920px avec détection automatique du format optimal (WebP/AVIF avec fallback JPEG). Le code splitting optimise le chargement des assets lourds."
+          },
+          "technical": {
+            "title": "Architecture Technique",
+            "content": "Stack frontend : Remix 2.14, React 18, TypeScript, Tailwind CSS, Framer Motion, Three.js et Lenis pour le smooth scrolling. Backend : Prisma ORM avec SQLite, Sharp pour l'optimisation d'images. DevOps : Vite avec support PWA, ESLint + Prettier, Service Worker pour le caching offline."
+          },
+          "architecture": {
+            "title": "Architecture Full-Stack",
+            "content": "L'architecture repose sur trois couches distinctes : le Client (React 18 avec SSR/Hydration, TypeScript, Framer Motion, Three.js, Tailwind CSS), le Serveur Remix 2.14 (Loaders/Actions, Session Auth, Sharp Image Pipeline), et la Data Layer (Prisma ORM, SQLite, système de cache dual-layer avec Memory Cache 1h TTL et Disk Cache 7 jours). Cette architecture garantit des performances optimales (Lighthouse 95+) tout en maintenant une excellente DX avec Vite, ESLint et Hot Module Replacement."
+          }
+        }
       },
       "pulseAnalytics": {
         "title": "Pulse Analytics",
@@ -225,11 +264,11 @@
         "sections": {
           "overview": {
             "title": "Vue d'ensemble",
-            "content": "Tchee est une solution complète de VTC développée pour répondre aux besoins spécifiques du marché africain. L'application connecte passagers et chauffeurs professionnels via une expérience mobile fluide et intuitive, disponible sur iOS et Android."
+            "content": "Tchee est une solution complète de VTC développée pour répondre aux besoins spécifiques du marché africain, et plus spécifiquement au marché malien. Au Mali, la plupart des transactions se font via mobile money. \n\nL'idée de l'application est de connecter passagers et chauffeurs professionnels via une expérience mobile fluide et intuitive, permettant de réglé sa course via n'importe qu'elle moyen de paiement. Elle est disponible au Mali sur iOS et Android."
           },
-          "passenger": {
-            "title": "Expérience Passager",
-            "content": "Le passager bénéficie d'une interface épurée permettant de commander une course en quelques secondes. La recherche d'adresse utilise l'autocomplétion Google Places pour une saisie rapide et précise. Une fois la course demandée, l'estimation du prix et du temps de trajet s'affiche en temps réel avant confirmation."
+          "mobileApp": {
+            "title": "Application Mobile",
+            "content": "Une seule application pour passagers et chauffeurs. Le passager commande une course en quelques secondes grâce à l'autocomplétion Google Places. Le chauffeur dispose d'une interface dédiée avec vérification de documents (permis, assurance, casier judiciaire). Chaque profil est validé par l'administration avant activation."
           },
           "tracking": {
             "title": "Suivi GPS Temps Réel",
@@ -238,10 +277,6 @@
           "payments": {
             "title": "Paiements Multi-Providers",
             "content": "Tchee supporte 3 moyens de paiement adaptés au marché africain : paiement en espèces pour les utilisateurs non bancarisés, carte bancaire via Stripe pour les paiements internationaux, et Mobile Money (Orange Money) qui représente le mode de paiement le plus populaire dans la région. Le système gère le cycle de vie complet des transactions avec webhooks et réconciliation automatique."
-          },
-          "driver": {
-            "title": "Espace Chauffeur",
-            "content": "Les chauffeurs disposent d'une application dédiée avec un processus d'inscription complet incluant la vérification de documents (permis de conduire, assurance, casier judiciaire, photos du véhicule). Chaque document est validé individuellement par l'administration avant activation du compte."
           },
           "dashboard": {
             "title": "Dashboard Financier",
@@ -254,6 +289,14 @@
           "admin": {
             "title": "Administration",
             "content": "Un dashboard d'administration web permet de gérer l'ensemble de la plateforme : validation des documents chauffeurs, gestion des utilisateurs, configuration des tarifs (prix/km, prix/minute, majorations heures de pointe), suivi des courses et traitement des paiements aux chauffeurs."
+          },
+          "cicd": {
+            "title": "CI/CD",
+            "content": "Pipeline de déploiement automatisé via GitHub Actions. Chaque push déclenche les tests, le build et le déploiement sur les stores (iOS/Android) et le serveur de production. Les environnements staging et production sont isolés avec rollback automatique en cas d'erreur."
+          },
+          "stores": {
+            "title": "App Store & Play Store",
+            "content": "Application publiée sur l'App Store (iOS) et le Google Play Store (Android). Gestion des metadata, screenshots, et descriptions localisées. Processus de review Apple et Google respectés avec mise à jour OTA (Over-The-Air) via Expo Updates pour les corrections mineures sans repasser par les stores."
           },
           "technical": {
             "title": "Architecture Technique",
@@ -458,9 +501,7 @@
     "experience": {
       "title": "Expérience",
       "subtitle": "Mon Parcours Professionnel",
-      "items": [
-        "Cliquez sur un bloc pour voir les projets réalisés"
-      ]
+      "items": ["Cliquez sur un bloc pour voir les projets réalisés"]
     }
   }
 }

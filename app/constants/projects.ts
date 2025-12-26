@@ -2,27 +2,89 @@ import type { Project } from "../types";
 
 export const projects: Project[] = [
   {
-    id: "nova-fashion",
-    titleKey: "portfolio.projects.novaFashion.title",
-    descriptionKey: "portfolio.projects.novaFashion.description",
-    longDescriptionKey: "portfolio.projects.novaFashion.longDescription",
-    tags: ["Next.js 14", "Stripe", "PostgreSQL", "Tailwind CSS", "Elasticsearch", "Redis"],
-    color: "#8B5CF6",
-    accentColor: "#C4B5FD",
-    image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&h=800&fit=crop",
+    id: "sayyes",
+    titleKey: "portfolio.projects.sayyes.title",
+    descriptionKey: "portfolio.projects.sayyes.description",
+    longDescriptionKey: "portfolio.projects.sayyes.longDescription",
+    tags: ["Remix", "React 18", "TypeScript", "Tailwind CSS", "Prisma", "Three.js", "Framer Motion", "SQLite"],
+    color: "#4F0BAC",
+    accentColor: "#9B5DE5",
+    image: "/images/portfolio/sayyes/sayyes-home.png",
+    presentationVideo: "/images/portfolio/sayyes/presentation.mov",
+    icon: "/images/portfolio/sayyes/icon.svg",
     mockups: [
-      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop",
+      "/images/portfolio/sayyes/sayyes-portfolio.png",
+      "/images/portfolio/sayyes/sayyes-backoffice.png",
+    ],
+    videos: [
+      { src: "/images/portfolio/sayyes/galerie-portfolio.mov", title: "Galerie Portfolio" },
+      { src: "/images/portfolio/sayyes/projet-portfolio.mov", title: "Projet Portfolio" },
+      { src: "/images/portfolio/sayyes/sayyes-landing.mov", title: "Landing Pages" },
+      { src: "/images/portfolio/sayyes/layout-animation.mov", title: "Animations Layout" },
+      { src: "/images/portfolio/sayyes/admin-projet-portfolio.mov", title: "Admin Portfolio" },
+      { src: "/images/portfolio/sayyes/admin-seo.mov", title: "Admin SEO" },
+      { src: "/images/portfolio/sayyes/sayyes-mobile.mov", title: "Vue Mobile" },
+    ],
+    sections: [
+      {
+        key: "design",
+      },
+      {
+        key: "overview",
+        media: [
+          { type: "image", src: "/images/portfolio/sayyes/sayyes-home.png", title: "Page d'accueil" },
+          { type: "video", src: "/images/portfolio/sayyes/layout-animation.mov", title: "Animations Layout" },
+        ],
+      },
+      {
+        key: "portfolio",
+        media: [
+          { type: "video", src: "/images/portfolio/sayyes/galerie-portfolio.mov", title: "Galerie Portfolio" },
+          { type: "video", src: "/images/portfolio/sayyes/projet-portfolio.mov", title: "Vue détail projet" },
+        ],
+      },
+      {
+        key: "landingBuilder",
+        media: [
+          { type: "video", src: "/images/portfolio/sayyes/sayyes-landing.mov", title: "Constructeur de landing pages" },
+        ],
+      },
+      {
+        key: "backoffice",
+        media: [
+          { type: "image", src: "/images/portfolio/sayyes/sayyes-backoffice.png", title: "Back-office admin" },
+          { type: "video", src: "/images/portfolio/sayyes/admin-projet-portfolio.mov", title: "Gestion des projets" },
+          { type: "video", src: "/images/portfolio/sayyes/admin-seo.mov", title: "Gestion SEO" },
+        ],
+      },
+      {
+        key: "bentoGrid",
+      },
+      {
+        key: "performance",
+      },
+      {
+        key: "technical",
+        media: [
+          { type: "video", src: "/images/portfolio/sayyes/sayyes-mobile.mov", title: "Vue Mobile Responsive" },
+        ],
+      },
+      {
+        key: "architecture",
+        media: [
+          { type: "image", src: "/images/portfolio/sayyes/architecture.svg", title: "Architecture Full-Stack" },
+        ],
+      },
     ],
     year: "2024",
-    duration: "4 mois",
-    client: "Nova Fashion Group",
-    role: "Lead Developer",
+    duration: "3 mois",
+    team: "1 personne",
+    client: "SayYes Agency",
+    role: "Lead Developer Full-Stack",
     stats: [
-      { label: "Conversion", value: "+340%" },
-      { label: "Lighthouse", value: "98/100" },
-      { label: "Users", value: "50K+" },
+      { label: "Blocs", value: "7 types" },
+      { label: "Cache", value: "2 layers" },
+      { label: "Lighthouse", value: "95+" },
     ],
     type: "web",
   },
@@ -82,10 +144,11 @@ export const projects: Project[] = [
         ],
       },
       {
-        key: "passenger",
+        key: "mobileApp",
         media: [
           { type: "image", src: "/images/portfolio/tchee/tchee-2.png", title: "Recherche d'adresse" },
           { type: "image", src: "/images/portfolio/tchee/tchee-3.png", title: "Estimation du trajet" },
+          { type: "image", src: "/images/portfolio/tchee/tchee-6.png", title: "Interface chauffeur" },
         ],
       },
       {
@@ -99,12 +162,6 @@ export const projects: Project[] = [
         key: "payments",
         media: [
           { type: "video", src: "/images/portfolio/tchee/tchee-orange-payment.mov", title: "Paiement Orange Money" },
-        ],
-      },
-      {
-        key: "driver",
-        media: [
-          { type: "image", src: "/images/portfolio/tchee/tchee-6.png", title: "Interface chauffeur" },
         ],
       },
       {
@@ -127,11 +184,21 @@ export const projects: Project[] = [
         ],
       },
       {
+        key: "cicd",
+        media: [
+          { type: "image", src: "/images/portfolio/tchee/cicd.png", title: "Pipeline CI/CD" },
+        ],
+      },
+      {
+        key: "stores",
+      },
+      {
         key: "technical",
       },
     ],
     year: "2025",
-    duration: "6 mois",
+    duration: "4 mois",
+    team: "1 personne",
     client: "Tchee",
     role: "Lead Developer Full-Stack",
     stats: [

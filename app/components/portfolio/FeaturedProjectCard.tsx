@@ -31,34 +31,41 @@ export function FeaturedProjectCard({ project, onClick }: FeaturedProjectCardPro
 
         <div className="relative grid lg:grid-cols-2 gap-0">
           <div className="relative aspect-4/3 lg:aspect-auto overflow-hidden">
-            <div className="absolute inset-4 lg:inset-6 rounded-xl overflow-hidden shadow-2xl bg-gray-900 border border-white/10">
-              <div className="h-8 bg-gray-800/90 flex items-center px-3 gap-1.5 border-b border-white/5">
-                <div className="flex gap-1">
-                  <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-500" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
-                </div>
-                <div className="flex-1 mx-3">
-                  <div className="bg-gray-700/50 rounded-md h-5 max-w-45 flex items-center px-2 gap-1.5">
-                    <svg className="w-2.5 h-2.5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                    </svg>
-                    <span className="text-[10px] text-white/50 font-mono">novafashion.com</span>
-                  </div>
-                </div>
-              </div>
-              <div className="relative h-[calc(100%-2rem)] overflow-hidden">
-                <motion.img
-                  src={project.image}
-                  alt={t(project.titleKey)}
-                  className="w-full h-full object-cover"
-                  initial={{ scale: 1.1 }}
-                  animate={{ scale: imageLoaded ? 1 : 1.1 }}
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.6 }}
-                  onLoad={() => setImageLoaded(true)}
-                />
+            <div className="absolute inset-4 lg:inset-6 rounded-2xl overflow-hidden shadow-2xl bg-gray-900 border border-white/10">
+              <div className="relative h-full overflow-hidden">
+                {project.presentationVideo ? (
+                  <video
+                    src={project.presentationVideo}
+                    className="w-full h-full object-cover"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                  />
+                ) : (
+                  <motion.img
+                    src={project.image}
+                    alt={t(project.titleKey)}
+                    className="w-full h-full object-cover"
+                    initial={{ scale: 1.1 }}
+                    animate={{ scale: imageLoaded ? 1 : 1.1 }}
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.6 }}
+                    onLoad={() => setImageLoaded(true)}
+                  />
+                )}
                 <div className="absolute inset-0 bg-linear-to-t from-black/30 via-transparent to-transparent" />
+                {project.icon && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={isInView ? { opacity: 1, scale: 1 } : {}}
+                    transition={{ delay: 0.5, duration: 0.4 }}
+                    className="absolute top-4 right-4 w-16 h-16 rounded-2xl overflow-hidden shadow-2xl border-2 backdrop-blur-sm"
+                    style={{ borderColor: `${project.color}80`, background: `${project.color}40` }}
+                  >
+                    <img src={project.icon} alt="" className="w-full h-full object-contain p-2" />
+                  </motion.div>
+                )}
               </div>
             </div>
 
@@ -93,7 +100,7 @@ export function FeaturedProjectCard({ project, onClick }: FeaturedProjectCardPro
                 className="px-3 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-wider"
                 style={{ background: `${project.color}20`, color: project.accentColor }}
               >
-                {project.type === "web" ? "E-Commerce" : project.type === "dashboard" ? "SaaS" : "Mobile"}
+                {project.type === "web" ? "Web App" : project.type === "dashboard" ? "SaaS" : "Mobile"}
               </span>
               <span className="text-white/40 text-sm">{project.year}</span>
             </motion.div>

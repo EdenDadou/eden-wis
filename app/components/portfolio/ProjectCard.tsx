@@ -51,13 +51,21 @@ export function ProjectCard({ project, index, onClick }: ProjectCardProps) {
                     <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent" />
                   </div>
                 </div>
+                {project.icon && (
+                  <div
+                    className="absolute -bottom-2 -right-2 w-10 h-10 rounded-xl overflow-hidden shadow-2xl border-2 backdrop-blur-sm z-20"
+                    style={{ borderColor: `${project.color}80`, background: `${project.color}40` }}
+                  >
+                    <img src={project.icon} alt="" className="w-full h-full object-contain p-1" />
+                  </div>
+                )}
                 <div
                   className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-24 h-6 rounded-full blur-xl opacity-50"
                   style={{ background: project.color }}
                 />
               </div>
             ) : (
-              <div className="rounded-lg overflow-hidden shadow-xl border border-white/10 group-hover:scale-[1.02] transition-transform duration-500">
+              <div className="relative rounded-lg overflow-hidden shadow-xl border border-white/10 group-hover:scale-[1.02] transition-transform duration-500">
                 <div className="h-6 bg-gray-800 flex items-center px-2 gap-1">
                   <div className="w-2 h-2 rounded-full bg-red-500/80" />
                   <div className="w-2 h-2 rounded-full bg-yellow-500/80" />
@@ -77,6 +85,14 @@ export function ProjectCard({ project, index, onClick }: ProjectCardProps) {
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent" />
+                  {project.icon && (
+                    <div
+                      className="absolute top-2 right-2 w-12 h-12 rounded-xl overflow-hidden shadow-2xl border-2 backdrop-blur-sm"
+                      style={{ borderColor: `${project.color}80`, background: `${project.color}40` }}
+                    >
+                      <img src={project.icon} alt="" className="w-full h-full object-contain p-1.5" />
+                    </div>
+                  )}
                   {project.type === "dashboard" && (
                     <div className="absolute top-2 left-2 flex gap-1.5">
                       {project.stats.slice(0, 2).map((stat) => (

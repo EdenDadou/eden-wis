@@ -33,6 +33,18 @@ export function PortfolioSection({
 
   return (
     <>
+      {/* Background overlay - fixed, outside scrollable container */}
+      <AnimatePresence>
+        {isVisible && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, transition: { duration: 0.6 } }}
+            exit={{ opacity: 0, transition: { duration: 0.3 } }}
+            className="absolute inset-0 z-10 bg-[#050508]/80 backdrop-blur-sm"
+          />
+        )}
+      </AnimatePresence>
+
       <AnimatePresence>
         {isVisible && (
           <motion.div
@@ -54,11 +66,8 @@ export function PortfolioSection({
               filter: "blur(8px)",
               transition: { duration: 0.3, ease: [0.4, 0, 1, 1] },
             }}
-            className="absolute inset-0 z-10 overflow-y-auto pointer-events-auto"
+            className="absolute inset-0 z-20 overflow-y-auto pointer-events-auto"
           >
-            {/* Background overlay */}
-            <div className="absolute top-0 left-0 right-0 bg-[#050508]/80 backdrop-blur-sm h-full" />
-
             <div className="relative h-max px-4 sm:px-6 py-24">
               <div className="max-w-6xl mx-auto">
                 {/* Header */}

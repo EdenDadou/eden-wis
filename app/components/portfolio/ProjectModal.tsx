@@ -20,97 +20,169 @@ function ArchitectureDiagram({ color, accentColor }: { color: string; accentColo
         Architecture du Système
       </h3>
 
-      {/* SVG Architecture Diagram */}
+      {/* SVG Architecture Diagram - Clean horizontal flow */}
       <div className="relative w-full overflow-x-auto">
-        <svg viewBox="0 0 800 320" className="w-full min-w-[600px] h-auto">
+        <svg viewBox="0 0 800 500" className="w-full min-w-[600px] h-auto">
           <defs>
             <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor={color} stopOpacity="0.6" />
-              <stop offset="100%" stopColor={accentColor} stopOpacity="0.6" />
+              <stop offset="0%" stopColor={color} stopOpacity="0.8" />
+              <stop offset="100%" stopColor={accentColor} stopOpacity="0.8" />
             </linearGradient>
             <linearGradient id="boxGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor={color} stopOpacity="0.15" />
-              <stop offset="100%" stopColor={color} stopOpacity="0.05" />
+              <stop offset="0%" stopColor={color} stopOpacity="0.12" />
+              <stop offset="100%" stopColor={color} stopOpacity="0.04" />
             </linearGradient>
             <linearGradient id="serverGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor={color} stopOpacity="0.3" />
-              <stop offset="100%" stopColor={color} stopOpacity="0.1" />
+              <stop offset="0%" stopColor={color} stopOpacity="0.25" />
+              <stop offset="100%" stopColor={color} stopOpacity="0.08" />
             </linearGradient>
-            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-              <polygon points="0 0, 10 3.5, 0 7" fill={color} opacity="0.6" />
+            <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={accentColor} opacity="0.9" />
             </marker>
-            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="3" result="coloredBlur" />
-              <feMerge>
-                <feMergeNode in="coloredBlur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
+            <marker id="arrowBlue" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="#3B82F6" opacity="0.9" />
+            </marker>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="2" result="blur" />
+              <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
             </filter>
           </defs>
 
-          {/* Connection lines */}
-          <motion.path d="M 180 160 C 250 160, 280 160, 350 160" stroke="url(#lineGrad)" strokeWidth="2" fill="none" markerEnd="url(#arrowhead)" initial={{ pathLength: 0, opacity: 0 }} whileInView={{ pathLength: 1, opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.3 }} />
-          <motion.path d="M 180 280 C 250 280, 280 200, 350 180" stroke="url(#lineGrad)" strokeWidth="2" fill="none" markerEnd="url(#arrowhead)" initial={{ pathLength: 0, opacity: 0 }} whileInView={{ pathLength: 1, opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.4 }} />
-          <motion.path d="M 530 140 C 580 140, 600 80, 650 80" stroke="url(#lineGrad)" strokeWidth="2" fill="none" markerEnd="url(#arrowhead)" initial={{ pathLength: 0, opacity: 0 }} whileInView={{ pathLength: 1, opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.5 }} />
-          <motion.path d="M 530 180 C 580 180, 600 240, 650 240" stroke="url(#lineGrad)" strokeWidth="2" fill="none" markerEnd="url(#arrowhead)" initial={{ pathLength: 0, opacity: 0 }} whileInView={{ pathLength: 1, opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.6 }} />
+          {/* ========== CLIENTS (Row 1) ========== */}
 
-          {/* Labels */}
-          <text x="90" y="30" fill="rgba(255,255,255,0.4)" fontSize="11" fontWeight="600" textAnchor="middle">Frontend</text>
-          <text x="440" y="30" fill="rgba(255,255,255,0.4)" fontSize="11" fontWeight="600" textAnchor="middle">Backend</text>
-          <text x="720" y="30" fill="rgba(255,255,255,0.4)" fontSize="11" fontWeight="600" textAnchor="middle">Data & Services</text>
-
-          {/* Mobile App */}
-          <motion.g initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }}>
-            <rect x="20" y="80" width="160" height="160" rx="16" fill="url(#boxGrad)" stroke={color} strokeWidth="1" strokeOpacity="0.3" />
-            <rect x="75" y="100" width="50" height="80" rx="8" fill="none" stroke={accentColor} strokeWidth="1.5" opacity="0.8" />
-            <circle cx="100" cy="170" r="4" fill={accentColor} opacity="0.6" />
-            <text x="100" y="205" fill="white" fontSize="13" fontWeight="600" textAnchor="middle">App Mobile</text>
-            <text x="100" y="222" fill="rgba(255,255,255,0.5)" fontSize="10" textAnchor="middle">Passager & Chauffeur</text>
+          {/* App Mobile */}
+          <motion.g initial={{ opacity: 0, y: -15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.1 }}>
+            <rect x="40" y="40" width="100" height="80" rx="10" fill="url(#boxGrad)" stroke={color} strokeOpacity="0.4" strokeWidth="1.5" />
+            <rect x="75" y="50" width="22" height="36" rx="4" fill="none" stroke={accentColor} strokeWidth="1.5" opacity="0.7" />
+            <circle cx="86" cy="78" r="2.5" fill={accentColor} opacity="0.5" />
+            <text x="90" y="100" fill="white" fontSize="10" fontWeight="600" textAnchor="middle">App Mobile</text>
+            <text x="90" y="112" fill="rgba(255,255,255,0.4)" fontSize="7" textAnchor="middle">React Native</text>
           </motion.g>
 
-          {/* Admin */}
-          <motion.g initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.2 }}>
-            <rect x="20" y="260" width="160" height="50" rx="12" fill="url(#boxGrad)" stroke={color} strokeWidth="1" strokeOpacity="0.3" />
-            <rect x="55" y="272" width="24" height="16" rx="2" fill="none" stroke={accentColor} strokeWidth="1.5" opacity="0.8" />
-            <line x1="67" y1="288" x2="67" y2="292" stroke={accentColor} strokeWidth="1.5" opacity="0.8" />
-            <line x1="60" y1="292" x2="74" y2="292" stroke={accentColor} strokeWidth="1.5" opacity="0.8" />
-            <text x="130" y="290" fill="white" fontSize="12" fontWeight="500" textAnchor="middle">Dashboard Admin</text>
+          {/* Dashboard */}
+          <motion.g initial={{ opacity: 0, y: -15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.15 }}>
+            <rect x="40" y="140" width="100" height="80" rx="10" fill="url(#boxGrad)" stroke={color} strokeOpacity="0.4" strokeWidth="1.5" />
+            <rect x="70" y="152" width="32" height="20" rx="3" fill="none" stroke={accentColor} strokeWidth="1.5" opacity="0.7" />
+            <rect x="73" y="156" width="8" height="2" rx="1" fill={accentColor} opacity="0.4" />
+            <rect x="73" y="160" width="14" height="2" rx="1" fill={accentColor} opacity="0.3" />
+            <rect x="73" y="164" width="10" height="2" rx="1" fill={accentColor} opacity="0.3" />
+            <text x="90" y="190" fill="white" fontSize="10" fontWeight="600" textAnchor="middle">Dashboard</text>
+            <text x="90" y="202" fill="rgba(255,255,255,0.4)" fontSize="7" textAnchor="middle">React Router</text>
           </motion.g>
 
-          {/* Server */}
-          <motion.g initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.3 }} filter="url(#glow)">
-            <rect x="350" y="100" width="180" height="120" rx="16" fill="url(#serverGrad)" stroke={color} strokeWidth="2" />
-            <rect x="420" y="125" width="40" height="12" rx="3" fill="none" stroke={accentColor} strokeWidth="1.5" />
-            <circle cx="432" cy="131" r="2" fill={accentColor} />
-            <circle cx="448" cy="131" r="2" fill={accentColor} />
-            <rect x="420" y="142" width="40" height="12" rx="3" fill="none" stroke={accentColor} strokeWidth="1.5" />
-            <circle cx="432" cy="148" r="2" fill={accentColor} />
-            <circle cx="448" cy="148" r="2" fill={accentColor} />
-            <text x="440" y="180" fill="white" fontSize="14" fontWeight="700" textAnchor="middle">Serveur</text>
-            <text x="440" y="198" fill="rgba(255,255,255,0.5)" fontSize="10" textAnchor="middle">React Router v7 • Node.js</text>
+          {/* ========== API SERVER (Center) ========== */}
+
+          <motion.g initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.2 }} filter="url(#glow)">
+            <rect x="220" y="70" width="120" height="100" rx="12" fill="url(#serverGrad)" stroke={color} strokeWidth="2" />
+            <rect x="265" y="85" width="24" height="7" rx="2" fill="none" stroke={accentColor} strokeWidth="1.5" />
+            <circle cx="272" cy="88.5" r="1.5" fill={accentColor} />
+            <circle cx="282" cy="88.5" r="1.5" fill={accentColor} />
+            <rect x="265" y="95" width="24" height="7" rx="2" fill="none" stroke={accentColor} strokeWidth="1.5" />
+            <circle cx="272" cy="98.5" r="1.5" fill={accentColor} />
+            <circle cx="282" cy="98.5" r="1.5" fill={accentColor} />
+            <text x="280" y="125" fill="white" fontSize="11" fontWeight="700" textAnchor="middle">API Server</text>
+            <text x="280" y="140" fill="rgba(255,255,255,0.4)" fontSize="8" textAnchor="middle">Node.js</text>
+            <text x="280" y="152" fill="rgba(255,255,255,0.4)" fontSize="8" textAnchor="middle">TypeScript</text>
           </motion.g>
 
-          {/* Database */}
-          <motion.g initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.4 }}>
-            <rect x="650" y="50" width="130" height="60" rx="12" fill="url(#boxGrad)" stroke={color} strokeWidth="1" strokeOpacity="0.3" />
-            <ellipse cx="685" cy="70" rx="12" ry="6" fill="none" stroke={accentColor} strokeWidth="1.5" opacity="0.8" />
-            <path d="M673 70 L673 88 C673 91 678 94 685 94 C692 94 697 91 697 88 L697 70" fill="none" stroke={accentColor} strokeWidth="1.5" opacity="0.8" />
-            <text x="750" y="77" fill="white" fontSize="12" fontWeight="500" textAnchor="middle">MySQL</text>
-            <text x="750" y="92" fill="rgba(255,255,255,0.5)" fontSize="9" textAnchor="middle">Prisma ORM</text>
+          {/* ========== DATABASE ========== */}
+
+          <motion.g initial={{ opacity: 0, x: 15 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.25 }}>
+            <rect x="220" y="200" width="120" height="80" rx="10" fill="url(#boxGrad)" stroke={color} strokeOpacity="0.4" strokeWidth="1.5" />
+            <ellipse cx="280" cy="220" rx="14" ry="6" fill="none" stroke={accentColor} strokeWidth="1.5" opacity="0.7" />
+            <path d="M266 220 L266 240 Q266 248 280 248 Q294 248 294 240 L294 220" fill="none" stroke={accentColor} strokeWidth="1.5" opacity="0.7" />
+            <text x="280" y="262" fill="white" fontSize="10" fontWeight="600" textAnchor="middle">Base de données</text>
+            <text x="280" y="274" fill="rgba(255,255,255,0.4)" fontSize="7" textAnchor="middle">MySQL • Prisma</text>
           </motion.g>
 
-          {/* Services */}
-          <motion.g initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.5 }}>
-            <rect x="650" y="200" width="130" height="80" rx="12" fill="url(#boxGrad)" stroke={color} strokeWidth="1" strokeOpacity="0.3" />
-            <path d="M675 230 C670 230 668 225 670 222 C670 218 675 216 680 218 C682 214 688 214 692 218 C696 216 702 218 702 224 C706 224 706 230 702 232 L675 232 C670 232 670 228 675 230 Z" fill="none" stroke={accentColor} strokeWidth="1.5" opacity="0.8" />
-            <text x="715" y="252" fill="white" fontSize="11" fontWeight="500" textAnchor="middle">Services Externes</text>
-            <text x="715" y="268" fill="rgba(255,255,255,0.5)" fontSize="9" textAnchor="middle">Stripe • Maps • FCM</text>
+          {/* ========== EXTERNAL SERVICES ========== */}
+
+          {/* Google Maps */}
+          <motion.g initial={{ opacity: 0, x: 15 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.3 }}>
+            <rect x="550" y="40" width="130" height="55" rx="8" fill="url(#boxGrad)" stroke={color} strokeOpacity="0.3" strokeWidth="1" />
+            <circle cx="575" cy="58" r="8" fill="none" stroke="#4285F4" strokeWidth="1.5" />
+            <path d="M575 50 L575 58 L580 63" fill="none" stroke="#EA4335" strokeWidth="1.5" />
+            <text x="615" y="63" fill="white" fontSize="9" fontWeight="600" textAnchor="middle">Géolocalisation</text>
+            <text x="615" y="75" fill="rgba(255,255,255,0.4)" fontSize="7" textAnchor="middle">Google Maps</text>
           </motion.g>
 
-          {/* Flow labels */}
-          <text x="265" y="150" fill="rgba(255,255,255,0.3)" fontSize="9" textAnchor="middle">REST API</text>
-          <text x="590" y="100" fill="rgba(255,255,255,0.3)" fontSize="9" textAnchor="middle">Prisma</text>
-          <text x="590" y="220" fill="rgba(255,255,255,0.3)" fontSize="9" textAnchor="middle">Webhooks</text>
+          {/* Stripe */}
+          <motion.g initial={{ opacity: 0, x: 15 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.35 }}>
+            <rect x="550" y="105" width="130" height="55" rx="8" fill="url(#boxGrad)" stroke={color} strokeOpacity="0.3" strokeWidth="1" />
+            <rect x="565" y="120" width="14" height="10" rx="2" fill="none" stroke="#635BFF" strokeWidth="1.5" />
+            <line x1="568" y1="125" x2="576" y2="125" stroke="#635BFF" strokeWidth="1.5" />
+            <text x="615" y="128" fill="white" fontSize="9" fontWeight="600" textAnchor="middle">Paiements CB</text>
+            <text x="615" y="140" fill="rgba(255,255,255,0.4)" fontSize="7" textAnchor="middle">Stripe</text>
+          </motion.g>
+
+          {/* Orange Money */}
+          <motion.g initial={{ opacity: 0, x: 15 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.4 }}>
+            <rect x="550" y="170" width="130" height="55" rx="8" fill="url(#boxGrad)" stroke={color} strokeOpacity="0.3" strokeWidth="1" />
+            <circle cx="575" cy="190" r="8" fill="none" stroke="#FF6600" strokeWidth="1.5" />
+            <text x="575" y="193" fill="#FF6600" fontSize="6" fontWeight="700" textAnchor="middle">OM</text>
+            <text x="615" y="193" fill="white" fontSize="9" fontWeight="600" textAnchor="middle">Mobile Money</text>
+            <text x="615" y="205" fill="rgba(255,255,255,0.4)" fontSize="7" textAnchor="middle">Orange Money</text>
+          </motion.g>
+
+          {/* Firebase */}
+          <motion.g initial={{ opacity: 0, x: 15 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.45 }}>
+            <rect x="550" y="235" width="130" height="55" rx="8" fill="url(#boxGrad)" stroke={color} strokeOpacity="0.3" strokeWidth="1" />
+            <path d="M568 270 L574 256 L577 262 L583 248 L583 270 Z" fill="none" stroke="#FFCA28" strokeWidth="1.5" />
+            <text x="615" y="258" fill="white" fontSize="9" fontWeight="600" textAnchor="middle">Notifications</text>
+            <text x="615" y="270" fill="rgba(255,255,255,0.4)" fontSize="7" textAnchor="middle">Firebase</text>
+          </motion.g>
+
+          {/* ========== CONNECTIONS - APP LAYER ========== */}
+
+          {/* App -> API */}
+          <motion.path d="M 140 75 L 220 100" stroke="url(#lineGrad)" strokeWidth="2" fill="none" markerEnd="url(#arrow)" initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.5 }} />
+
+          {/* Dashboard -> API */}
+          <motion.path d="M 140 150 L 220 135" stroke="url(#lineGrad)" strokeWidth="2" fill="none" markerEnd="url(#arrow)" initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.55 }} />
+
+          {/* API -> Database */}
+          <motion.path d="M 280 170 L 280 200" stroke="url(#lineGrad)" strokeWidth="2" fill="none" markerEnd="url(#arrow)" initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.6 }} />
+
+          {/* API -> Services (diagonal arrows) */}
+          <motion.path d="M 340 100 L 550 67" stroke="url(#lineGrad)" strokeWidth="1.5" fill="none" markerEnd="url(#arrow)" initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.65 }} />
+          <motion.path d="M 340 115 L 550 132" stroke="url(#lineGrad)" strokeWidth="1.5" fill="none" markerEnd="url(#arrow)" initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.7 }} />
+          <motion.path d="M 340 130 L 550 197" stroke="url(#lineGrad)" strokeWidth="1.5" fill="none" markerEnd="url(#arrow)" initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.75 }} />
+          <motion.path d="M 340 145 L 550 262" stroke="url(#lineGrad)" strokeWidth="1.5" fill="none" markerEnd="url(#arrow)" initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.8 }} />
+
+          {/* ========== CI/CD SECTION ========== */}
+
+          {/* Separator */}
+          <motion.line x1="40" y1="310" x2="760" y2="310" stroke="rgba(255,255,255,0.06)" strokeWidth="1" strokeDasharray="3,6" initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.85 }} />
+
+          {/* GitHub Actions */}
+          <motion.g initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.9 }}>
+            <rect x="280" y="340" width="180" height="50" rx="8" fill="rgba(59,130,246,0.08)" stroke="#3B82F6" strokeOpacity="0.4" strokeWidth="1.5" />
+            <circle cx="315" cy="358" r="10" fill="none" stroke="#3B82F6" strokeWidth="1.5" />
+            <path d="M310 358 L313 361 L321 352" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <text x="395" y="355" fill="white" fontSize="11" fontWeight="600" textAnchor="middle">GitHub Actions</text>
+            <text x="395" y="370" fill="rgba(255,255,255,0.4)" fontSize="8" textAnchor="middle">Staging / Production</text>
+          </motion.g>
+
+          {/* ========== DEPLOYMENT TARGETS ========== */}
+
+          {/* App Store */}
+          <motion.g initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.95 }}>
+            <rect x="220" y="430" width="100" height="55" rx="8" fill="url(#boxGrad)" stroke={color} strokeOpacity="0.3" strokeWidth="1" />
+            <rect x="255" y="442" width="20" height="20" rx="4" fill="none" stroke="#007AFF" strokeWidth="1.5" />
+            <text x="265" y="457" fill="#007AFF" fontSize="12" fontWeight="700" textAnchor="middle">A</text>
+            <text x="270" y="475" fill="white" fontSize="9" fontWeight="500" textAnchor="middle">App Store</text>
+          </motion.g>
+
+          {/* Play Store */}
+          <motion.g initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 1 }}>
+            <rect x="420" y="430" width="100" height="55" rx="8" fill="url(#boxGrad)" stroke={color} strokeOpacity="0.3" strokeWidth="1" />
+            <path d="M456 442 L456 462 L472 452 Z" fill="none" stroke="#34A853" strokeWidth="1.5" />
+            <text x="470" y="475" fill="white" fontSize="9" fontWeight="500" textAnchor="middle">Play Store</text>
+          </motion.g>
+
+          {/* CI/CD -> Deployments */}
+          <motion.path d="M 330 390 L 270 430" stroke="#3B82F6" strokeWidth="1.5" fill="none" markerEnd="url(#arrowBlue)" initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 1.05 }} />
+          <motion.path d="M 410 390 L 470 430" stroke="#3B82F6" strokeWidth="1.5" fill="none" markerEnd="url(#arrowBlue)" initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 1.1 }} />
         </svg>
       </div>
     </motion.div>
@@ -121,26 +193,62 @@ function ArchitectureDiagram({ color, accentColor }: { color: string; accentColo
 // Grid is 3 columns, cards are arranged to tessellate properly
 const bentoLayout = [
   { colSpan: 2, rowSpan: 1, size: "wide" },     // 0: Overview
-  { colSpan: 1, rowSpan: 2, size: "tall" },     // 1: Passenger
+  { colSpan: 1, rowSpan: 2, size: "tall" },     // 1: Mobile App (passager + chauffeur)
   { colSpan: 1, rowSpan: 1, size: "small" },    // 2: Tracking
   { colSpan: 1, rowSpan: 1, size: "small" },    // 3: Payments
-  { colSpan: 1, rowSpan: 2, size: "tall" },     // 4: Driver
-  { colSpan: 2, rowSpan: 1, size: "wide" },     // 5: Dashboard
-  { colSpan: 1, rowSpan: 1, size: "small" },    // 6: Notifications
-  { colSpan: 1, rowSpan: 1, size: "small" },    // 7: Admin
-  { colSpan: 3, rowSpan: 1, size: "full" },     // 8: Technical
+  { colSpan: 1, rowSpan: 1, size: "small" },    // 4: Dashboard
+  { colSpan: 2, rowSpan: 1, size: "wide" },     // 5: Notifications
+  { colSpan: 1, rowSpan: 1, size: "small" },    // 6: Admin
+  { colSpan: 1, rowSpan: 1, size: "small" },    // 7: CI/CD
+  { colSpan: 1, rowSpan: 1, size: "small" },    // 8: Stores
+  { colSpan: 3, rowSpan: 1, size: "full" },     // 9: Technical
 ];
 
 // Icons for each section
 const sectionIcons: Record<string, React.ReactNode> = {
+  design: (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+    </svg>
+  ),
   overview: (
     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
     </svg>
   ),
-  passenger: (
+  portfolio: (
     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+    </svg>
+  ),
+  landingBuilder: (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+    </svg>
+  ),
+  backoffice: (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+    </svg>
+  ),
+  bentoGrid: (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+    </svg>
+  ),
+  performance: (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+    </svg>
+  ),
+  architecture: (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+    </svg>
+  ),
+  mobileApp: (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
     </svg>
   ),
   tracking: (
@@ -152,11 +260,6 @@ const sectionIcons: Record<string, React.ReactNode> = {
   payments: (
     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-    </svg>
-  ),
-  driver: (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
     </svg>
   ),
   dashboard: (
@@ -173,6 +276,16 @@ const sectionIcons: Record<string, React.ReactNode> = {
     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    </svg>
+  ),
+  cicd: (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+    </svg>
+  ),
+  stores: (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
     </svg>
   ),
   technical: (
@@ -456,7 +569,7 @@ function SectionDetail({
             </div>
 
             {/* Description */}
-            <p className="text-white/70 leading-relaxed text-base">
+            <p className="text-white/70 leading-relaxed text-base whitespace-pre-line">
               {content}
             </p>
           </div>
@@ -471,6 +584,12 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
   const hasSections = project.sections && project.sections.length > 0;
   const isTchee = project.id === "tchee";
   const [selectedSection, setSelectedSection] = useState<number | null>(null);
+
+  // Find architecture section with SVG media
+  const architectureSection = project.sections?.find(
+    s => s.key === "architecture" && s.media?.some(m => m.src.endsWith(".svg"))
+  );
+  const architectureSvg = architectureSection?.media?.find(m => m.src.endsWith(".svg"));
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -670,6 +789,30 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
               </div>
             )}
 
+            {/* Architecture SVG diagram for other projects (like Sayyes) */}
+            {!isTchee && architectureSvg && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="mb-10 p-6 md:p-8 rounded-2xl bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10"
+              >
+                <h3 className="text-sm font-bold uppercase tracking-wider mb-6" style={{ color: project.accentColor }}>
+                  {t(`portfolio.projects.${project.id}.sections.architecture.title`)}
+                </h3>
+                <div className="relative w-full overflow-x-auto rounded-xl">
+                  <img
+                    src={architectureSvg.src}
+                    alt={architectureSvg.title || "Architecture"}
+                    className="w-full h-auto min-w-[600px]"
+                  />
+                </div>
+                <p className="mt-6 text-white/60 text-sm leading-relaxed">
+                  {t(`portfolio.projects.${project.id}.sections.architecture.content`)}
+                </p>
+              </motion.div>
+            )}
+
             {/* Bento Grid Features */}
             {hasSections && (
               <div className="mb-10">
@@ -751,13 +894,14 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
               viewport={{ once: true }}
               className="p-5 rounded-xl bg-white/5 border border-white/10"
             >
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 {[
                   { label: "Client", value: project.client },
                   { label: "Role", value: project.role },
                   { label: "Durée", value: project.duration },
+                  { label: "Équipe", value: project.team },
                   { label: "Année", value: project.year },
-                ].map(({ label, value }) => (
+                ].filter(item => item.value).map(({ label, value }) => (
                   <div key={label}>
                     <span className="text-[10px] text-white/40 uppercase tracking-wider">{label}</span>
                     <p className="text-white font-medium text-sm mt-0.5">{value}</p>

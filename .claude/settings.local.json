@@ -21,7 +21,9 @@
       "Bash(node scripts/optimize-images.js:*)",
       "Bash(for f in *.png)",
       "Bash(do echo \"$f\")",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(for:*)",
+      "Bash(xxd:*)"
     ]
   }
 }

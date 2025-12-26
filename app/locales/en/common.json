@@ -178,20 +178,59 @@
       "button": "Get in Touch"
     },
     "projects": {
-      "novaFashion": {
-        "title": "Nova Fashion",
-        "description": "A premium luxury e-commerce platform revolutionizing online fashion retail with AI-powered recommendations and immersive shopping experiences.",
-        "longDescription": "Nova Fashion represents the pinnacle of luxury e-commerce development. This project involved creating a complete digital ecosystem for a high-end fashion brand, integrating advanced search capabilities with Elasticsearch, real-time inventory management across 50+ warehouses, and a seamless multi-currency checkout experience supporting 15+ payment methods. The platform achieved a 340% increase in conversion rates and handles over 50,000 active users daily.",
+      "sayyes": {
+        "title": "SayYes",
+        "description": "Full-stack portfolio/agency web application with custom CMS, modular landing page builder, and complete back-office.",
+        "longDescription": "SayYes is a full-stack portfolio/agency website with a custom content management system (CMS). It allows presenting client projects through a dynamic gallery with category filtering, scroll animations, and rich detail views. The application includes a modular landing page builder with 7 different block types, a complete admin back-office with secure authentication, and an on-the-fly image optimization system with dual-layer caching.",
         "features": [
-          "AI-powered product recommendations with 95% accuracy",
-          "Real-time inventory sync across 50+ warehouses",
-          "Multi-currency checkout with 15+ payment methods",
-          "Advanced filtering with Elasticsearch (sub-100ms queries)",
-          "3D product visualization and AR try-on",
-          "Admin dashboard with predictive analytics",
-          "SEO-optimized with 98/100 Lighthouse score",
-          "Fully responsive design with 60fps animations"
-        ]
+          "Design provided by client (digital communication agency)",
+          "Dynamic portfolio gallery with real-time filtering",
+          "Landing page builder with 7 modular blocks",
+          "Configurable Bento grid with 6 different formats",
+          "On-the-fly image optimization (WebP/AVIF, 20px → 1920px)",
+          "Dual-layer cache (memory 1h + disk 7d)",
+          "Admin back-office with secure authentication",
+          "Advanced SEO with Schema.org JSON-LD",
+          "Scroll-driven animations with Framer Motion"
+        ],
+        "sections": {
+          "design": {
+            "title": "Client Design",
+            "content": "The design was provided by SayYes Agency, a digital communication agency. My role was to transform their creative vision into a performant and functional web application, faithfully respecting the mockups and brand identity."
+          },
+          "overview": {
+            "title": "Overview",
+            "content": "SayYes is a full-stack web application for presenting client projects and creating custom marketing landing pages. Built with Remix and React, it delivers a smooth user experience through Framer Motion animations and Lenis smooth scrolling.\n\nThe modern architecture combines TypeScript for code robustness, Prisma ORM for data management, and an optimized caching system for maximum performance."
+          },
+          "portfolio": {
+            "title": "Portfolio Gallery",
+            "content": "The portfolio gallery features a responsive grid display (2-4 columns) with real-time category filtering. Each project has a detailed view including a hero image with parallax effect, client testimonial, deliverables list, Bento grid for photos, and a carousel of similar projects."
+          },
+          "landingBuilder": {
+            "title": "Landing Page Builder",
+            "content": "The modular block system allows creating custom landing pages with 7 component types: blocIntro (hero), cards (products/services), chiffresCles (animated metrics), testimonial (client reviews), methods (process steps), faq (accordion), and useCase (portfolio showcase)."
+          },
+          "backoffice": {
+            "title": "Admin Back-Office",
+            "content": "The complete back-office offers secure session authentication, full CRUD for portfolios, image upload with preview, and a visual landing page builder. SEO management includes meta tags and Schema.org JSON-LD for optimal search engine visibility."
+          },
+          "bentoGrid": {
+            "title": "Bento Grid",
+            "content": "The Bento grid editor allows configuring image layouts for each project with 6 different formats. The drag & drop interface makes it easy to visually organize content and create unique, engaging presentations."
+          },
+          "performance": {
+            "title": "Performance Optimizations",
+            "content": "The dual-layer image caching system combines memory cache (1h TTL) and disk cache (7 days TTL). Responsive images are generated on demand from 20px to 1920px with automatic format detection (WebP/AVIF with JPEG fallback). Code splitting optimizes loading of heavy assets."
+          },
+          "technical": {
+            "title": "Technical Architecture",
+            "content": "Frontend stack: Remix 2.14, React 18, TypeScript, Tailwind CSS, Framer Motion, Three.js, and Lenis for smooth scrolling. Backend: Prisma ORM with SQLite, Sharp for image optimization. DevOps: Vite with PWA support, ESLint + Prettier, Service Worker for offline caching."
+          },
+          "architecture": {
+            "title": "Full-Stack Architecture",
+            "content": "The architecture relies on three distinct layers: Client (React 18 with SSR/Hydration, TypeScript, Framer Motion, Three.js, Tailwind CSS), Remix 2.14 Server (Loaders/Actions, Session Auth, Sharp Image Pipeline), and Data Layer (Prisma ORM, SQLite, dual-layer cache system with Memory Cache 1h TTL and Disk Cache 7 days). This architecture ensures optimal performance (Lighthouse 95+) while maintaining excellent DX with Vite, ESLint, and Hot Module Replacement."
+          }
+        }
       },
       "pulseAnalytics": {
         "title": "Pulse Analytics",
@@ -225,11 +264,11 @@
         "sections": {
           "overview": {
             "title": "Overview",
-            "content": "Tchee is a complete ride-hailing solution developed to meet the specific needs of the African market. The application connects passengers and professional drivers through a smooth and intuitive mobile experience, available on iOS and Android."
+            "content": "Tchee is a complete ride-hailing solution developed to meet the specific needs of the African market, and more specifically the Malian market. In Mali, most transactions are done via mobile money.\n\nThe idea of the application is to connect passengers and professional drivers through a smooth and intuitive mobile experience, allowing payment via any payment method. It is available in Mali on iOS and Android."
           },
-          "passenger": {
-            "title": "Passenger Experience",
-            "content": "Passengers benefit from a clean interface allowing them to book a ride in seconds. Address search uses Google Places autocomplete for quick and accurate input. Once the ride is requested, price and trip time estimates are displayed in real-time before confirmation."
+          "mobileApp": {
+            "title": "Mobile Application",
+            "content": "A single application for passengers and drivers. Passengers can book a ride in seconds thanks to Google Places autocomplete. Drivers have a dedicated interface with document verification (license, insurance, criminal record). Each profile is validated by administration before activation."
           },
           "tracking": {
             "title": "Real-Time GPS Tracking",
@@ -238,10 +277,6 @@
           "payments": {
             "title": "Multi-Provider Payments",
             "content": "Tchee supports 3 payment methods adapted to the African market: cash payment for unbanked users, credit card via Stripe for international payments, and Mobile Money (Orange Money) which represents the most popular payment method in the region. The system manages the complete transaction lifecycle with webhooks and automatic reconciliation."
-          },
-          "driver": {
-            "title": "Driver Space",
-            "content": "Drivers have a dedicated application with a complete registration process including document verification (driver's license, insurance, criminal record, vehicle photos). Each document is individually validated by administration before account activation."
           },
           "dashboard": {
             "title": "Financial Dashboard",
@@ -254,6 +289,14 @@
           "admin": {
             "title": "Administration",
             "content": "A web administration dashboard allows managing the entire platform: driver document validation, user management, rate configuration (price/km, price/minute, peak hour surcharges), trip monitoring, and driver payment processing."
+          },
+          "cicd": {
+            "title": "CI/CD",
+            "content": "Automated deployment pipeline via GitHub Actions. Each push triggers tests, build, and deployment to stores (iOS/Android) and production server. Staging and production environments are isolated with automatic rollback in case of error."
+          },
+          "stores": {
+            "title": "App Store & Play Store",
+            "content": "Application published on the App Store (iOS) and Google Play Store (Android). Metadata, screenshots, and localized descriptions management. Apple and Google review process respected with OTA (Over-The-Air) updates via Expo Updates for minor fixes without going through the stores."
           },
           "technical": {
             "title": "Technical Architecture",
@@ -301,12 +344,16 @@
   "sections": {
     "introduction": "Introduction",
     "interface": "Interface",
+    "frontend": "Frontend",
+    "backend": "Backend",
     "server": "Server",
     "data": "Data",
     "mobile": "Mobile",
     "administration": "Administration",
+    "devops": "DevOps",
     "pipeline": "Pipeline",
     "hosting": "Hosting",
+    "design": "Design",
     "quality": "Quality",
     "overview": "Overview",
     "timelineSection": "Timeline",
@@ -314,6 +361,7 @@
     "back": "Back",
     "scrollToExplore": "Scroll to explore",
     "scrollToSeeProjects": "Scroll to see projects",
+    "youHaveAnIdea": "You have an idea?",
     "letsGoReal": "Let's make it real"
   },
   "content": {

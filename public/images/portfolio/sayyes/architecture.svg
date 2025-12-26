@@ -1,0 +1,356 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" fill="none">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0f"/>
+      <stop offset="100%" style="stop-color:#1a1a2e"/>
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4F0BAC"/>
+      <stop offset="100%" style="stop-color:#9B5DE5"/>
+    </linearGradient>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0066FF"/>
+      <stop offset="100%" style="stop-color:#00D4FF"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00C853"/>
+      <stop offset="100%" style="stop-color:#69F0AE"/>
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6D00"/>
+      <stop offset="100%" style="stop-color:#FFAB40"/>
+    </linearGradient>
+    <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#06B6D4"/>
+      <stop offset="100%" style="stop-color:#67E8F9"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="700" fill="url(#bgGrad)"/>
+
+  <!-- Grid pattern -->
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+  </pattern>
+  <rect width="1200" height="700" fill="url(#grid)"/>
+
+  <!-- Title -->
+  <text x="600" y="45" text-anchor="middle" fill="white" font-family="system-ui, -apple-system, sans-serif" font-size="26" font-weight="bold">Architecture Full-Stack SayYes</text>
+  <text x="600" y="70" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="system-ui" font-size="12">Remix SSR • React 18 • Prisma ORM • Dual-Layer Cache</text>
+
+  <!-- ============ CLIENT LAYER ============ -->
+  <g transform="translate(40, 100)">
+    <rect x="0" y="0" width="340" height="280" rx="16" fill="rgba(79,11,172,0.1)" stroke="rgba(79,11,172,0.3)" stroke-width="2" filter="url(#shadow)"/>
+    <text x="170" y="28" text-anchor="middle" fill="#9B5DE5" font-family="system-ui" font-size="13" font-weight="bold">CLIENT - SSR + HYDRATION</text>
+
+    <!-- React Components -->
+    <g transform="translate(15, 50)">
+      <rect x="0" y="0" width="150" height="60" rx="10" fill="rgba(97,218,251,0.1)" stroke="rgba(97,218,251,0.3)" stroke-width="1"/>
+      <text x="75" y="25" text-anchor="middle" fill="#61DAFB" font-family="system-ui" font-size="13" font-weight="bold">React 18</text>
+      <text x="75" y="45" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="system-ui" font-size="10">Concurrent Features</text>
+    </g>
+
+    <!-- TypeScript -->
+    <g transform="translate(175, 50)">
+      <rect x="0" y="0" width="150" height="60" rx="10" fill="rgba(49,120,198,0.2)" stroke="rgba(49,120,198,0.4)" stroke-width="1"/>
+      <text x="75" y="25" text-anchor="middle" fill="#3178C6" font-family="system-ui" font-size="13" font-weight="bold">TypeScript</text>
+      <text x="75" y="45" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="system-ui" font-size="10">Type Safety</text>
+    </g>
+
+    <!-- Framer Motion -->
+    <g transform="translate(15, 120)">
+      <rect x="0" y="0" width="100" height="50" rx="8" fill="rgba(236,72,153,0.15)" stroke="rgba(236,72,153,0.4)" stroke-width="1"/>
+      <text x="50" y="22" text-anchor="middle" fill="#F472B6" font-family="system-ui" font-size="11" font-weight="600">Framer</text>
+      <text x="50" y="38" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="system-ui" font-size="9">Animations</text>
+    </g>
+
+    <!-- Three.js -->
+    <g transform="translate(125, 120)">
+      <rect x="0" y="0" width="100" height="50" rx="8" fill="rgba(139,92,246,0.15)" stroke="rgba(139,92,246,0.4)" stroke-width="1"/>
+      <text x="50" y="22" text-anchor="middle" fill="#A78BFA" font-family="system-ui" font-size="11" font-weight="600">Three.js</text>
+      <text x="50" y="38" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="system-ui" font-size="9">3D WebGL</text>
+    </g>
+
+    <!-- Lenis -->
+    <g transform="translate(235, 120)">
+      <rect x="0" y="0" width="90" height="50" rx="8" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+      <text x="45" y="22" text-anchor="middle" fill="white" font-family="system-ui" font-size="11" font-weight="600">Lenis</text>
+      <text x="45" y="38" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="system-ui" font-size="9">Smooth Scroll</text>
+    </g>
+
+    <!-- Tailwind -->
+    <g transform="translate(15, 180)">
+      <rect x="0" y="0" width="150" height="50" rx="8" fill="rgba(6,182,212,0.15)" stroke="rgba(6,182,212,0.4)" stroke-width="1"/>
+      <text x="75" y="22" text-anchor="middle" fill="#22D3EE" font-family="system-ui" font-size="11" font-weight="600">Tailwind CSS</text>
+      <text x="75" y="38" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="system-ui" font-size="9">Utility-First CSS</text>
+    </g>
+
+    <!-- PWA -->
+    <g transform="translate(175, 180)">
+      <rect x="0" y="0" width="150" height="50" rx="8" fill="rgba(139,92,246,0.15)" stroke="rgba(139,92,246,0.4)" stroke-width="1"/>
+      <text x="75" y="22" text-anchor="middle" fill="#A78BFA" font-family="system-ui" font-size="11" font-weight="600">Service Worker</text>
+      <text x="75" y="38" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="system-ui" font-size="9">PWA + Offline</text>
+    </g>
+
+    <!-- Features list -->
+    <g transform="translate(15, 240)">
+      <text x="0" y="12" fill="rgba(255,255,255,0.6)" font-family="system-ui" font-size="9">• Code Splitting dynamique</text>
+      <text x="165" y="12" fill="rgba(255,255,255,0.6)" font-family="system-ui" font-size="9">• Responsive Images</text>
+      <text x="0" y="28" fill="rgba(255,255,255,0.6)" font-family="system-ui" font-size="9">• Lazy Loading composants</text>
+      <text x="165" y="28" fill="rgba(255,255,255,0.6)" font-family="system-ui" font-size="9">• Prefetch routes</text>
+    </g>
+  </g>
+
+  <!-- Arrow Client to Server -->
+  <g filter="url(#glow)">
+    <path d="M390 240 L430 240" stroke="url(#purpleGrad)" stroke-width="2"/>
+    <polygon points="435,240 425,235 425,245" fill="#9B5DE5"/>
+    <text x="412" y="225" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="system-ui" font-size="9">HTTP/2</text>
+  </g>
+
+  <!-- ============ SERVER LAYER (REMIX) ============ -->
+  <g transform="translate(445, 100)">
+    <rect x="0" y="0" width="310" height="280" rx="16" fill="rgba(0,102,255,0.1)" stroke="rgba(0,102,255,0.3)" stroke-width="2" filter="url(#shadow)"/>
+    <text x="155" y="28" text-anchor="middle" fill="#00D4FF" font-family="system-ui" font-size="13" font-weight="bold">SERVER - REMIX 2.14</text>
+
+    <!-- Loaders -->
+    <g transform="translate(15, 50)">
+      <rect x="0" y="0" width="135" height="55" rx="8" fill="rgba(0,200,83,0.15)" stroke="rgba(0,200,83,0.4)" stroke-width="1"/>
+      <text x="67" y="22" text-anchor="middle" fill="#69F0AE" font-family="system-ui" font-size="12" font-weight="600">Loaders</text>
+      <text x="67" y="40" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="system-ui" font-size="9">Data Fetching SSR</text>
+    </g>
+
+    <!-- Actions -->
+    <g transform="translate(160, 50)">
+      <rect x="0" y="0" width="135" height="55" rx="8" fill="rgba(255,109,0,0.15)" stroke="rgba(255,109,0,0.4)" stroke-width="1"/>
+      <text x="67" y="22" text-anchor="middle" fill="#FFAB40" font-family="system-ui" font-size="12" font-weight="600">Actions</text>
+      <text x="67" y="40" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="system-ui" font-size="9">Mutations + Forms</text>
+    </g>
+
+    <!-- Session Auth -->
+    <g transform="translate(15, 115)">
+      <rect x="0" y="0" width="135" height="55" rx="8" fill="rgba(239,68,68,0.15)" stroke="rgba(239,68,68,0.4)" stroke-width="1"/>
+      <text x="67" y="22" text-anchor="middle" fill="#F87171" font-family="system-ui" font-size="11" font-weight="600">Session Auth</text>
+      <text x="67" y="40" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="system-ui" font-size="9">Cookie httpOnly</text>
+    </g>
+
+    <!-- Meta + SEO -->
+    <g transform="translate(160, 115)">
+      <rect x="0" y="0" width="135" height="55" rx="8" fill="rgba(79,11,172,0.2)" stroke="rgba(155,93,229,0.4)" stroke-width="1"/>
+      <text x="67" y="22" text-anchor="middle" fill="#9B5DE5" font-family="system-ui" font-size="11" font-weight="600">Meta + SEO</text>
+      <text x="67" y="40" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="system-ui" font-size="9">JSON-LD Schema</text>
+    </g>
+
+    <!-- Image Optimization -->
+    <g transform="translate(15, 180)">
+      <rect x="0" y="0" width="280" height="55" rx="8" fill="rgba(16,185,129,0.15)" stroke="rgba(16,185,129,0.4)" stroke-width="1"/>
+      <text x="140" y="22" text-anchor="middle" fill="#34D399" font-family="system-ui" font-size="11" font-weight="bold">Sharp Image Pipeline</text>
+      <text x="140" y="40" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="system-ui" font-size="9">WebP/AVIF • Responsive 20px-1920px • Lazy Generation</text>
+    </g>
+
+    <!-- Features -->
+    <g transform="translate(15, 245)">
+      <text x="0" y="12" fill="rgba(255,255,255,0.6)" font-family="system-ui" font-size="9">• Routes imbriquées</text>
+      <text x="100" y="12" fill="rgba(255,255,255,0.6)" font-family="system-ui" font-size="9">• Error Boundaries</text>
+      <text x="210" y="12" fill="rgba(255,255,255,0.6)" font-family="system-ui" font-size="9">• Streaming SSR</text>
+    </g>
+  </g>
+
+  <!-- Arrow Server to Data -->
+  <g filter="url(#glow)">
+    <path d="M765 240 L805 240" stroke="url(#blueGrad)" stroke-width="2"/>
+    <polygon points="810,240 800,235 800,245" fill="#00D4FF"/>
+    <text x="787" y="225" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="system-ui" font-size="9">ORM</text>
+  </g>
+
+  <!-- ============ DATA LAYER ============ -->
+  <g transform="translate(820, 100)">
+    <rect x="0" y="0" width="340" height="280" rx="16" fill="rgba(6,182,212,0.1)" stroke="rgba(6,182,212,0.3)" stroke-width="2" filter="url(#shadow)"/>
+    <text x="170" y="28" text-anchor="middle" fill="#67E8F9" font-family="system-ui" font-size="13" font-weight="bold">DATA LAYER</text>
+
+    <!-- Prisma ORM -->
+    <g transform="translate(15, 50)">
+      <rect x="0" y="0" width="150" height="70" rx="10" fill="rgba(45,55,72,0.5)" stroke="rgba(99,179,237,0.4)" stroke-width="1"/>
+      <text x="75" y="28" text-anchor="middle" fill="#63B3ED" font-family="system-ui" font-size="14" font-weight="bold">Prisma ORM</text>
+      <text x="75" y="48" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="system-ui" font-size="9">Type-safe Queries</text>
+      <text x="75" y="62" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-family="system-ui" font-size="9">Auto-migrations</text>
+    </g>
+
+    <!-- SQLite -->
+    <g transform="translate(175, 50)">
+      <rect x="0" y="0" width="150" height="70" rx="10" fill="rgba(0,122,204,0.2)" stroke="rgba(0,122,204,0.4)" stroke-width="1"/>
+      <text x="75" y="28" text-anchor="middle" fill="#4FC3F7" font-family="system-ui" font-size="14" font-weight="bold">SQLite</text>
+      <text x="75" y="48" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="system-ui" font-size="9">Embedded DB</text>
+      <text x="75" y="62" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-family="system-ui" font-size="9">Zero Config</text>
+    </g>
+
+    <!-- Cache System -->
+    <g transform="translate(15, 135)">
+      <rect x="0" y="0" width="310" height="90" rx="10" fill="rgba(255,109,0,0.1)" stroke="rgba(255,109,0,0.3)" stroke-width="2"/>
+      <text x="155" y="22" text-anchor="middle" fill="#FFAB40" font-family="system-ui" font-size="12" font-weight="bold">DUAL-LAYER CACHE SYSTEM</text>
+
+      <!-- Memory Cache -->
+      <g transform="translate(15, 35)">
+        <rect x="0" y="0" width="135" height="45" rx="6" fill="rgba(255,109,0,0.2)" stroke="rgba(255,171,64,0.5)" stroke-width="1"/>
+        <text x="67" y="18" text-anchor="middle" fill="#FFAB40" font-family="system-ui" font-size="10" font-weight="600">Memory Cache</text>
+        <text x="67" y="35" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="system-ui" font-size="9">TTL: 1h • LRU</text>
+      </g>
+
+      <!-- Disk Cache -->
+      <g transform="translate(160, 35)">
+        <rect x="0" y="0" width="135" height="45" rx="6" fill="rgba(255,109,0,0.2)" stroke="rgba(255,171,64,0.5)" stroke-width="1"/>
+        <text x="67" y="18" text-anchor="middle" fill="#FFAB40" font-family="system-ui" font-size="10" font-weight="600">Disk Cache</text>
+        <text x="67" y="35" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="system-ui" font-size="9">TTL: 7 days • Persistent</text>
+      </g>
+    </g>
+
+    <!-- Data Models -->
+    <g transform="translate(15, 235)">
+      <text x="0" y="12" fill="rgba(255,255,255,0.6)" font-family="system-ui" font-size="9">Models: Portfolio, Landing, Block, Lead, User, SEO</text>
+      <text x="0" y="28" fill="rgba(255,255,255,0.6)" font-family="system-ui" font-size="9">Relations: 1-N Landing→Blocks • 1-N Portfolio→Media</text>
+    </g>
+  </g>
+
+  <!-- ============ BOTTOM SECTIONS ============ -->
+
+  <!-- Build Pipeline -->
+  <g transform="translate(40, 410)">
+    <rect x="0" y="0" width="370" height="120" rx="12" fill="rgba(139,92,246,0.1)" stroke="rgba(139,92,246,0.3)" stroke-width="1" filter="url(#shadow)"/>
+    <text x="185" y="25" text-anchor="middle" fill="#A78BFA" font-family="system-ui" font-size="12" font-weight="bold">BUILD & TOOLING</text>
+
+    <g transform="translate(15, 40)">
+      <rect x="0" y="0" width="80" height="35" rx="6" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+      <text x="40" y="22" text-anchor="middle" fill="white" font-family="system-ui" font-size="10" font-weight="600">Vite 5</text>
+    </g>
+    <g transform="translate(105, 40)">
+      <rect x="0" y="0" width="80" height="35" rx="6" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+      <text x="40" y="22" text-anchor="middle" fill="white" font-family="system-ui" font-size="10" font-weight="600">ESLint</text>
+    </g>
+    <g transform="translate(195, 40)">
+      <rect x="0" y="0" width="80" height="35" rx="6" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+      <text x="40" y="22" text-anchor="middle" fill="white" font-family="system-ui" font-size="10" font-weight="600">Prettier</text>
+    </g>
+    <g transform="translate(285, 40)">
+      <rect x="0" y="0" width="70" height="35" rx="6" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+      <text x="35" y="22" text-anchor="middle" fill="white" font-family="system-ui" font-size="10" font-weight="600">HMR</text>
+    </g>
+
+    <g transform="translate(15, 85)">
+      <text x="0" y="12" fill="rgba(255,255,255,0.5)" font-family="system-ui" font-size="9">Tree-shaking • Bundle optimization • Source maps • Fast refresh</text>
+    </g>
+  </g>
+
+  <!-- Features Highlight -->
+  <g transform="translate(425, 410)">
+    <rect x="0" y="0" width="330" height="120" rx="12" fill="rgba(0,200,83,0.1)" stroke="rgba(0,200,83,0.3)" stroke-width="1" filter="url(#shadow)"/>
+    <text x="165" y="25" text-anchor="middle" fill="#69F0AE" font-family="system-ui" font-size="12" font-weight="bold">FONCTIONNALITÉS MÉTIER</text>
+
+    <g transform="translate(15, 40)">
+      <text x="0" y="12" fill="rgba(255,255,255,0.7)" font-family="system-ui" font-size="10">• Portfolio dynamique avec filtres</text>
+      <text x="0" y="28" fill="rgba(255,255,255,0.7)" font-family="system-ui" font-size="10">• Landing Page Builder (7 blocs)</text>
+      <text x="0" y="44" fill="rgba(255,255,255,0.7)" font-family="system-ui" font-size="10">• Grille Bento drag & drop</text>
+      <text x="0" y="60" fill="rgba(255,255,255,0.7)" font-family="system-ui" font-size="10">• Back-office complet avec CRUD</text>
+    </g>
+    <g transform="translate(175, 40)">
+      <text x="0" y="12" fill="rgba(255,255,255,0.7)" font-family="system-ui" font-size="10">• SEO Meta + JSON-LD</text>
+      <text x="0" y="28" fill="rgba(255,255,255,0.7)" font-family="system-ui" font-size="10">• Upload images + preview</text>
+      <text x="0" y="44" fill="rgba(255,255,255,0.7)" font-family="system-ui" font-size="10">• Auth session sécurisée</text>
+      <text x="0" y="60" fill="rgba(255,255,255,0.7)" font-family="system-ui" font-size="10">• Formulaires validés</text>
+    </g>
+  </g>
+
+  <!-- Performance Metrics -->
+  <g transform="translate(770, 410)">
+    <rect x="0" y="0" width="390" height="120" rx="12" fill="rgba(79,11,172,0.1)" stroke="rgba(79,11,172,0.3)" stroke-width="1" filter="url(#shadow)"/>
+    <text x="195" y="25" text-anchor="middle" fill="#9B5DE5" font-family="system-ui" font-size="12" font-weight="bold">PERFORMANCE</text>
+
+    <!-- Lighthouse Score -->
+    <g transform="translate(20, 45)">
+      <circle cx="35" cy="35" r="32" fill="none" stroke="rgba(0,200,83,0.3)" stroke-width="6"/>
+      <circle cx="35" cy="35" r="32" fill="none" stroke="#69F0AE" stroke-width="6" stroke-dasharray="190 200" stroke-linecap="round" transform="rotate(-90 35 35)"/>
+      <text x="35" y="40" text-anchor="middle" fill="#69F0AE" font-family="system-ui" font-size="16" font-weight="bold">95+</text>
+      <text x="35" y="90" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-family="system-ui" font-size="9">Lighthouse</text>
+    </g>
+
+    <!-- Metrics -->
+    <g transform="translate(110, 45)">
+      <rect x="0" y="0" width="85" height="55" rx="8" fill="rgba(255,255,255,0.05)"/>
+      <text x="42" y="22" text-anchor="middle" fill="#67E8F9" font-family="system-ui" font-size="14" font-weight="bold">&lt;1s</text>
+      <text x="42" y="42" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="system-ui" font-size="9">FCP</text>
+    </g>
+    <g transform="translate(205, 45)">
+      <rect x="0" y="0" width="85" height="55" rx="8" fill="rgba(255,255,255,0.05)"/>
+      <text x="42" y="22" text-anchor="middle" fill="#67E8F9" font-family="system-ui" font-size="14" font-weight="bold">&lt;2.5s</text>
+      <text x="42" y="42" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="system-ui" font-size="9">LCP</text>
+    </g>
+    <g transform="translate(300, 45)">
+      <rect x="0" y="0" width="70" height="55" rx="8" fill="rgba(255,255,255,0.05)"/>
+      <text x="35" y="22" text-anchor="middle" fill="#67E8F9" font-family="system-ui" font-size="14" font-weight="bold">0</text>
+      <text x="35" y="42" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="system-ui" font-size="9">CLS</text>
+    </g>
+  </g>
+
+  <!-- Data Flow Arrows -->
+  <g filter="url(#glow)" opacity="0.6">
+    <!-- Bidirectional between layers -->
+    <path d="M210 385 L210 405" stroke="url(#purpleGrad)" stroke-width="1.5"/>
+    <path d="M590 385 L590 405" stroke="url(#greenGrad)" stroke-width="1.5"/>
+    <path d="M990 385 L990 405" stroke="url(#purpleGrad)" stroke-width="1.5"/>
+  </g>
+
+  <!-- Tech Stack Footer -->
+  <g transform="translate(40, 560)">
+    <text x="0" y="15" fill="rgba(255,255,255,0.3)" font-family="system-ui" font-size="11">Stack:</text>
+    <g transform="translate(50, 0)">
+      <rect x="0" y="0" width="65" height="22" rx="11" fill="rgba(79,11,172,0.3)" stroke="rgba(155,93,229,0.5)" stroke-width="1"/>
+      <text x="32" y="15" text-anchor="middle" fill="#9B5DE5" font-family="system-ui" font-size="9" font-weight="600">Remix</text>
+    </g>
+    <g transform="translate(125, 0)">
+      <rect x="0" y="0" width="65" height="22" rx="11" fill="rgba(97,218,251,0.2)" stroke="rgba(97,218,251,0.5)" stroke-width="1"/>
+      <text x="32" y="15" text-anchor="middle" fill="#61DAFB" font-family="system-ui" font-size="9" font-weight="600">React 18</text>
+    </g>
+    <g transform="translate(200, 0)">
+      <rect x="0" y="0" width="75" height="22" rx="11" fill="rgba(49,120,198,0.2)" stroke="rgba(49,120,198,0.5)" stroke-width="1"/>
+      <text x="37" y="15" text-anchor="middle" fill="#3178C6" font-family="system-ui" font-size="9" font-weight="600">TypeScript</text>
+    </g>
+    <g transform="translate(285, 0)">
+      <rect x="0" y="0" width="65" height="22" rx="11" fill="rgba(6,182,212,0.2)" stroke="rgba(6,182,212,0.5)" stroke-width="1"/>
+      <text x="32" y="15" text-anchor="middle" fill="#22D3EE" font-family="system-ui" font-size="9" font-weight="600">Tailwind</text>
+    </g>
+    <g transform="translate(360, 0)">
+      <rect x="0" y="0" width="55" height="22" rx="11" fill="rgba(99,179,237,0.2)" stroke="rgba(99,179,237,0.5)" stroke-width="1"/>
+      <text x="27" y="15" text-anchor="middle" fill="#63B3ED" font-family="system-ui" font-size="9" font-weight="600">Prisma</text>
+    </g>
+    <g transform="translate(425, 0)">
+      <rect x="0" y="0" width="55" height="22" rx="11" fill="rgba(0,122,204,0.2)" stroke="rgba(0,122,204,0.5)" stroke-width="1"/>
+      <text x="27" y="15" text-anchor="middle" fill="#4FC3F7" font-family="system-ui" font-size="9" font-weight="600">SQLite</text>
+    </g>
+    <g transform="translate(490, 0)">
+      <rect x="0" y="0" width="55" height="22" rx="11" fill="rgba(139,92,246,0.2)" stroke="rgba(139,92,246,0.5)" stroke-width="1"/>
+      <text x="27" y="15" text-anchor="middle" fill="#A78BFA" font-family="system-ui" font-size="9" font-weight="600">Three.js</text>
+    </g>
+    <g transform="translate(555, 0)">
+      <rect x="0" y="0" width="80" height="22" rx="11" fill="rgba(236,72,153,0.2)" stroke="rgba(236,72,153,0.5)" stroke-width="1"/>
+      <text x="40" y="15" text-anchor="middle" fill="#F472B6" font-family="system-ui" font-size="9" font-weight="600">Framer Motion</text>
+    </g>
+    <g transform="translate(645, 0)">
+      <rect x="0" y="0" width="55" height="22" rx="11" fill="rgba(16,185,129,0.2)" stroke="rgba(16,185,129,0.5)" stroke-width="1"/>
+      <text x="27" y="15" text-anchor="middle" fill="#34D399" font-family="system-ui" font-size="9" font-weight="600">Sharp</text>
+    </g>
+    <g transform="translate(710, 0)">
+      <rect x="0" y="0" width="45" height="22" rx="11" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+      <text x="22" y="15" text-anchor="middle" fill="white" font-family="system-ui" font-size="9" font-weight="600">Vite</text>
+    </g>
+  </g>
+</svg>

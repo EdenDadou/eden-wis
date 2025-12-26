@@ -18,12 +18,14 @@ export interface Project {
   color: string;
   accentColor: string;
   image: string;
+  presentationVideo?: string;
   icon?: string;
   mockups: string[];
   videos?: { src: string; title: string }[];
   sections?: ProjectSection[];
   year: string;
   duration: string;
+  team?: string;
   client: string;
   role: string;
   stats: { label: string; value: string }[];

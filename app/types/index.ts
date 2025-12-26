@@ -1,1 +1,1 @@
-export type { Project } from "./project";
+export type { Project, ProjectMedia, ProjectSection } from "./project";
