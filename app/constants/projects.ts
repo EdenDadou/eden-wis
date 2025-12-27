@@ -17,7 +17,7 @@ export const projects: Project[] = [
       "/images/portfolio/sayyes/sayyes-backoffice.png",
     ],
     videos: [
-      { src: "/images/portfolio/sayyes/galerie-portfolio.mov", title: "Galerie Portfolio" },
+      { src: "/images/portfolio/sayyes/galerie-portfolio.mp4", title: "Galerie Portfolio" },
       { src: "/images/portfolio/sayyes/projet-portfolio.mp4", title: "Projet Portfolio" },
       { src: "/images/portfolio/sayyes/sayyes-landing.mov", title: "Landing Pages" },
       { src: "/images/portfolio/sayyes/layout-animation.mp4", title: "Animations Layout" },
@@ -39,7 +39,7 @@ export const projects: Project[] = [
       {
         key: "portfolio",
         media: [
-          { type: "video", src: "/images/portfolio/sayyes/galerie-portfolio.mov", title: "Galerie Portfolio" },
+          { type: "video", src: "/images/portfolio/sayyes/galerie-portfolio.mp4", title: "Galerie Portfolio" },
           { type: "video", src: "/images/portfolio/sayyes/projet-portfolio.mp4", title: "Vue détail projet" },
         ],
       },
