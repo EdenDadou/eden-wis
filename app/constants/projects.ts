@@ -10,7 +10,7 @@ export const projects: Project[] = [
     color: "#4F0BAC",
     accentColor: "#9B5DE5",
     image: "/images/portfolio/sayyes/sayyes-home.png",
-    presentationVideo: "/images/portfolio/sayyes/presentation.mov",
+    presentationVideo: "/images/portfolio/sayyes/presentation.mp4",
     icon: "/images/portfolio/sayyes/icon.svg",
     mockups: [
       "/images/portfolio/sayyes/sayyes-portfolio.png",
@@ -18,9 +18,9 @@ export const projects: Project[] = [
     ],
     videos: [
       { src: "/images/portfolio/sayyes/galerie-portfolio.mov", title: "Galerie Portfolio" },
-      { src: "/images/portfolio/sayyes/projet-portfolio.mov", title: "Projet Portfolio" },
+      { src: "/images/portfolio/sayyes/projet-portfolio.mp4", title: "Projet Portfolio" },
       { src: "/images/portfolio/sayyes/sayyes-landing.mov", title: "Landing Pages" },
-      { src: "/images/portfolio/sayyes/layout-animation.mov", title: "Animations Layout" },
+      { src: "/images/portfolio/sayyes/layout-animation.mp4", title: "Animations Layout" },
       { src: "/images/portfolio/sayyes/admin-projet-portfolio.mov", title: "Admin Portfolio" },
       { src: "/images/portfolio/sayyes/admin-seo.mov", title: "Admin SEO" },
       { src: "/images/portfolio/sayyes/sayyes-mobile.mov", title: "Vue Mobile" },
@@ -33,14 +33,14 @@ export const projects: Project[] = [
         key: "overview",
         media: [
           { type: "image", src: "/images/portfolio/sayyes/sayyes-home.png", title: "Page d'accueil" },
-          { type: "video", src: "/images/portfolio/sayyes/layout-animation.mov", title: "Animations Layout" },
+          { type: "video", src: "/images/portfolio/sayyes/layout-animation.mp4", title: "Animations Layout" },
         ],
       },
       {
         key: "portfolio",
         media: [
           { type: "video", src: "/images/portfolio/sayyes/galerie-portfolio.mov", title: "Galerie Portfolio" },
-          { type: "video", src: "/images/portfolio/sayyes/projet-portfolio.mov", title: "Vue détail projet" },
+          { type: "video", src: "/images/portfolio/sayyes/projet-portfolio.mp4", title: "Vue détail projet" },
         ],
       },
       {
