@@ -1,78 +1,160 @@
-import { ParticleStream } from "./ParticleStream";
+import { useMemo } from "react";
+import { Line } from "@react-three/drei";
+import * as THREE from "three";
 import {
-  P_FRONT,
-  P_MOBILE,
-  P_BACK,
-  P_SERVER_LEFT,
-  P_SERVER_RIGHT,
-  P_SERVER_BOTTOM,
-  P_DB_LEFT,
-  P_DB_RIGHT,
-  P_DB_TOP,
-  P_CICD,
-  P_CLOUD,
-  P_ARCHI,
-  C_FRONT,
-  C_MOBILE,
-  C_BACK,
+  GRID_X,
+  GRID_Y,
   C_SERVER,
   C_DB,
   C_CICD,
   C_CLOUD,
-  C_ARCHI,
 } from "../constants";
 
 interface SkillConnectionsProps {
   showElements: boolean;
-  showParticles: boolean;
-  linkDrawProgress: number[];
+  showParticles?: boolean;
+  linkDrawProgress?: number[];
   isInDetailSection: boolean;
+}
+
+// Animated curved line component with draw progress
+function CurvedConnection({
+  start,
+  end,
+  color,
+  opacity = 0.25,
+  drawProgress = 1,
+}: {
+  start: [number, number, number];
+  end: [number, number, number];
+  color: string;
+  opacity?: number;
+  drawProgress?: number;
+}) {
+  const points = useMemo(() => {
+    const startVec = new THREE.Vector3(...start);
+    const endVec = new THREE.Vector3(...end);
+
+    // Calculate control point for quadratic bezier curve
+    const midX = (startVec.x + endVec.x) / 2;
+    const midY = (startVec.y + endVec.y) / 2;
+
+    // Offset control point perpendicular to line for curve effect
+    const dx = endVec.x - startVec.x;
+    const dy = endVec.y - startVec.y;
+    const len = Math.sqrt(dx * dx + dy * dy);
+    const curveAmount = len * 0.15; // Subtle curve
+
+    // Control point offset perpendicular to line
+    const controlX = midX - (dy / len) * curveAmount;
+    const controlY = midY + (dx / len) * curveAmount;
+
+    // Generate curve points
+    const curve = new THREE.QuadraticBezierCurve3(
+      startVec,
+      new THREE.Vector3(controlX, controlY, -0.3),
+      endVec
+    );
+
+    return curve.getPoints(30);
+  }, [start, end]);
+
+  // Calculate how many points to show based on drawProgress
+  const visiblePoints = useMemo(() => {
+    if (drawProgress >= 1) return points;
+    if (drawProgress <= 0) return [];
+    const numPoints = Math.max(2, Math.ceil(points.length * drawProgress));
+    return points.slice(0, numPoints);
+  }, [points, drawProgress]);
+
+  if (visiblePoints.length < 2) return null;
+
+  return (
+    <Line
+      points={visiblePoints}
+      color={color}
+      lineWidth={1.5}
+      transparent
+      opacity={opacity * drawProgress}
+    />
+  );
 }
 
 export function SkillConnections({
   showElements,
-  showParticles,
-  linkDrawProgress,
+  linkDrawProgress = [],
   isInDetailSection,
 }: SkillConnectionsProps) {
   if (!showElements) return null;
 
-  // Get draw progress for a link (0 if not started)
-  const getDrawProgress = (index: number) => linkDrawProgress[index] || 0;
+  // If linkDrawProgress is empty or all zeros, don't render anything yet
+  const hasProgress = linkDrawProgress.length > 0 && linkDrawProgress.some(p => p > 0);
+  if (!hasProgress) return null;
 
-  // Define all links with their properties
-  // Frontend: points on right -> Server: points on left
-  // Server: points on right -> DevOps: points on left
-  // Server <-> Database: top/bottom connection
-  const links = [
-    // BACKEND GROUP (vertical) - Server bottom to Database top (all red)
-    { start: P_SERVER_BOTTOM, end: P_DB_TOP, startColor: C_DB, endColor: C_DB },
-    // DEVOPS GROUP (vertical chain) - left side points
-    { start: P_CICD, end: P_CLOUD, startColor: C_CICD, endColor: C_CLOUD },
-    // FRONTEND -> SERVER (all green - server color)
-    { start: P_FRONT, end: P_SERVER_LEFT, startColor: C_SERVER, endColor: C_SERVER },
-    { start: P_MOBILE, end: P_SERVER_LEFT, startColor: C_SERVER, endColor: C_SERVER },
-    // BACKOFFICE -> SERVER (all green - server color)
-    { start: P_BACK, end: P_SERVER_LEFT, startColor: C_SERVER, endColor: C_SERVER },
-    // SERVER -> DEVOPS (right to left)
-    { start: P_SERVER_RIGHT, end: P_CICD, startColor: C_SERVER, endColor: C_CICD },
-    { start: P_SERVER_RIGHT, end: P_CLOUD, startColor: C_SERVER, endColor: C_CLOUD },
-  ];
+  const baseOpacity = isInDetailSection ? 0.25 : 0.6;
+
+  // Backend positions (shifted down by 1.5)
+  const SERVER_Y = GRID_Y * 0.5 - 1.5;
+  const DB_Y = -GRID_Y * 0.5 - 1.5;
+
+  // Connection definitions - minimal, elegant
+  const connections = useMemo(
+    () => [
+      // Server to Database (vertical, red)
+      {
+        start: [0, SERVER_Y - 0.5, -0.3] as [number, number, number],
+        end: [0, DB_Y + 0.5, -0.3] as [number, number, number],
+        color: C_DB,
+      },
+      // Frontend column to Server
+      {
+        start: [-GRID_X + 0.6, GRID_Y - 0.3, -0.3] as [number, number, number],
+        end: [-0.6, SERVER_Y + 0.2, -0.3] as [number, number, number],
+        color: C_SERVER,
+      },
+      {
+        start: [-GRID_X + 0.6, -0.3, -0.3] as [number, number, number],
+        end: [-0.6, SERVER_Y, -0.3] as [number, number, number],
+        color: C_SERVER,
+      },
+      {
+        start: [-GRID_X + 0.6, -GRID_Y + 0.3, -0.3] as [number, number, number],
+        end: [-0.6, SERVER_Y - 0.2, -0.3] as [number, number, number],
+        color: C_SERVER,
+      },
+      // Server to DevOps column
+      {
+        start: [0.6, SERVER_Y + 0.2, -0.3] as [number, number, number],
+        end: [GRID_X - 0.6, GRID_Y - 0.3, -0.3] as [number, number, number],
+        color: C_CICD,
+      },
+      {
+        start: [0.6, SERVER_Y - 0.2, -0.3] as [number, number, number],
+        end: [GRID_X - 0.6, 0.3, -0.3] as [number, number, number],
+        color: C_CLOUD,
+      },
+      // CI/CD to Cloud (vertical)
+      {
+        start: [GRID_X, GRID_Y - 0.5, -0.3] as [number, number, number],
+        end: [GRID_X, 0.5, -0.3] as [number, number, number],
+        color: C_CICD,
+      },
+    ],
+    []
+  );
 
   return (
     <>
-      {links.map((link, index) => {
-        const progress = getDrawProgress(index);
-        if (progress === 0) return null; // Don't render if not started
+      {connections.map((conn, index) => {
+        const progress = linkDrawProgress[index] ?? 0;
+        if (progress <= 0) return null;
         return (
-          <ParticleStream
+          <CurvedConnection
             key={index}
-            start={link.start}
-            end={link.end}
-            startColor={link.startColor}
-            endColor={link.endColor}
-            showParticles={showParticles && progress === 1}
-            opacity={isInDetailSection ? 0.15 : 1}
+            start={conn.start}
+            end={conn.end}
+            color={conn.color}
+            opacity={baseOpacity}
             drawProgress={progress}
           />
         );

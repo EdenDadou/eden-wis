@@ -11,21 +11,56 @@ import type {
 import { MorphingText } from "../ui";
 import { useTranslatedProjects } from "~/hooks";
 
-// Mapping des dates pour les projets Atecna
-const ATECNA_PROJECT_DATES: Record<string, string> = {
-  "OPPBTP : PreventionBTP v3": "18 mois • 2024-2025",
-  "Au Vieux Campeur - App Mobile v2": "3 mois • 2025-2026",
-  "OPPBTP : Bonnes Pratiques Cordiste": "2 semaines • 2025",
-  "GoCrisis - Gestion de Crise": "2 mois • 2024",
-  "Catalina - Fidélité Gamifiée Retail": "6 mois • 2022-2025",
-  "Elistair - Portail Client Drones": "6 mois • 2024",
-  "Beager - Plateforme Freelance v2": "6 mois • 2023",
+// Mapping des dates pour les projets par expérience
+const PROJECT_DATES: Record<string, Record<string, string>> = {
+  atecna: {
+    "OPPBTP : PreventionBTP v3": "18 mois • 2024-2025",
+    "Au Vieux Campeur - App Mobile v2": "3 mois • 2025-2026",
+    "OPPBTP : Bonnes Pratiques Cordiste": "1 mois • 2025",
+    "GoCrisis - Gestion de Crise": "3 mois • 2024",
+    "Catalina - Fidélité Gamifiée Retail": "1 an • 2021-2025",
+    "Elistair - Portail Client Drones": "10 mois • 2023-2024",
+    "Beager - Plateforme Freelance v2": "6 mois • 2023",
+    "Timtle - Location Immobilière": "6 mois • 2020-2021",
+    "Cora Wine - E-commerce Vins": "6 mois • 2023",
+    "Wipple - Réservation Salles": "2 mois • 2024",
+  },
+  freelance: {
+    "Tchee - Application VTC": "8 mois • 2024-2025",
+    "SayYes - Portfolio & Landing Builder": "3 mois • 2024",
+    "Guardian - DeFi Smart Accounts": "1 mois • 2025",
+  },
+  etude: {
+    "Projet de fin d'études": "4 mois • 2019",
+    "Stage développeur": "3 mois • 2019",
+  },
+  e4ia: {
+    "Projet 1": "6 mois • 2020",
+  },
 };
 
 // Mapping des projets ayant une page portfolio dédiée
 const PORTFOLIO_PROJECT_IDS: Record<string, string> = {
   "Tchee - Application VTC": "tchee",
   "SayYes - Portfolio & Landing Builder": "sayyes",
+};
+
+// Mapping des logos pour chaque projet
+const PROJECT_LOGOS: Record<string, string> = {
+  "OPPBTP : PreventionBTP v3": "/images/logos/oppbtp-prevention.png",
+  "Au Vieux Campeur - App Mobile v2": "/images/logos/auvieuxcampeur.svg",
+  "OPPBTP : Bonnes Pratiques Cordiste":
+    "/images/logos/oppbtp-bonnepratique.png",
+  "GoCrisis - Gestion de Crise": "/images/logos/gocrisis.png",
+  "Catalina - Fidélité Gamifiée Retail": "/images/logos/catalina.png",
+  "Elistair - Portail Client Drones": "/images/logos/elistair.png",
+  "Beager - Plateforme Freelance v2": "/images/logos/beager.png",
+  "Timtle - Location Immobilière": "/images/logos/timtle.png",
+  "Wipple - Réservation Salles": "/images/logos/wipple.png",
+  "Cora Wine - E-commerce Vins": "/images/logos/corawine.png",
+  "Tchee - Application VTC": "/images/logos/tchee.png",
+  "SayYes - Portfolio & Landing Builder": "/images/logos/sayyes.svg",
+  "Guardian - DeFi Smart Accounts": "/images/logos/guardian.png",
 };
 
 interface ExperienceModalProps {
@@ -37,27 +72,34 @@ interface ExperienceModalProps {
 function ProjectCard({
   project,
   experienceColor,
-  isSelected,
+  isHovered,
   onClick,
+  onMouseEnter,
+  onMouseLeave,
   hasDetails,
+  syncHeight,
 }: {
   project: Project;
   experienceColor: string;
   index: number;
-  isSelected: boolean;
+  isHovered: boolean;
   onClick: () => void;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
   hasDetails: boolean;
+  syncHeight?: boolean;
 }) {
   return (
     <motion.div
       onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
       className={`group relative p-6 rounded-2xl border cursor-pointer transition-all duration-300 ${
-        isSelected
-          ? "border-white/30 bg-white/10"
-          : "border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/8"
+        isHovered ? "border-white/30 bg-white/10" : "border-white/10 bg-white/5"
       }`}
       style={{
-        boxShadow: isSelected ? `0 0 30px ${experienceColor}30` : undefined,
+        boxShadow: isHovered ? `0 0 30px ${experienceColor}30` : undefined,
+        height: syncHeight ? "176px" : undefined,
       }}
       whileHover={{ scale: 1.02, y: -2 }}
       whileTap={{ scale: 0.98 }}
@@ -160,7 +202,10 @@ function ArchitectureSection({
       <ul className="space-y-2">
         {section.items.map((item, i) => (
           <li key={i} className="flex items-start gap-2 text-sm text-white/70">
-            <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style={{ background: color }} />
+            <span
+              className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0"
+              style={{ background: color }}
+            />
             <span>{item}</span>
           </li>
         ))}
@@ -371,7 +416,9 @@ function ProjectDetailView({
             className="relative pl-4 py-2 border-l-2 mb-4"
             style={{ borderColor: `${color}60` }}
           >
-            <p className="text-white/60 text-sm italic">{project.description}</p>
+            <p className="text-white/60 text-sm italic">
+              {project.description}
+            </p>
           </div>
 
           {/* Overview détaillée */}
@@ -473,10 +520,7 @@ function ProjectDetailView({
             >
               {t("experience.stackTechnique")}
             </h4>
-            <div
-              className="flex-1 h-px"
-              style={{ background: `${color}20` }}
-            />
+            <div className="flex-1 h-px" style={{ background: `${color}20` }} />
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -744,6 +788,9 @@ function YearMarker({
 export function ExperienceModal({ experience, onClose }: ExperienceModalProps) {
   const { t } = useTranslation("common");
   const { translateProjects } = useTranslatedProjects();
+  const [hoveredProjectIndex, setHoveredProjectIndex] = useState<number | null>(
+    null
+  );
   const [selectedProjectIndex, setSelectedProjectIndex] = useState<
     number | null
   >(null);
@@ -775,8 +822,10 @@ export function ExperienceModal({ experience, onClose }: ExperienceModalProps) {
     const targetEl = source === "left" ? rightEl : leftEl;
 
     // Calculer le ratio de scroll
-    const scrollRatio = sourceEl.scrollTop / (sourceEl.scrollHeight - sourceEl.clientHeight || 1);
-    const targetScrollTop = scrollRatio * (targetEl.scrollHeight - targetEl.clientHeight);
+    const scrollRatio =
+      sourceEl.scrollTop / (sourceEl.scrollHeight - sourceEl.clientHeight || 1);
+    const targetScrollTop =
+      scrollRatio * (targetEl.scrollHeight - targetEl.clientHeight);
 
     targetEl.scrollTop = targetScrollTop;
 
@@ -1009,8 +1058,8 @@ export function ExperienceModal({ experience, onClose }: ExperienceModalProps) {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                 >
-                  {/* Left side - Timeline dates for Atecna */}
-                  {experience.id === "atecna" && (
+                  {/* Left side - Timeline dates for experiences with project dates */}
+                  {PROJECT_DATES[experience.id] && (
                     <motion.div
                       className="hidden md:block w-56 shrink-0 border-r border-white/10 bg-black/20"
                       initial={{ opacity: 0, x: -30 }}
@@ -1020,25 +1069,41 @@ export function ExperienceModal({ experience, onClose }: ExperienceModalProps) {
                     >
                       <div
                         ref={leftScrollRef}
-                        className="h-full overflow-y-auto scrollbar-none p-4"
+                        className="h-full overflow-y-auto scrollbar-none py-4 px-4"
                         onScroll={() => handleScroll("left")}
                       >
-                        <div className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-4 pb-8">
                           {experience.projects.map((project, index) => {
-                            const projectDate = ATECNA_PROJECT_DATES[project.name];
+                            const projectDate =
+                              PROJECT_DATES[experience.id]?.[project.name];
                             return (
                               <motion.div
                                 key={project.name}
                                 data-index={index}
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
-                                transition={{ duration: 0.3, delay: 0.1 + index * 0.05 }}
-                                className={`relative pl-4 pr-2 py-4 border-l-2 transition-all cursor-pointer hover:bg-white/5 rounded-r-lg flex flex-col justify-center`}
-                                style={{
-                                  minHeight: "160px",
-                                  borderLeftColor: selectedProjectIndex === index ? experience.color : "rgba(255,255,255,0.2)",
-                                  backgroundColor: selectedProjectIndex === index ? "rgba(255,255,255,0.05)" : undefined,
+                                transition={{
+                                  duration: 0.3,
+                                  delay: 0.1 + index * 0.05,
                                 }}
+                                className={`relative pl-4 pr-2 border-l-2 transition-all cursor-pointer rounded-r-lg flex flex-col justify-center`}
+                                style={{
+                                  height: "176px",
+                                  borderLeftColor:
+                                    hoveredProjectIndex === index
+                                      ? experience.color
+                                      : "rgba(255,255,255,0.2)",
+                                  backgroundColor:
+                                    hoveredProjectIndex === index
+                                      ? "rgba(255,255,255,0.05)"
+                                      : undefined,
+                                }}
+                                onMouseEnter={() =>
+                                  setHoveredProjectIndex(index)
+                                }
+                                onMouseLeave={() =>
+                                  setHoveredProjectIndex(null)
+                                }
                                 onClick={() => {
                                   setSelectedProjectIndex(index);
                                   const proj = translatedProjects[index];
@@ -1047,19 +1112,58 @@ export function ExperienceModal({ experience, onClose }: ExperienceModalProps) {
                                   }
                                 }}
                               >
+                                {/* Logo */}
+                                {PROJECT_LOGOS[project.name] && (
+                                  <div className="mb-2 flex items-center">
+                                    <div className="bg-white rounded-lg p-2 flex items-center justify-center">
+                                      <img
+                                        src={PROJECT_LOGOS[project.name]}
+                                        alt={`${project.name} logo`}
+                                        className={`object-contain transition-opacity ${
+                                          project.name ===
+                                          "Au Vieux Campeur - App Mobile v2"
+                                            ? "h-6 w-[140px]"
+                                            : project.name === "Elistair - Portail Client Drones"
+                                              ? "max-h-7 max-w-[100px]"
+                                              : [
+                                                  "GoCrisis - Gestion de Crise",
+                                                  "Cora Wine - E-commerce Vins",
+                                                  "Wipple - Réservation Salles",
+                                                ].includes(project.name)
+                                              ? "max-h-10 max-w-[160px]"
+                                              : "max-h-8 max-w-[120px]"
+                                        }`}
+                                        style={{
+                                          filter:
+                                            hoveredProjectIndex === index
+                                              ? "none"
+                                              : "grayscale(30%)",
+                                          opacity:
+                                            hoveredProjectIndex === index
+                                              ? 1
+                                              : 0.8,
+                                        }}
+                                      />
+                                    </div>
+                                  </div>
+                                )}
                                 {/* Date badge */}
                                 {projectDate && (
                                   <span
-                                    className="text-[11px] font-bold uppercase tracking-wider mb-2 block"
+                                    className="text-[11px] font-bold uppercase tracking-wider mb-1 block"
                                     style={{ color: experience.color }}
                                   >
                                     {projectDate}
                                   </span>
                                 )}
                                 {/* Project name */}
-                                <p className={`text-xs leading-snug transition-colors font-medium ${
-                                  selectedProjectIndex === index ? "text-white" : "text-white/60"
-                                }`}>
+                                <p
+                                  className={`text-xs leading-snug transition-colors font-medium ${
+                                    hoveredProjectIndex === index
+                                      ? "text-white"
+                                      : "text-white/60"
+                                  }`}
+                                >
                                   {project.name}
                                 </p>
                               </motion.div>
@@ -1070,8 +1174,8 @@ export function ExperienceModal({ experience, onClose }: ExperienceModalProps) {
                     </motion.div>
                   )}
 
-                  {/* Left side - Years timeline for other experiences */}
-                  {experience.id !== "atecna" && (
+                  {/* Left side - Years timeline for experiences without project dates */}
+                  {!PROJECT_DATES[experience.id] && (
                     <motion.div
                       className="hidden md:block w-48 shrink-0 p-6 border-r border-white/10 bg-black/20"
                       initial={{ opacity: 0, x: -30 }}
@@ -1132,7 +1236,7 @@ export function ExperienceModal({ experience, onClose }: ExperienceModalProps) {
 
                   {/* Right side - Projects */}
                   <motion.div
-                    className="flex-1 overflow-hidden p-6 md:p-8"
+                    className={`flex-1 overflow-hidden ${PROJECT_DATES[experience.id] ? "" : "p-6 md:p-8"}`}
                     initial={{ opacity: 0, x: 30 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 20 }}
@@ -1141,9 +1245,17 @@ export function ExperienceModal({ experience, onClose }: ExperienceModalProps) {
                     <div className="h-full flex flex-col">
                       {/* Projects grid */}
                       <div
-                        ref={experience.id === "atecna" ? rightScrollRef : undefined}
-                        className="flex-1 overflow-y-auto pr-2 flex flex-col gap-4"
-                        onScroll={experience.id === "atecna" ? () => handleScroll("right") : undefined}
+                        ref={
+                          PROJECT_DATES[experience.id]
+                            ? rightScrollRef
+                            : undefined
+                        }
+                        className={`flex-1 overflow-y-auto pr-2 flex flex-col gap-4 ${PROJECT_DATES[experience.id] ? "py-4 pb-8 px-6 md:px-8" : ""}`}
+                        onScroll={
+                          PROJECT_DATES[experience.id]
+                            ? () => handleScroll("right")
+                            : undefined
+                        }
                       >
                         {translatedProjects.map((project, index) => (
                           <motion.div
@@ -1157,9 +1269,12 @@ export function ExperienceModal({ experience, onClose }: ExperienceModalProps) {
                               project={project}
                               experienceColor={experience.color}
                               index={index}
-                              isSelected={selectedProjectIndex === index}
+                              isHovered={hoveredProjectIndex === index}
                               onClick={() => handleProjectClick(index)}
+                              onMouseEnter={() => setHoveredProjectIndex(index)}
+                              onMouseLeave={() => setHoveredProjectIndex(null)}
                               hasDetails={!!project.details}
+                              syncHeight={!!PROJECT_DATES[experience.id]}
                             />
                           </motion.div>
                         ))}

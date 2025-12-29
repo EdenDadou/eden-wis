@@ -72,11 +72,11 @@ export function useAnimations({ currentSection, refs }: UseAnimationsProps) {
   const shuffledLinkOrder = useRef<number[]>([]);
   const linkFadeOutStartTime = useRef<number | null>(null); // Track fade out animation
   const linkEntryTime = useRef<number | null>(null); // Track when we entered skill section
-  const totalLinks = 11; // Total number of links in SkillConnections
-  const linkDrawDuration = 0.4; // Duration to draw each link in seconds
-  const linkStaggerDelay = 0.15; // Delay between starting each link
+  const totalLinks = 7; // Total number of links in SkillConnections (curved connections)
+  const linkDrawDuration = 0.5; // Duration to draw each link in seconds
+  const linkStaggerDelay = 0.12; // Delay between starting each link
   const linkFadeOutDuration = 0.3; // Duration to fade out all links
-  const linkAppearDelay = 1.5; // Delay before links appear after entering skill section
+  const linkAppearDelay = 1.2; // Delay before links appear after entering skill section
 
   useFrame((state) => {
     if (!refs.sceneRef.current) return;

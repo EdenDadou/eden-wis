@@ -23,7 +23,8 @@
       "Bash(do echo \"$f\")",
       "Bash(done)",
       "Bash(for:*)",
-      "Bash(xxd:*)"
+      "Bash(xxd:*)",
+      "Bash(file:*)"
     ]
   }
 }

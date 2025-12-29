@@ -246,118 +246,6 @@ export const experienceData: Experience[] = [
     row: "top",
     projects: [
       {
-        name: "OPPBTP : PreventionBTP v3",
-        description:
-          "Refonte totale (v3) du site officiel preventionbtp.fr - Application web entreprise pour la prévention et sécurité du secteur BTP français.",
-        tech: [
-          "React Router 7",
-          "React 18",
-          "TypeScript",
-          "Vite",
-          "Express",
-          "Contentful",
-          "Algolia",
-          "Tailwind CSS",
-          "Framer Motion",
-          "Zod",
-          "OpenID Connect",
-          "Docker",
-        ],
-        details: {
-          overview:
-            "PreventionBTP est la plateforme digitale officielle de l'OPPBTP (Organisme Professionnel de Prévention du BTP). Cette refonte v3 représente une modernisation complète de l'architecture et de l'expérience utilisateur, servant des milliers de professionnels du secteur BTP en France.",
-          architecture: [
-            {
-              title: "Frontend",
-              items: [
-                "React Router 7 (anciennement Remix) - Framework full-stack avec SSR",
-                "React 18 avec Suspense et Concurrent Features",
-                "TypeScript strict pour la type-safety",
-                "Tailwind CSS + Framer Motion pour les animations",
-                "Swiper pour les carrousels, Highcharts pour la data viz",
-              ],
-            },
-            {
-              title: "Backend & API",
-              items: [
-                "Express.js comme serveur Node.js",
-                "API REST complète (/api/content, /api/form, /api/algolia...)",
-                "Middlewares custom (auth, sessions, logging)",
-                "Intégration API legacy Paddix pour le contenu métier",
-              ],
-            },
-            {
-              title: "CMS & Contenu",
-              items: [
-                "Contentful comme CMS headless",
-                "71 composants dynamiques mappés pour le rendu",
-                "Mode Live Preview pour l'édition en temps réel",
-                "Support rich text et markdown",
-              ],
-            },
-            {
-              title: "Infrastructure",
-              items: [
-                "Docker + Nginx comme reverse proxy",
-                "Pipeline GitLab CI/CD",
-                "3 environnements : dev → preprod → prod",
-                "Logging structuré avec Winston (rotation quotidienne)",
-              ],
-            },
-          ],
-          features: [
-            {
-              title: "Recherche Avancée",
-              description:
-                "Algolia avec recherche full-text, facettes dynamiques, suggestions temps réel et recherche IA via Perplexity",
-              icon: "🔍",
-            },
-            {
-              title: "Authentification SSO",
-              description:
-                "Flux OpenID Connect complet avec contrôle d'accès par rôles (FULL_ACCESS, READER, REFUSED) et permissions par entreprise",
-              icon: "🔐",
-            },
-            {
-              title: "Formulaires Interactifs",
-              description:
-                "Inscription, demandes formation, commandes ressources, quiz prévention - validation Zod + react-hook-form + reCAPTCHA",
-              icon: "📝",
-            },
-            {
-              title: "Sections Métier",
-              description:
-                "Formations (initiale/continue), Ressources (mémos, guides), Actualités, Droit de la Prévention, Observatoire statistiques, E-learning, Webinaires",
-              icon: "📚",
-            },
-            {
-              title: "SEO & Performance",
-              description:
-                "SSR complet, génération sitemaps XML, Bing IndexNow pour indexation instantanée, optimisation images, détection bots",
-              icon: "⚡",
-            },
-            {
-              title: "Analytics & Monitoring",
-              description:
-                "GTM, Matomo, Hotjar (heatmaps), Zendesk (support), Didomi (consentement cookies), health checks services",
-              icon: "📊",
-            },
-          ],
-          challenges: [
-            "Migration depuis une architecture legacy tout en maintenant la compatibilité avec l'API Paddix existante",
-            "Gestion de 100+ routes avec SSR et optimisation des performances",
-            "Synchronisation de contenu entre 3 environnements avec scripts de déploiement custom",
-            "Implémentation d'un système de composants dynamiques Contentful (71 composants)",
-          ],
-          metrics: [
-            { label: "Routes", value: "100+" },
-            { label: "Composants CMS", value: "71" },
-            { label: "Types TypeScript", value: "50+" },
-            { label: "Intégrations tierces", value: "10+" },
-          ],
-        },
-      },
-      {
         name: "Au Vieux Campeur - App Mobile v2",
         description:
           "Application mobile e-commerce cross-platform pour la chaîne de magasins d'équipement outdoor Au Vieux Campeur. Refonte design partielle de l'app existante.",
@@ -577,6 +465,131 @@ export const experienceData: Experience[] = [
         },
       },
       {
+        name: "OPPBTP : PreventionBTP v3",
+        description:
+          "Refonte totale (v3) du site officiel preventionbtp.fr - Application web entreprise pour la prévention et sécurité du secteur BTP français.",
+        tech: [
+          "React Router 7",
+          "React 18",
+          "TypeScript",
+          "Vite",
+          "Express",
+          "Contentful",
+          "Algolia",
+          "Tailwind CSS",
+          "Framer Motion",
+          "Zod",
+          "OpenID Connect",
+          "Docker",
+        ],
+        details: {
+          overview:
+            "PreventionBTP est la plateforme digitale officielle de l'OPPBTP (Organisme Professionnel de Prévention du BTP). Cette refonte v3 représente une modernisation complète de l'architecture et de l'expérience utilisateur, servant des milliers de professionnels du secteur BTP en France.",
+          architecture: [
+            {
+              title: "Frontend",
+              items: [
+                "React Router 7 (anciennement Remix) - Framework full-stack avec SSR",
+                "React 18 avec Suspense et Concurrent Features",
+                "TypeScript strict pour la type-safety",
+                "Tailwind CSS + Framer Motion pour les animations",
+                "Swiper pour les carrousels, Highcharts pour la data viz",
+              ],
+            },
+            {
+              title: "Backend & API",
+              items: [
+                "Express.js comme serveur Node.js",
+                "API REST complète (/api/content, /api/form, /api/algolia...)",
+                "Middlewares custom (auth, sessions, logging)",
+                "Intégration API legacy Paddix pour le contenu métier",
+              ],
+            },
+            {
+              title: "CMS & Contenu",
+              items: [
+                "Contentful comme CMS headless",
+                "71 composants dynamiques mappés pour le rendu",
+                "Mode Live Preview pour l'édition en temps réel",
+                "Support rich text et markdown",
+              ],
+            },
+            {
+              title: "Infrastructure",
+              items: [
+                "Docker + Nginx comme reverse proxy",
+                "Pipeline GitLab CI/CD",
+                "3 environnements : dev → preprod → prod",
+                "Logging structuré avec Winston (rotation quotidienne)",
+              ],
+            },
+          ],
+          features: [
+            {
+              title: "Recherche Avancée",
+              description:
+                "Algolia avec recherche full-text, facettes dynamiques, suggestions temps réel et recherche IA via Perplexity",
+              icon: "🔍",
+            },
+            {
+              title: "Authentification SSO",
+              description:
+                "Flux OpenID Connect complet avec contrôle d'accès par rôles (FULL_ACCESS, READER, REFUSED) et permissions par entreprise",
+              icon: "🔐",
+            },
+            {
+              title: "Formulaires Interactifs",
+              description:
+                "Inscription, demandes formation, commandes ressources, quiz prévention - validation Zod + react-hook-form + reCAPTCHA",
+              icon: "📝",
+            },
+            {
+              title: "Sections Métier",
+              description:
+                "Formations (initiale/continue), Ressources (mémos, guides), Actualités, Droit de la Prévention, Observatoire statistiques, E-learning, Webinaires",
+              icon: "📚",
+            },
+            {
+              title: "SEO & Performance",
+              description:
+                "SSR complet, génération sitemaps XML, Bing IndexNow pour indexation instantanée, optimisation images, détection bots",
+              icon: "⚡",
+            },
+            {
+              title: "Analytics & Monitoring",
+              description:
+                "GTM, Matomo, Hotjar (heatmaps), Zendesk (support), Didomi (consentement cookies), health checks services",
+              icon: "📊",
+            },
+          ],
+          challenges: [
+            "Migration depuis une architecture legacy tout en maintenant la compatibilité avec l'API Paddix existante",
+            "Gestion de 100+ routes avec SSR et optimisation des performances",
+            "Synchronisation de contenu entre 3 environnements avec scripts de déploiement custom",
+            "Implémentation d'un système de composants dynamiques Contentful (71 composants)",
+          ],
+          metrics: [
+            { label: "Routes", value: "100+" },
+            { label: "Composants CMS", value: "71" },
+            { label: "Types TypeScript", value: "50+" },
+            { label: "Intégrations tierces", value: "10+" },
+          ],
+        },
+      },
+      {
+        name: "Wipple - Réservation Salles",
+        description:
+          "Plateforme de réservation de salles de réunion avec synchronisation calendriers, boîtiers connectés et visualisation temps réel des disponibilités.",
+        tech: [
+          "Remix",
+          "React",
+          "TypeScript",
+          "Tailwind CSS",
+          "Office 365",
+          "Google Agenda",
+        ],
+      },
+      {
         name: "GoCrisis - Gestion de Crise",
         description:
           "Application mobile de gestion de crise permettant aux entreprises d'évaluer, gérer et coordonner leurs réponses aux situations de crise.",
@@ -681,6 +694,239 @@ export const experienceData: Experience[] = [
             { label: "Fichiers TS/TSX", value: "104" },
             { label: "Modules API", value: "21" },
             { label: "Écrans", value: "11" },
+          ],
+        },
+      },
+      {
+        name: "Elistair - Portail Client Drones",
+        description:
+          "Portail client B2B pour Elistair, leader européen des drones captifs pour applications défense, sécurité et industrie. Gestion de flotte et monitoring temps réel.",
+        tech: [
+          "Next.js",
+          "React",
+          "TypeScript",
+          "Tailwind CSS",
+          "Prisma",
+          "PostgreSQL",
+          "tRPC",
+          "NextAuth",
+          "Docker",
+          "AWS",
+        ],
+        details: {
+          overview:
+            "Portail client B2B développé pour Elistair, entreprise française leader européen des drones captifs (tethered drones). La plateforme sert des clients gouvernementaux, militaires et industriels pour la gestion de leur flotte de drones, le monitoring temps réel des missions et l'accès à la documentation technique sécurisée.",
+          architecture: [
+            {
+              title: "Frontend & Framework",
+              items: [
+                "Next.js 14 avec App Router et Server Components",
+                "React 18 avec Suspense pour le streaming",
+                "TypeScript strict avec validation Zod end-to-end",
+                "Tailwind CSS pour le design system custom",
+                "Recharts pour la data visualization temps réel",
+              ],
+            },
+            {
+              title: "Backend & API",
+              items: [
+                "tRPC pour API typée end-to-end",
+                "Prisma ORM avec PostgreSQL",
+                "NextAuth.js pour authentification multi-provider",
+                "API Routes pour webhooks et intégrations",
+              ],
+            },
+            {
+              title: "Sécurité & Auth",
+              items: [
+                "Authentification SSO entreprise (SAML/OAuth)",
+                "Contrôle d'accès basé sur les rôles (RBAC)",
+                "Audit logs pour conformité défense",
+                "Chiffrement données sensibles",
+              ],
+            },
+            {
+              title: "Infrastructure",
+              items: [
+                "Docker containers pour déploiement",
+                "AWS (ECS, RDS, S3, CloudFront)",
+                "CI/CD GitHub Actions",
+                "Monitoring et alerting CloudWatch",
+              ],
+            },
+          ],
+          features: [
+            {
+              title: "Gestion de Flotte",
+              description:
+                "Dashboard centralisé pour visualiser et gérer l'ensemble des drones captifs, statuts opérationnels, maintenance préventive et historique",
+              icon: "🚁",
+            },
+            {
+              title: "Monitoring Temps Réel",
+              description:
+                "Suivi en direct des missions avec télémétrie, alertes automatiques, cartographie et replay des vols",
+              icon: "📡",
+            },
+            {
+              title: "Documentation Sécurisée",
+              description:
+                "Accès contrôlé aux manuels techniques, procédures de maintenance, certificats et documents réglementaires",
+              icon: "📋",
+            },
+            {
+              title: "Gestion des Utilisateurs",
+              description:
+                "Administration multi-tenant avec rôles personnalisés, SSO entreprise et audit trail complet",
+              icon: "👥",
+            },
+            {
+              title: "Rapports & Analytics",
+              description:
+                "Génération de rapports de mission, statistiques d'utilisation, KPIs de performance flotte",
+              icon: "📊",
+            },
+            {
+              title: "Support & Tickets",
+              description:
+                "Système de ticketing intégré, base de connaissances, chat support et suivi des demandes SAV",
+              icon: "🎫",
+            },
+          ],
+          challenges: [
+            "Conformité aux exigences de sécurité pour clients défense et gouvernementaux",
+            "Architecture multi-tenant avec isolation stricte des données clients",
+            "Intégration temps réel avec les systèmes de télémétrie des drones",
+            "Performance et disponibilité critique pour applications de surveillance",
+          ],
+          metrics: [
+            { label: "Clients", value: "Gov/Mil" },
+            { label: "Uptime SLA", value: "99.9%" },
+            { label: "Rôles RBAC", value: "8+" },
+            { label: "Endpoints API", value: "50+" },
+          ],
+        },
+      },
+      {
+        name: "Cora Wine - E-commerce Vins",
+        description:
+          "Site e-commerce de vente de vins avec catalogue de dizaines de milliers de références, gestion de contenu via CMS headless Prismic.",
+        tech: [
+          "Remix",
+          "React",
+          "TypeScript",
+          "Prismic",
+          "Tailwind CSS",
+          "Node.js",
+        ],
+      },
+      {
+        name: "Beager - Plateforme Freelance v2",
+        description:
+          "Refonte complète (v2) de la plateforme de mise en relation entre freelances et entreprises avec génération automatique de documents contractuels.",
+        tech: [
+          "Next.js",
+          "React",
+          "TypeScript",
+          "Tailwind CSS",
+          "Prisma",
+          "PostgreSQL",
+          "tRPC",
+          "NextAuth",
+          "PDF Generation",
+          "Stripe",
+        ],
+        details: {
+          overview:
+            "Beager est une plateforme innovante de mise en relation entre freelances et entreprises, fondée en 2020. La v2 apporte une refonte complète avec génération automatique de documents contractuels basée sur les données collectées lors du matching. Parmi les clients : Accor, RATP, SNCF, Clarins, BlaBlaCar. La plateforme privilégie la qualité sur le volume avec un matching en 72h et paiements garantis.",
+          architecture: [
+            {
+              title: "Frontend & Framework",
+              items: [
+                "Next.js 14 avec App Router et Server Components",
+                "React 18 avec Suspense pour le streaming",
+                "TypeScript strict avec validation Zod",
+                "Tailwind CSS pour le design system responsive",
+                "Framer Motion pour les animations fluides",
+              ],
+            },
+            {
+              title: "Backend & API",
+              items: [
+                "tRPC pour API typée end-to-end",
+                "Prisma ORM avec PostgreSQL",
+                "NextAuth.js pour authentification multi-provider",
+                "Webhooks pour intégrations externes",
+              ],
+            },
+            {
+              title: "Génération Documents",
+              items: [
+                "Génération PDF automatique des contrats",
+                "Templates dynamiques basés sur les données de matching",
+                "Signature électronique intégrée",
+                "Archivage sécurisé des documents",
+              ],
+            },
+            {
+              title: "Infrastructure",
+              items: [
+                "Vercel pour le déploiement et CDN",
+                "PostgreSQL managé (Neon/Supabase)",
+                "Stripe pour les paiements sécurisés",
+                "CI/CD GitHub Actions",
+              ],
+            },
+          ],
+          features: [
+            {
+              title: "Matching Intelligent",
+              description:
+                "Algorithme de mise en relation basé sur les compétences, disponibilités et préférences. Matching en 72h avec présélection qualitative",
+              icon: "🎯",
+            },
+            {
+              title: "Génération Contractuelle",
+              description:
+                "Documents contractuels générés automatiquement à partir des données du matching : contrats, avenants, NDA, factures",
+              icon: "📄",
+            },
+            {
+              title: "Profils Vérifiés",
+              description:
+                "Processus de vérification des freelances : compétences validées, références vérifiées, expériences confirmées",
+              icon: "✅",
+            },
+            {
+              title: "Paiements Garantis",
+              description:
+                "Système de paiement sécurisé avec Stripe, facturation automatique et garantie de paiement pour les freelances",
+              icon: "💳",
+            },
+            {
+              title: "Dashboard Entreprise",
+              description:
+                "Interface dédiée aux entreprises : gestion des missions, suivi des freelances, analytics et reporting",
+              icon: "📊",
+            },
+            {
+              title: "Espace Freelance",
+              description:
+                "Profil enrichi, gestion des disponibilités, historique des missions, suivi des revenus et documents",
+              icon: "👤",
+            },
+          ],
+          challenges: [
+            "Génération dynamique de documents PDF contractuels complexes avec données variables",
+            "Algorithme de matching multicritères performant avec scoring en temps réel",
+            "Intégration Stripe complète avec gestion des paiements récurrents et des commissions",
+            "Architecture multi-tenant avec isolation des données entreprises clientes",
+          ],
+          metrics: [
+            { label: "Clients", value: "50+" },
+            { label: "Matching", value: "72h" },
+            { label: "Freelances", value: "1000+" },
+            { label: "Types docs", value: "6+" },
           ],
         },
       },
@@ -895,226 +1141,6 @@ export const experienceData: Experience[] = [
             { label: "Plateformes", value: "iOS/Android" },
             { label: "Portails", value: "Intégrés" },
             { label: "Signature", value: "Électronique" },
-          ],
-        },
-      },
-      {
-        name: "Elistair - Portail Client Drones",
-        description:
-          "Portail client B2B pour Elistair, leader européen des drones captifs pour applications défense, sécurité et industrie. Gestion de flotte et monitoring temps réel.",
-        tech: [
-          "Next.js",
-          "React",
-          "TypeScript",
-          "Tailwind CSS",
-          "Prisma",
-          "PostgreSQL",
-          "tRPC",
-          "NextAuth",
-          "Docker",
-          "AWS",
-        ],
-        details: {
-          overview:
-            "Portail client B2B développé pour Elistair, entreprise française leader européen des drones captifs (tethered drones). La plateforme sert des clients gouvernementaux, militaires et industriels pour la gestion de leur flotte de drones, le monitoring temps réel des missions et l'accès à la documentation technique sécurisée.",
-          architecture: [
-            {
-              title: "Frontend & Framework",
-              items: [
-                "Next.js 14 avec App Router et Server Components",
-                "React 18 avec Suspense pour le streaming",
-                "TypeScript strict avec validation Zod end-to-end",
-                "Tailwind CSS pour le design system custom",
-                "Recharts pour la data visualization temps réel",
-              ],
-            },
-            {
-              title: "Backend & API",
-              items: [
-                "tRPC pour API typée end-to-end",
-                "Prisma ORM avec PostgreSQL",
-                "NextAuth.js pour authentification multi-provider",
-                "API Routes pour webhooks et intégrations",
-              ],
-            },
-            {
-              title: "Sécurité & Auth",
-              items: [
-                "Authentification SSO entreprise (SAML/OAuth)",
-                "Contrôle d'accès basé sur les rôles (RBAC)",
-                "Audit logs pour conformité défense",
-                "Chiffrement données sensibles",
-              ],
-            },
-            {
-              title: "Infrastructure",
-              items: [
-                "Docker containers pour déploiement",
-                "AWS (ECS, RDS, S3, CloudFront)",
-                "CI/CD GitHub Actions",
-                "Monitoring et alerting CloudWatch",
-              ],
-            },
-          ],
-          features: [
-            {
-              title: "Gestion de Flotte",
-              description:
-                "Dashboard centralisé pour visualiser et gérer l'ensemble des drones captifs, statuts opérationnels, maintenance préventive et historique",
-              icon: "🚁",
-            },
-            {
-              title: "Monitoring Temps Réel",
-              description:
-                "Suivi en direct des missions avec télémétrie, alertes automatiques, cartographie et replay des vols",
-              icon: "📡",
-            },
-            {
-              title: "Documentation Sécurisée",
-              description:
-                "Accès contrôlé aux manuels techniques, procédures de maintenance, certificats et documents réglementaires",
-              icon: "📋",
-            },
-            {
-              title: "Gestion des Utilisateurs",
-              description:
-                "Administration multi-tenant avec rôles personnalisés, SSO entreprise et audit trail complet",
-              icon: "👥",
-            },
-            {
-              title: "Rapports & Analytics",
-              description:
-                "Génération de rapports de mission, statistiques d'utilisation, KPIs de performance flotte",
-              icon: "📊",
-            },
-            {
-              title: "Support & Tickets",
-              description:
-                "Système de ticketing intégré, base de connaissances, chat support et suivi des demandes SAV",
-              icon: "🎫",
-            },
-          ],
-          challenges: [
-            "Conformité aux exigences de sécurité pour clients défense et gouvernementaux",
-            "Architecture multi-tenant avec isolation stricte des données clients",
-            "Intégration temps réel avec les systèmes de télémétrie des drones",
-            "Performance et disponibilité critique pour applications de surveillance",
-          ],
-          metrics: [
-            { label: "Clients", value: "Gov/Mil" },
-            { label: "Uptime SLA", value: "99.9%" },
-            { label: "Rôles RBAC", value: "8+" },
-            { label: "Endpoints API", value: "50+" },
-          ],
-        },
-      },
-      {
-        name: "Beager - Plateforme Freelance v2",
-        description:
-          "Refonte complète (v2) de la plateforme de mise en relation entre freelances et entreprises avec génération automatique de documents contractuels.",
-        tech: [
-          "Next.js",
-          "React",
-          "TypeScript",
-          "Tailwind CSS",
-          "Prisma",
-          "PostgreSQL",
-          "tRPC",
-          "NextAuth",
-          "PDF Generation",
-          "Stripe",
-        ],
-        details: {
-          overview:
-            "Beager est une plateforme innovante de mise en relation entre freelances et entreprises, fondée en 2020. La v2 apporte une refonte complète avec génération automatique de documents contractuels basée sur les données collectées lors du matching. Parmi les clients : Accor, RATP, SNCF, Clarins, BlaBlaCar. La plateforme privilégie la qualité sur le volume avec un matching en 72h et paiements garantis.",
-          architecture: [
-            {
-              title: "Frontend & Framework",
-              items: [
-                "Next.js 14 avec App Router et Server Components",
-                "React 18 avec Suspense pour le streaming",
-                "TypeScript strict avec validation Zod",
-                "Tailwind CSS pour le design system responsive",
-                "Framer Motion pour les animations fluides",
-              ],
-            },
-            {
-              title: "Backend & API",
-              items: [
-                "tRPC pour API typée end-to-end",
-                "Prisma ORM avec PostgreSQL",
-                "NextAuth.js pour authentification multi-provider",
-                "Webhooks pour intégrations externes",
-              ],
-            },
-            {
-              title: "Génération Documents",
-              items: [
-                "Génération PDF automatique des contrats",
-                "Templates dynamiques basés sur les données de matching",
-                "Signature électronique intégrée",
-                "Archivage sécurisé des documents",
-              ],
-            },
-            {
-              title: "Infrastructure",
-              items: [
-                "Vercel pour le déploiement et CDN",
-                "PostgreSQL managé (Neon/Supabase)",
-                "Stripe pour les paiements sécurisés",
-                "CI/CD GitHub Actions",
-              ],
-            },
-          ],
-          features: [
-            {
-              title: "Matching Intelligent",
-              description:
-                "Algorithme de mise en relation basé sur les compétences, disponibilités et préférences. Matching en 72h avec présélection qualitative",
-              icon: "🎯",
-            },
-            {
-              title: "Génération Contractuelle",
-              description:
-                "Documents contractuels générés automatiquement à partir des données du matching : contrats, avenants, NDA, factures",
-              icon: "📄",
-            },
-            {
-              title: "Profils Vérifiés",
-              description:
-                "Processus de vérification des freelances : compétences validées, références vérifiées, expériences confirmées",
-              icon: "✅",
-            },
-            {
-              title: "Paiements Garantis",
-              description:
-                "Système de paiement sécurisé avec Stripe, facturation automatique et garantie de paiement pour les freelances",
-              icon: "💳",
-            },
-            {
-              title: "Dashboard Entreprise",
-              description:
-                "Interface dédiée aux entreprises : gestion des missions, suivi des freelances, analytics et reporting",
-              icon: "📊",
-            },
-            {
-              title: "Espace Freelance",
-              description:
-                "Profil enrichi, gestion des disponibilités, historique des missions, suivi des revenus et documents",
-              icon: "👤",
-            },
-          ],
-          challenges: [
-            "Génération dynamique de documents PDF contractuels complexes avec données variables",
-            "Algorithme de matching multicritères performant avec scoring en temps réel",
-            "Intégration Stripe complète avec gestion des paiements récurrents et des commissions",
-            "Architecture multi-tenant avec isolation des données entreprises clientes",
-          ],
-          metrics: [
-            { label: "Clients", value: "50+" },
-            { label: "Matching", value: "72h" },
-            { label: "Freelances", value: "1000+" },
-            { label: "Types docs", value: "6+" },
           ],
         },
       },
