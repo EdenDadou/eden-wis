@@ -32,12 +32,11 @@ export const ServerSkill = forwardRef<THREE.Group, ServerSkillProps>(
         {/* Label en dessous de l'élément */}
         <Text
           position={[0, -0.9, 0]}
-          fontSize={isActive ? 0.22 : 0.2}
+          fontSize={isActive ? 0.24 : 0.22}
           color="#ffffff"
           anchorX="center"
           anchorY="top"
-          outlineWidth={0.02}
-          outlineColor="#000000"
+          fontWeight="bold"
         >
           SERVEUR
         </Text>

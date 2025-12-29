@@ -123,7 +123,852 @@
     "projects": "Completed projects",
     "noProjects": "No projects to display yet",
     "education": "Education",
-    "study": "Study"
+    "study": "Study",
+    "details": "Details",
+    "viewDetails": "View details",
+    "back": "Back",
+    "stackTechnique": "Tech Stack",
+    "architecture": "Architecture",
+    "keyFeatures": "Key Features",
+    "technicalChallenges": "Technical Challenges",
+    "projectCount": "project",
+    "projectCountPlural": "projects",
+    "viewInPortfolio": "View in portfolio"
+  },
+  "atecnaProjects": {
+    "preventionbtp": {
+      "name": "OPPBTP: PreventionBTP v3",
+      "description": "Complete redesign (v3) of the official preventionbtp.fr website - Enterprise web application for prevention and safety in the French construction sector.",
+      "overview": "PreventionBTP is the official digital platform of OPPBTP (Professional Organization for Prevention in Construction). This v3 redesign represents a complete modernization of the architecture and user experience, serving thousands of construction professionals in France.",
+      "architecture": {
+        "frontend": {
+          "title": "Frontend",
+          "items": [
+            "React Router 7 (formerly Remix) - Full-stack framework with SSR",
+            "React 18 with Suspense and Concurrent Features",
+            "Strict TypeScript for type-safety",
+            "Tailwind CSS + Framer Motion for animations",
+            "Swiper for carousels, Highcharts for data viz"
+          ]
+        },
+        "backend": {
+          "title": "Backend & API",
+          "items": [
+            "Express.js as Node.js server",
+            "Complete REST API (/api/content, /api/form, /api/algolia...)",
+            "Custom middlewares (auth, sessions, logging)",
+            "Legacy Paddix API integration for business content"
+          ]
+        },
+        "cms": {
+          "title": "CMS & Content",
+          "items": [
+            "Contentful as headless CMS",
+            "71 dynamic components mapped for rendering",
+            "Live Preview mode for real-time editing",
+            "Rich text and markdown support"
+          ]
+        },
+        "infrastructure": {
+          "title": "Infrastructure",
+          "items": [
+            "Docker + Nginx as reverse proxy",
+            "GitLab CI/CD pipeline",
+            "3 environments: dev → preprod → prod",
+            "Structured logging with Winston (daily rotation)"
+          ]
+        }
+      },
+      "features": {
+        "search": {
+          "title": "Advanced Search",
+          "description": "Algolia with full-text search, dynamic facets, real-time suggestions and AI search via Perplexity"
+        },
+        "auth": {
+          "title": "SSO Authentication",
+          "description": "Complete OpenID Connect flow with role-based access control (FULL_ACCESS, READER, REFUSED) and company permissions"
+        },
+        "forms": {
+          "title": "Interactive Forms",
+          "description": "Registration, training requests, resource orders, prevention quizzes - Zod + react-hook-form + reCAPTCHA validation"
+        },
+        "sections": {
+          "title": "Business Sections",
+          "description": "Training (initial/continuing), Resources (memos, guides), News, Prevention Law, Statistics Observatory, E-learning, Webinars"
+        },
+        "seo": {
+          "title": "SEO & Performance",
+          "description": "Complete SSR, XML sitemap generation, Bing IndexNow for instant indexing, image optimization, bot detection"
+        },
+        "analytics": {
+          "title": "Analytics & Monitoring",
+          "description": "GTM, Matomo, Hotjar (heatmaps), Zendesk (support), Didomi (cookie consent), service health checks"
+        }
+      },
+      "challenges": [
+        "Migration from legacy architecture while maintaining compatibility with existing Paddix API",
+        "Managing 100+ routes with SSR and performance optimization",
+        "Content synchronization between 3 environments with custom deployment scripts",
+        "Implementation of dynamic Contentful component system (71 components)"
+      ]
+    },
+    "avc": {
+      "name": "Au Vieux Campeur - Mobile App v2",
+      "description": "Cross-platform e-commerce mobile application for the outdoor equipment store chain Au Vieux Campeur. Partial design redesign of the existing app.",
+      "overview": "VieuxCampeur is a cross-platform e-commerce mobile application (iOS/Android) developed for the outdoor equipment store chain 'Au Vieux Campeur'. Version 2.1.7 with partial design redesign, the app offers a complete shopping experience with product scanner, store locator and loyalty program.",
+      "architecture": {
+        "framework": {
+          "title": "Framework & Navigation",
+          "items": [
+            "React Native 0.76.9 with Expo ~52.0 (managed framework)",
+            "Expo Router ~4.0 for file-based routing",
+            "React Navigation with tabs and nested navigation",
+            "TypeScript 5.3 for static typing"
+          ]
+        },
+        "ui": {
+          "title": "UI & Animations",
+          "items": [
+            "NativeWind (Tailwind CSS for React Native)",
+            "Moti for simple animations",
+            "React Native Reanimated for advanced animations",
+            "Expo Vector Icons + React Native SVG"
+          ]
+        },
+        "state": {
+          "title": "State & Persistence",
+          "items": [
+            "React Context API (UserContext, ProductContext)",
+            "AsyncStorage for local persistence",
+            "Dual token system (Admin + Client)",
+            "Token caching for API optimization"
+          ]
+        },
+        "backend": {
+          "title": "Backend & Services",
+          "items": [
+            "Magento REST API for e-commerce",
+            "Salesforce Search for product search",
+            "CouchDB for store data",
+            "Firebase (push notifications, analytics)"
+          ]
+        }
+      },
+      "features": {
+        "auth": {
+          "title": "Multi-step Authentication",
+          "description": "Login/signup, password reset, persistent session, anonymous user support, complete profile"
+        },
+        "search": {
+          "title": "Search & Discovery",
+          "description": "Salesforce full-text search, brand/category navigation, advanced filters (price, attributes, facets), sorting and pagination"
+        },
+        "shopping": {
+          "title": "Shopping & Cart",
+          "description": "Cart management with backend sync, wishlist, product details with variants, real-time stock verification"
+        },
+        "orders": {
+          "title": "Order Management",
+          "description": "Paginated history, real-time delivery tracking, returns management, PDF invoice download, reorder function"
+        },
+        "scanner": {
+          "title": "Scanner & Stores",
+          "description": "QR/barcode scanner with camera and flashlight, store locator with Google Maps and geolocation"
+        },
+        "loyalty": {
+          "title": "Loyalty & Notifications",
+          "description": "Club loyalty card, coupons, product alerts, Firebase push notifications with automatic token management"
+        }
+      },
+      "challenges": [
+        "Integration of multiple APIs (Magento, Salesforce, CouchDB, Firebase) with consistent error handling",
+        "Dual token authentication system with optimized caching to reduce API calls",
+        "Partial design redesign while maintaining compatibility with existing features",
+        "Performance optimization with Hermes and new React Native architecture"
+      ]
+    },
+    "cordiste": {
+      "name": "OPPBTP: Best Practices Cordiste",
+      "description": "Web platform for sharing and managing best practices for the rope access profession in the construction sector. Content-driven architecture with Contentful.",
+      "overview": "Modern web platform for sharing and managing best practices for the rope access profession in the construction sector. Developed for OPPBTP, this application allows professionals to create, share and consult best practice sheets with an extensible multi-profession system.",
+      "architecture": {
+        "framework": {
+          "title": "Framework & Rendering",
+          "items": [
+            "Remix.js 2.13 - Full-stack meta-framework with SSR",
+            "React 18 for user interface",
+            "TypeScript 5.6 for static typing",
+            "Vite 5.4 as build tool and dev server",
+            "Express.js for HTTP backend server"
+          ]
+        },
+        "cms": {
+          "title": "CMS & Content",
+          "items": [
+            "Contentful as headless CMS and database",
+            "Rich text renderer for enriched content",
+            "Live Preview for real-time preview",
+            "8 content models (Profession, Sheet, Homepage...)"
+          ]
+        },
+        "forms": {
+          "title": "Forms & Validation",
+          "items": [
+            "React Hook Form for state management",
+            "Zod for TypeScript runtime validation",
+            "React Dropzone for multi-file upload",
+            "React Cropper for image cropping"
+          ]
+        },
+        "auth": {
+          "title": "Auth & Services",
+          "items": [
+            "OpenID Connect for OAuth2 authentication",
+            "JWT with secure cookie sessions",
+            "SendGrid + Twig for transactional emails",
+            "reCAPTCHA v3 for anti-bot protection"
+          ]
+        }
+      },
+      "features": {
+        "creation": {
+          "title": "4-Step Sheet Creation",
+          "description": "Guided workflow: description with images, impact assessment, metadata (title, solution type, factors, PDF), then author info and ToS validation"
+        },
+        "discovery": {
+          "title": "Discovery & Search",
+          "description": "Search with debounce, multi-selection filters (location, factors, solution types, professions), pagination and date sorting"
+        },
+        "multiProfession": {
+          "title": "Multi-Profession System",
+          "description": "Profession-specific routes (/:base/sheets), metadata from Contentful, dedicated context provider for extensibility"
+        },
+        "authEnterprise": {
+          "title": "Enterprise-Grade Auth",
+          "description": "OpenID Connect, JWT management, cookie sessions, role system (FULL_ACCESS, READER, REFUSED), complete user profile"
+        },
+        "responsive": {
+          "title": "Advanced Responsive Design",
+          "description": "Client-side viewport context, server-side client hints, 7 custom breakpoints (xs to 2xl), mobile optimizations"
+        },
+        "analytics": {
+          "title": "Analytics & Compliance",
+          "description": "Integrated GTM, data layer event tracking, Didomi consent management, SendGrid email notifications"
+        }
+      },
+      "challenges": [
+        "Content-driven architecture without separate database (Contentful as single source)",
+        "Multi-step creation workflow with file upload, image cropping and complex validation",
+        "Extensible multi-profession system with dynamic routes and dedicated contexts",
+        "Hybrid responsive detection (client context + server client hints)"
+      ]
+    },
+    "gocrisis": {
+      "name": "GoCrisis - Crisis Management",
+      "description": "Mobile crisis management application enabling companies to assess, manage and coordinate their responses to crisis situations.",
+      "overview": "GoCrisis is a professional enterprise crisis management mobile application (v3.1.7). It enables teams to assess crisis situations through intelligent questionnaire system, coordinate responses with role-based team management, and trigger appropriate protocols based on severity level.",
+      "architecture": {
+        "framework": {
+          "title": "Framework & Runtime",
+          "items": [
+            "React Native 0.75.2 cross-platform (iOS/Android)",
+            "TypeScript 4.8 for static typing",
+            "Hermes enabled - optimized JS engine",
+            "Fabric - new React Native rendering engine"
+          ]
+        },
+        "state": {
+          "title": "State Management",
+          "items": [
+            "Redux Toolkit for centralized management",
+            "Redux-Saga for async side effects",
+            "3 slices: appSlice, assessmentSlice, userSlice",
+            "AsyncStorage for local persistence"
+          ]
+        },
+        "ui": {
+          "title": "UI & Navigation",
+          "items": [
+            "NativeBase 3.4 as UI framework",
+            "@react-navigation/stack for stack navigation",
+            "11 screens with Login (614 lines) being the most complex",
+            "Multilingual support i18n-js + react-native-localize"
+          ]
+        },
+        "backend": {
+          "title": "Backend & API",
+          "items": [
+            "Parse Server as Backend as a Service",
+            "21 API modules for different entities",
+            "Email/SMS notifications via Parse Cloud",
+            "Authentication system with domain/user"
+          ]
+        }
+      },
+      "features": {
+        "assessment": {
+          "title": "Crisis Assessment",
+          "description": "3 situation types (REAL, SIMULATION, TEST), assessment creation and completion, statuses ACTIVE/IN_PREPARATION/NOT_REACHED/NOT_ACTIVATED"
+        },
+        "questionnaire": {
+          "title": "Intelligent Questionnaire",
+          "description": "JSON-based questions with branching logic, themes (Human life, Legal...), scoring mechanism, conditional navigation"
+        },
+        "scenarios": {
+          "title": "Scenario Management",
+          "description": "Crisis type selection (ECL), creation with parameters, Training/Simulation/Real modes, company customization"
+        },
+        "team": {
+          "title": "Team Coordination",
+          "description": "LEADER/MANAGER roles, function-based assignment, role-based notifications, member type templates"
+        },
+        "authSecure": {
+          "title": "Secure Authentication",
+          "description": "Domain/user/password login, auto-login, password reset, blacklist verification"
+        },
+        "notifications": {
+          "title": "Multi-Channel Notifications",
+          "description": "Email and SMS notifications via Parse Cloud, role-based templates, receipt confirmation, notified tracking"
+        }
+      },
+      "challenges": [
+        "Dynamic questionnaire system with branching logic and complex scoring",
+        "Management of 3 crisis modes (Training/Simulation/Real) with distinct workflows",
+        "Real-time team coordination with hierarchical roles (LEADER/MANAGER)",
+        "Migration to Hermes and Fabric for iOS/Android performance optimization"
+      ]
+    },
+    "catalina": {
+      "name": "Catalina - Gamified Retail Loyalty",
+      "description": "Gamified loyalty platform for retail allowing stores to offer games (casino, scratch, wheel) and rewards to their customers.",
+      "overview": "Catalina is a gamified retail loyalty platform, structured as a monorepo with a Next.js 15 BFF and React frontend. It enables retail chains (Carrefour, Tigros, Aldi...) to offer loyalty games (casino, scratch, wheel) with reward system, in e-commerce or in-store mode (receipts).",
+      "architecture": {
+        "monorepo": {
+          "title": "Monorepo & BFF",
+          "items": [
+            "catalina-next: Backend-for-Frontend Next.js 15 (Port 4000)",
+            "shop-play: Legacy React 16 frontend",
+            "Proxy to external Catalina SI API",
+            "Flow: Frontend → BFF → Catalina SI"
+          ]
+        },
+        "security": {
+          "title": "Security & Crypto",
+          "items": [
+            "AES-ECB encryption for authentication",
+            "HMAC-SHA1 signature on every API request",
+            "Azure Key Vault for secrets (partner_k, partner_s, utf8_token)",
+            "X-Partner-Access-Token and X-Cwallet-Timestamp headers"
+          ]
+        },
+        "multiTenant": {
+          "title": "Multi-Tenant",
+          "items": [
+            "8+ stores support with custom themes",
+            "Per-tenant configs (Carrefour, Tigros, Aldi, S&P...)",
+            "Dynamic branding and colors",
+            "i18next for internationalization"
+          ]
+        },
+        "cloud": {
+          "title": "Cloud & CI/CD",
+          "items": [
+            "Azure App Service for hosting",
+            "Azure DevOps for CI/CD",
+            "Branch main → Staging, Tags → Production",
+            "Test coverage ~73% with 260+ files"
+          ]
+        }
+      },
+      "features": {
+        "games": {
+          "title": "Loyalty Games",
+          "description": "4 game types: Casino (roulette/dice), Scratch (scratch cards), Wheel (wheel of fortune), Flip (card flipping)"
+        },
+        "authCrypto": {
+          "title": "Encrypted Auth",
+          "description": "Login via email or holder_ref with AES-ECB encryption and HMAC-SHA1 signature, secure token management"
+        },
+        "offers": {
+          "title": "Offer Management",
+          "description": "Offer retrieval by EAN code, product tagging, member shopping cart, spotlight promotional banners"
+        },
+        "instore": {
+          "title": "In-Store Mode",
+          "description": "Receipt upload and validation, QR/barcode scanner, in-store game results"
+        },
+        "multiRetailer": {
+          "title": "Multi-Retailers",
+          "description": "8+ supported stores with custom themes, tenant-specific configs, dynamic branding"
+        },
+        "api": {
+          "title": "Complete API",
+          "description": "Auth, offers, games, e-commerce/instore results, spotlight endpoints - all HMAC-signed requests"
+        }
+      },
+      "challenges": [
+        "Secure BFF architecture with HMAC-SHA1 signature and AES encryption for all communications",
+        "Multi-tenant system with complete customization (themes, configs) for 8+ retail stores",
+        "Integration of e-commerce and in-store mode (receipts) in a unified experience",
+        "Extensive test coverage (~73%, 260+ files) with Vitest, Jest and MSW"
+      ]
+    },
+    "elistair": {
+      "name": "Elistair - Drone Client Portal",
+      "description": "B2B client portal for Elistair, European leader in tethered drones for defense, security and industrial applications. Fleet management and real-time monitoring.",
+      "overview": "B2B client portal developed for Elistair, French company and European leader in tethered drones. The platform serves government, military and industrial clients for drone fleet management, real-time mission monitoring and secure technical documentation access.",
+      "architecture": {
+        "frontend": {
+          "title": "Frontend & Framework",
+          "items": [
+            "Next.js 14 with App Router and Server Components",
+            "React 18 with Suspense for streaming",
+            "Strict TypeScript with end-to-end Zod validation",
+            "Tailwind CSS for custom design system",
+            "Recharts for real-time data visualization"
+          ]
+        },
+        "backend": {
+          "title": "Backend & API",
+          "items": [
+            "tRPC for end-to-end typed API",
+            "Prisma ORM with PostgreSQL",
+            "NextAuth.js for multi-provider authentication",
+            "API Routes for webhooks and integrations"
+          ]
+        },
+        "security": {
+          "title": "Security & Auth",
+          "items": [
+            "Enterprise SSO authentication (SAML/OAuth)",
+            "Role-based access control (RBAC)",
+            "Audit logs for defense compliance",
+            "Sensitive data encryption"
+          ]
+        },
+        "infrastructure": {
+          "title": "Infrastructure",
+          "items": [
+            "Docker containers for deployment",
+            "AWS (ECS, RDS, S3, CloudFront)",
+            "CI/CD GitHub Actions",
+            "CloudWatch monitoring and alerting"
+          ]
+        }
+      },
+      "features": {
+        "fleet": {
+          "title": "Fleet Management",
+          "description": "Centralized dashboard to view and manage all tethered drones, operational status, preventive maintenance and history"
+        },
+        "monitoring": {
+          "title": "Real-Time Monitoring",
+          "description": "Live mission tracking with telemetry, automatic alerts, mapping and flight replay"
+        },
+        "docs": {
+          "title": "Secure Documentation",
+          "description": "Controlled access to technical manuals, maintenance procedures, certificates and regulatory documents"
+        },
+        "users": {
+          "title": "User Management",
+          "description": "Multi-tenant administration with custom roles, enterprise SSO and complete audit trail"
+        },
+        "analytics": {
+          "title": "Reports & Analytics",
+          "description": "Mission report generation, usage statistics, fleet performance KPIs"
+        },
+        "support": {
+          "title": "Support & Tickets",
+          "description": "Integrated ticketing system, knowledge base, support chat and service request tracking"
+        }
+      },
+      "challenges": [
+        "Compliance with security requirements for defense and government clients",
+        "Multi-tenant architecture with strict client data isolation",
+        "Real-time integration with drone telemetry systems",
+        "Critical performance and availability for surveillance applications"
+      ]
+    },
+    "timtle": {
+      "name": "Timtle - Real Estate Rental",
+      "description": "React Native mobile application for digitalizing the rental journey, simplifying candidate file management and visit scheduling for real estate agencies.",
+      "overview": "Timtle is an innovative digital solution that simplifies and digitalizes the real estate rental process. Founded in early 2023, the platform addresses pain points experienced by both property managers and tenant candidates. The application consists of two distinct mobile interfaces: one for real estate agencies and one for tenants, both designed with intuitive design and simplified user experience.",
+      "architecture": {
+        "framework": {
+          "title": "Framework & Mobile",
+          "items": [
+            "React Native for iOS and Android",
+            "TypeScript for code robustness",
+            "Two distinct applications: Agency and Tenant",
+            "UX/UI design optimized for each audience"
+          ]
+        },
+        "features": {
+          "title": "Business Features",
+          "items": [
+            "Automatic synchronization of listings from real estate portals",
+            "Centralized candidate files per property",
+            "Integrated visit scheduling system",
+            "Real-time tracking of each property status"
+          ]
+        },
+        "documents": {
+          "title": "Document Management",
+          "items": [
+            "Digital tenant file creation",
+            "Upload and validation of supporting documents",
+            "Electronic lease signature",
+            "Insurance certificate management"
+          ]
+        },
+        "backend": {
+          "title": "Backend & Services",
+          "items": [
+            "REST API for data synchronization",
+            "Major real estate portal integration",
+            "Push notifications for tracking",
+            "Secure document storage"
+          ]
+        }
+      },
+      "features": {
+        "propertyManagement": {
+          "title": "Property Management",
+          "description": "Centralized tracking of all rental properties across platforms, real-time visibility into each property's rental status"
+        },
+        "candidateFiles": {
+          "title": "Candidate Files",
+          "description": "Automatic consolidation of application files per property, with all necessary supporting documents"
+        },
+        "visitScheduling": {
+          "title": "Visit Scheduling",
+          "description": "Integrated calendar system to optimize visit organization and reduce time-consuming tasks"
+        },
+        "digitalSignature": {
+          "title": "Electronic Signature",
+          "description": "Rental finalization with interest confirmation, insurance document provision and electronic lease signing"
+        },
+        "tenantApp": {
+          "title": "Tenant App",
+          "description": "Dedicated interface allowing candidates to build their file, track their applications and sign their lease"
+        },
+        "agencyApp": {
+          "title": "Agency App",
+          "description": "Professional interface to manage property portfolio, process applications and optimize time-to-lease"
+        }
+      },
+      "challenges": [
+        "UX/UI design of two distinct mobile applications with different user journeys",
+        "Integration with major real estate portals for automatic listing synchronization",
+        "Complete rental workflow: from application to electronic lease signing",
+        "Significant reduction in time-consuming and non-productive tasks for agencies"
+      ]
+    },
+    "beager": {
+      "name": "Beager - Freelance Platform v2",
+      "description": "Complete redesign (v2) of the freelance-enterprise matching platform with automatic contractual document generation.",
+      "overview": "Beager is an innovative freelance-enterprise matching platform, founded in 2020. The v2 brings a complete redesign with automatic contractual document generation based on data collected during matching. Clients include: Accor, RATP, SNCF, Clarins, BlaBlaCar. The platform prioritizes quality over volume with 72h matching and guaranteed payments.",
+      "architecture": {
+        "frontend": {
+          "title": "Frontend & Framework",
+          "items": [
+            "Next.js 14 with App Router and Server Components",
+            "React 18 with Suspense for streaming",
+            "Strict TypeScript with Zod validation",
+            "Tailwind CSS for responsive design system",
+            "Framer Motion for smooth animations"
+          ]
+        },
+        "backend": {
+          "title": "Backend & API",
+          "items": [
+            "tRPC for end-to-end typed API",
+            "Prisma ORM with PostgreSQL",
+            "NextAuth.js for multi-provider authentication",
+            "Webhooks for external integrations"
+          ]
+        },
+        "documents": {
+          "title": "Document Generation",
+          "items": [
+            "Automatic PDF contract generation",
+            "Dynamic templates based on matching data",
+            "Integrated electronic signature",
+            "Secure document archiving"
+          ]
+        },
+        "infrastructure": {
+          "title": "Infrastructure",
+          "items": [
+            "Vercel for deployment and CDN",
+            "Managed PostgreSQL (Neon/Supabase)",
+            "Stripe for secure payments",
+            "CI/CD GitHub Actions"
+          ]
+        }
+      },
+      "features": {
+        "matching": {
+          "title": "Intelligent Matching",
+          "description": "Matching algorithm based on skills, availability and preferences. 72h matching with qualitative pre-selection"
+        },
+        "contracts": {
+          "title": "Contract Generation",
+          "description": "Contractual documents automatically generated from matching data: contracts, amendments, NDAs, invoices"
+        },
+        "verified": {
+          "title": "Verified Profiles",
+          "description": "Freelance verification process: validated skills, verified references, confirmed experiences"
+        },
+        "payments": {
+          "title": "Guaranteed Payments",
+          "description": "Secure payment system with Stripe, automatic invoicing and payment guarantee for freelancers"
+        },
+        "dashboard": {
+          "title": "Enterprise Dashboard",
+          "description": "Dedicated interface for enterprises: mission management, freelancer tracking, analytics and reporting"
+        },
+        "freelanceSpace": {
+          "title": "Freelance Space",
+          "description": "Enhanced profile, availability management, mission history, income and document tracking"
+        }
+      },
+      "challenges": [
+        "Dynamic generation of complex contractual PDF documents with variable data",
+        "Multi-criteria matching algorithm with real-time scoring",
+        "Complete Stripe integration with recurring payments and commission management",
+        "Multi-tenant architecture with client enterprise data isolation"
+      ]
+    }
+  },
+  "freelanceProjects": {
+    "tchee": {
+      "name": "Tchee - Ride-Hailing App",
+      "description": "Complete ride-hailing platform (Uber-style) for the African market with passenger/driver mobile app, backend API and admin backoffice. Multi-provider payments (Stripe, Orange Money, Wave).",
+      "overview": "Tchee is a complete ride-hailing application (Uber-style) designed for the African market. The platform consists of 3 distinct parts: a React Native mobile app for passengers and drivers, a Node.js backend API, and an admin backoffice. It supports card payments (Stripe), cash and Mobile Money (Orange Money, MTN, Moov, Wave).",
+      "architecture": {
+        "mobile": {
+          "title": "Mobile App (Expo)",
+          "items": [
+            "Expo 54 + React Native 0.81 cross-platform iOS/Android",
+            "TypeScript 5.9 for static typing",
+            "Expo Router 6.0 for file-based navigation",
+            "Google Maps API + Places for geolocation"
+          ]
+        },
+        "backend": {
+          "title": "Backend API (Node.js)",
+          "items": [
+            "React Router 7.9 full-stack SSR",
+            "Prisma 6.18 ORM with MySQL",
+            "49 REST API routes (auth, trips, payments, documents)",
+            "JWT 30 days + bcrypt for authentication"
+          ]
+        },
+        "backoffice": {
+          "title": "Admin BackOffice",
+          "items": [
+            "React 19 + React Router 7.9 SSR",
+            "Tailwind CSS 4.1 for styling",
+            "Dashboard: rides, payments, users",
+            "Driver document validation (license, insurance)"
+          ]
+        },
+        "payments": {
+          "title": "Payments & Notifications",
+          "items": [
+            "Stripe for card payments + webhooks",
+            "Mobile Money: Orange Money, MTN, Moov, Wave",
+            "Firebase Cloud Messaging for push notifications",
+            "Dynamic pricing with peak hours"
+          ]
+        }
+      },
+      "features": {
+        "passenger": {
+          "title": "Passenger Side",
+          "description": "Destination search (Google Places), route calculation, ride creation, real-time driver tracking on map, ride history and wallet"
+        },
+        "driver": {
+          "title": "Driver Side",
+          "description": "Complete onboarding (documents, vehicle, photos), active mode to receive rides, ride management, finances with earnings and commissions"
+        },
+        "payments": {
+          "title": "Multi-Provider Payments",
+          "description": "Credit card (Stripe), cash, Mobile Money (Orange Money, MTN, Moov, Wave) with confirmation webhooks"
+        },
+        "realtime": {
+          "title": "Real-Time Tracking",
+          "description": "Live driver position on map, ride lifecycle (pending → accepted → in_progress → completed), push notifications"
+        },
+        "admin": {
+          "title": "Admin BackOffice",
+          "description": "3-tab dashboard (rides, payments, users), driver document validation, commission settings (15%) and pricing"
+        },
+        "pricing": {
+          "title": "Dynamic Pricing",
+          "description": "Base 500 XOF + 50 XOF/min + 100 XOF/km, 15% commission, peak hours multiplier 1.5x (7-9am, 5-7pm)"
+        }
+      },
+      "challenges": [
+        "Complete 3-tier architecture: Mobile App + Backend API + BackOffice communicating via REST/JWT",
+        "Multi-payment integration adapted to African market (Mobile Money dominant)",
+        "Real-time GPS tracking with battery optimization and Google Maps route calculation",
+        "Driver document validation workflow with state management (pending → approved/rejected)"
+      ]
+    },
+    "sayyes": {
+      "name": "SayYes - Portfolio & Landing Builder",
+      "description": "Portfolio management and dynamic landing page platform for creative agencies with advanced animations and modular CMS.",
+      "overview": "SayYes is a portfolio management and dynamic landing page platform designed for creative agencies and digital studios. The application showcases client projects with advanced animations (Framer Motion, Three.js) and enables creation of customizable landing pages via a modular block system.",
+      "architecture": {
+        "frontend": {
+          "title": "Frontend & Framework",
+          "items": [
+            "React 18 with SSR via Remix",
+            "Strict TypeScript for code robustness",
+            "Tailwind CSS for design system",
+            "Framer Motion + Three.js for animations",
+            "Vite as build tool with PWA support"
+          ]
+        },
+        "backend": {
+          "title": "Backend & API",
+          "items": [
+            "Remix (SSR + file-based routing)",
+            "Loaders for data fetching",
+            "Actions for mutations",
+            "Nodemailer (SMTP Brevo) for emails"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "items": [
+            "SQLite for persistence",
+            "Prisma ORM with versioned migrations",
+            "Models: Portfolio, Media, LandingPage, Solution",
+            "Cascade delete relations for media"
+          ]
+        },
+        "performance": {
+          "title": "Performance & PWA",
+          "items": [
+            "Service Worker with offline cache (50MB)",
+            "Code splitting for large SVGs",
+            "Sharp for image optimization",
+            "Lazy loading with Intersection Observer"
+          ]
+        }
+      },
+      "features": {
+        "landingBuilder": {
+          "title": "Landing Page Builder",
+          "description": "Modular block system: blocIntro, cards, chiffresCles, testimonial, methods, faq, useCase, footer - Visual per-block configuration"
+        },
+        "portfolios": {
+          "title": "Portfolio Management",
+          "description": "Full CRUD with WYSIWYG editor, drag & drop media upload, flexible Bento grid, integrated SEO (meta tags, schema.org)"
+        },
+        "animations": {
+          "title": "Advanced Animations",
+          "description": "FadeInView on scroll, parallax, smooth scroll (Lenis), holographic gradients, halos, textures, animated gradient titles"
+        },
+        "admin": {
+          "title": "Admin Dashboard",
+          "description": "Complete admin interface: portfolio management, landing page builder, real-time preview, SEO configuration"
+        },
+        "pwa": {
+          "title": "PWA & Offline",
+          "description": "Installable application, CacheFirst offline strategy, prefers-reduced-motion support for accessibility"
+        },
+        "seo": {
+          "title": "Optimized SEO",
+          "description": "Full SSR for search engines, dynamic meta tags, integrated schema.org JSON-LD, customizable slugs"
+        }
+      },
+      "challenges": [
+        "Reusable modular block system with JSON configuration and real-time preview",
+        "CSS @property polyfill for Safari iOS with JavaScript fallback for animated gradients",
+        "Robust TypeScript architecture with well-defined types for the block system",
+        "Performance optimization: SSR, code splitting, image optimization, PWA caching"
+      ]
+    },
+    "guardian": {
+      "name": "Guardian - DeFi Smart Accounts",
+      "description": "Autonomous fund manager for Monad Testnet with MetaMask Smart Accounts, reusable delegations and AI strategy recommendation agent.",
+      "overview": "Guardian is an autonomous fund manager developed for the Monad x MetaMask Smart Accounts hackathon. The application combines Smart Accounts with deterministic CREATE2 deployment, reusable delegations (single signature for multiple jobs), an AI agent with multi-strategy scoring, and DCA automation. Architecture of 174 TypeScript files and 36,500+ lines of code.",
+      "architecture": {
+        "frontend": {
+          "title": "Frontend & UI",
+          "items": [
+            "Remix 2.0 with React 18 and TypeScript",
+            "Three.js for 3D visualizations",
+            "Framer Motion for smooth animations",
+            "Tailwind CSS for design system",
+            "9 React contexts (balances, tokens, modals...)"
+          ]
+        },
+        "backend": {
+          "title": "Backend & API",
+          "items": [
+            "Express 4.18 as HTTP server",
+            "Prisma ORM with SQLite",
+            "28 server modules (10,300+ lines)",
+            "50+ REST API endpoints"
+          ]
+        },
+        "blockchain": {
+          "title": "Blockchain & Web3",
+          "items": [
+            "viem 2.x + wagmi 2.17 for blockchain interactions",
+            "MetaMask Delegation Toolkit 0.13 for Smart Accounts",
+            "ZeroDev SDK 5.5 for Account Abstraction",
+            "Pimlico as ERC-4337 Bundler"
+          ]
+        },
+        "indexation": {
+          "title": "Indexation & Data",
+          "items": [
+            "Envio HyperIndex + HyperSync for indexation",
+            "Token Discovery with CoinMarketCap API",
+            "Real-time prices with multi-source fallback",
+            "Persistent cache for logos and metadata"
+          ]
+        }
+      },
+      "features": {
+        "agentBrain": {
+          "title": "AI Agent Brain",
+          "description": "Decision engine evaluating 4 strategies (staking, DCA, hold, compound) with 0-100 scoring based on volatility, volume, liquidity and estimated APY"
+        },
+        "delegations": {
+          "title": "Reusable Delegations",
+          "description": "Single signature for multiple executions, CREATE2 Smart Accounts with auto-deployment, smartSession and functionCall scopes"
+        },
+        "scheduler": {
+          "title": "DCA Scheduler",
+          "description": "In-memory scheduler for automatic Dollar Cost Averaging, disk persistence, auto-stop on expiration, real-time tracking"
+        },
+        "tokenDiscovery": {
+          "title": "Token Discovery",
+          "description": "Autonomous pipeline: Envio HyperSync → Scan Swap events → DB → CoinMarketCap enrichment, 0-4 stars confidence score"
+        },
+        "smartHarvest": {
+          "title": "Smart Harvest",
+          "description": "Main workflow: market evaluation → AI recommendation → delegation submission → automated DCA job"
+        },
+        "authSiwe": {
+          "title": "SIWE Auth",
+          "description": "Sign-In With Ethereum: wallet connection, server nonce, signature verification, secure session cookie"
+        }
+      },
+      "challenges": [
+        "Smart Accounts with deterministic CREATE2 deployment and first transaction = deployment + atomic execution",
+        "Reusable delegations eliminating re-signature friction for recurring DCA jobs",
+        "Envio integration with 50x optimization via batching and intelligent filtering (99% event reduction)",
+        "AI agent with explicit reasoning and confidence level for each recommendation"
+      ]
+    }
   },
   "experiences": {
     "title": "Experience",

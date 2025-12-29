@@ -110,6 +110,30 @@ export default function Home() {
   // Portfolio scroll ref
   const portfolioScrollRef = useRef<HTMLDivElement>(null);
 
+  // Listen for custom event to open portfolio project from ExperienceModal
+  useEffect(() => {
+    const handleOpenPortfolioProject = (e: CustomEvent<{ projectId: string }>) => {
+      const project = projects.find((p) => p.id === e.detail.projectId);
+      if (project) {
+        // Close experience modal first
+        setShowExperienceModal(false);
+        setSelectedExperience(null);
+        // Navigate to portfolio and open the project
+        setSection(11);
+        setShowCard(true);
+        // Slight delay to let the portfolio section render
+        setTimeout(() => {
+          setSelectedProject(project);
+        }, 300);
+      }
+    };
+
+    window.addEventListener("openPortfolioProject", handleOpenPortfolioProject as EventListener);
+    return () => {
+      window.removeEventListener("openPortfolioProject", handleOpenPortfolioProject as EventListener);
+    };
+  }, []);
+
   // Scroll timing to prevent rapid section changes
   const lastScrollTimeRef = useRef(0);
 

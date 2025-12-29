@@ -41,13 +41,13 @@ export const SECTION_CAMERA_POSITIONS: Record<
   // Intro - far back view
   0: { x: 0, y: 0, z: ORBIT_RADIUS + 12, lookX: 0, lookY: 0, lookZ: 0 },
 
-  // Skills Overview - wide view of all skills
+  // Skills Overview - wide view of all skills, centered on Backend column
   1: {
     x: CAM_X_OFFSET,
-    y: 0,
+    y: -0.5,
     z: ORBIT_RADIUS + CAMERA_DISTANCE,
     lookX: CAM_X_OFFSET,
-    lookY: 0,
+    lookY: -0.5,
     lookZ: ORBIT_RADIUS,
   },
 
@@ -80,23 +80,23 @@ export const SECTION_CAMERA_POSITIONS: Record<
     lookZ: ORBIT_RADIUS,
   },
 
-  // ===== BACKEND GROUP (sections 5-6) =====
+  // ===== BACKEND GROUP (sections 5-6) - shifted down by 1.5 =====
   // Server - section 5
   5: {
     x: SKILLS_X_OFFSET,
-    y: GRID_Y * 0.5,
+    y: GRID_Y * 0.5 - 1.5,
     z: ORBIT_RADIUS + SKILL_DETAIL_Z,
     lookX: SKILLS_X_OFFSET,
-    lookY: GRID_Y * 0.5,
+    lookY: GRID_Y * 0.5 - 1.5,
     lookZ: ORBIT_RADIUS,
   },
   // Database - section 6
   6: {
     x: SKILLS_X_OFFSET,
-    y: -GRID_Y * 0.5,
+    y: -GRID_Y * 0.5 - 1.5,
     z: ORBIT_RADIUS + SKILL_DETAIL_Z,
     lookX: SKILLS_X_OFFSET,
-    lookY: -GRID_Y * 0.5,
+    lookY: -GRID_Y * 0.5 - 1.5,
     lookZ: ORBIT_RADIUS,
   },
 

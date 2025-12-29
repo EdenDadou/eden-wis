@@ -3,8 +3,12 @@ import {
   P_FRONT,
   P_MOBILE,
   P_BACK,
-  P_SERVER,
-  P_DB,
+  P_SERVER_LEFT,
+  P_SERVER_RIGHT,
+  P_SERVER_BOTTOM,
+  P_DB_LEFT,
+  P_DB_RIGHT,
+  P_DB_TOP,
   P_CICD,
   P_CLOUD,
   P_ARCHI,
@@ -37,23 +41,22 @@ export function SkillConnections({
   const getDrawProgress = (index: number) => linkDrawProgress[index] || 0;
 
   // Define all links with their properties
+  // Frontend: points on right -> Server: points on left
+  // Server: points on right -> DevOps: points on left
+  // Server <-> Database: top/bottom connection
   const links = [
-    // FRONTEND GROUP (vertical chain)
-    { start: P_FRONT, end: P_MOBILE, startColor: C_FRONT, endColor: C_MOBILE },
-    { start: P_MOBILE, end: P_BACK, startColor: C_MOBILE, endColor: C_BACK },
-    // BACKEND GROUP (vertical)
-    { start: P_SERVER, end: P_DB, startColor: C_DB, endColor: C_DB },
-    // DEVOPS GROUP (vertical chain)
+    // BACKEND GROUP (vertical) - Server bottom to Database top (all red)
+    { start: P_SERVER_BOTTOM, end: P_DB_TOP, startColor: C_DB, endColor: C_DB },
+    // DEVOPS GROUP (vertical chain) - left side points
     { start: P_CICD, end: P_CLOUD, startColor: C_CICD, endColor: C_CLOUD },
-    { start: P_CLOUD, end: P_ARCHI, startColor: C_CLOUD, endColor: C_ARCHI },
-    // CROSS-GROUP HORIZONTAL
-    { start: P_FRONT, end: P_SERVER, startColor: C_FRONT, endColor: C_SERVER },
-    { start: P_SERVER, end: P_CICD, startColor: C_SERVER, endColor: C_CICD },
-    { start: P_MOBILE, end: P_SERVER, startColor: C_MOBILE, endColor: C_SERVER },
-    { start: P_DB, end: P_CLOUD, startColor: C_DB, endColor: C_DB },
-    // KEY DIAGONAL/CROSS
-    { start: P_BACK, end: P_SERVER, startColor: C_BACK, endColor: C_SERVER },
-    { start: P_SERVER, end: P_CLOUD, startColor: C_SERVER, endColor: C_CLOUD },
+    // FRONTEND -> SERVER (all green - server color)
+    { start: P_FRONT, end: P_SERVER_LEFT, startColor: C_SERVER, endColor: C_SERVER },
+    { start: P_MOBILE, end: P_SERVER_LEFT, startColor: C_SERVER, endColor: C_SERVER },
+    // BACKOFFICE -> SERVER (all green - server color)
+    { start: P_BACK, end: P_SERVER_LEFT, startColor: C_SERVER, endColor: C_SERVER },
+    // SERVER -> DEVOPS (right to left)
+    { start: P_SERVER_RIGHT, end: P_CICD, startColor: C_SERVER, endColor: C_CICD },
+    { start: P_SERVER_RIGHT, end: P_CLOUD, startColor: C_SERVER, endColor: C_CLOUD },
   ];
 
   return (

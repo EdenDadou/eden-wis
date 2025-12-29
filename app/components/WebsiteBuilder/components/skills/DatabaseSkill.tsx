@@ -33,12 +33,11 @@ export const DatabaseSkill = forwardRef<THREE.Group, DatabaseSkillProps>(
         <Billboard>
           <Text
             position={[0, -0.7, 0]}
-            fontSize={isActive ? 0.22 : 0.2}
+            fontSize={isActive ? 0.24 : 0.22}
             color="#ffffff"
             anchorX="center"
             anchorY="top"
-            outlineWidth={0.02}
-            outlineColor="#000000"
+            fontWeight="bold"
           >
             DATABASE
           </Text>

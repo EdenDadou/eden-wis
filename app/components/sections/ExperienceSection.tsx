@@ -10,7 +10,6 @@ interface ExperienceSectionProps {
 }
 
 export function ExperienceSection({
-  section,
   selectedExperience,
   showModal = false,
   onCloseModal,

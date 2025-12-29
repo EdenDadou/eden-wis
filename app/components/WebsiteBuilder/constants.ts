@@ -8,24 +8,40 @@ export const POS_FRONTEND = [-GRID_X, GRID_Y, 0] as [number, number, number];
 export const POS_MOBILE = [-GRID_X, 0, 0] as [number, number, number];
 export const POS_BACKOFFICE = [-GRID_X, -GRID_Y, 0] as [number, number, number];
 
-// BACKEND GROUP (CENTER column, x = 0)
-export const POS_SERVER = [0, GRID_Y * 0.5, 0] as [number, number, number];
-export const POS_DATABASE = [0, -GRID_Y * 0.5, 0] as [number, number, number];
+// BACKEND GROUP (CENTER column, x = 0, shifted down by 1.5)
+export const POS_SERVER = [0, GRID_Y * 0.5 - 1.5, 0] as [number, number, number];
+export const POS_DATABASE = [0, -GRID_Y * 0.5 - 1.5, 0] as [number, number, number];
 
 // DEVOPS GROUP (RIGHT column, x = GRID_X)
 export const POS_CICD = [GRID_X, GRID_Y, 0] as [number, number, number];
 export const POS_CLOUD = [GRID_X, 0, 0] as [number, number, number];
 export const POS_ARCHI = [GRID_X, -GRID_Y, 0] as [number, number, number];
 
+// Connection point offset from skill center
+const CONN_OFFSET = 0.9;
+
 // Connection Points (for ParticleStream)
-export const P_FRONT = [-GRID_X, GRID_Y, 0];
-export const P_MOBILE = [-GRID_X, 0, 0];
-export const P_BACK = [-GRID_X, -GRID_Y, 0];
-export const P_SERVER = [0, GRID_Y * 0.5, 0];
-export const P_DB = [0, -GRID_Y * 0.5, 0];
-export const P_CICD = [GRID_X, GRID_Y, 0];
-export const P_CLOUD = [GRID_X, 0, 0];
-export const P_ARCHI = [GRID_X, -GRID_Y, 0];
+// FRONTEND column - points on RIGHT side
+export const P_FRONT = [-GRID_X + CONN_OFFSET, GRID_Y, 0];
+export const P_MOBILE = [-GRID_X + CONN_OFFSET, 0, 0];
+export const P_BACK = [-GRID_X + CONN_OFFSET, -GRID_Y, 0];
+
+// BACKEND column - Server: right, left, bottom | Database: right, left, top
+const SERVER_Y = GRID_Y * 0.5 - 1.5;
+const DB_Y = -GRID_Y * 0.5 - 1.5;
+export const P_SERVER = [0, SERVER_Y, 0]; // center (for vertical)
+export const P_SERVER_LEFT = [-CONN_OFFSET, SERVER_Y, 0];
+export const P_SERVER_RIGHT = [CONN_OFFSET, SERVER_Y, 0];
+export const P_SERVER_BOTTOM = [0, SERVER_Y - CONN_OFFSET, 0];
+export const P_DB = [0, DB_Y, 0]; // center (for vertical)
+export const P_DB_LEFT = [-CONN_OFFSET, DB_Y, 0];
+export const P_DB_RIGHT = [CONN_OFFSET, DB_Y, 0];
+export const P_DB_TOP = [0, DB_Y + CONN_OFFSET, 0];
+
+// DEVOPS column - points on LEFT side
+export const P_CICD = [GRID_X - CONN_OFFSET, GRID_Y, 0];
+export const P_CLOUD = [GRID_X - CONN_OFFSET, 0, 0];
+export const P_ARCHI = [GRID_X - CONN_OFFSET, -GRID_Y, 0];
 
 // Skill Colors
 export const C_FRONT = "#3b82f6"; // Blue (Frontend)
