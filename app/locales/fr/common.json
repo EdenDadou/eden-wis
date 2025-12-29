@@ -119,6 +119,12 @@
     "technologies": "Technologies",
     "achievements": "Réalisations clés"
   },
+  "experience": {
+    "projects": "Projets réalisés",
+    "noProjects": "Aucun projet à afficher pour le moment",
+    "education": "Formation",
+    "study": "Étude"
+  },
   "experiences": {
     "title": "Expériences",
     "e4ia": {

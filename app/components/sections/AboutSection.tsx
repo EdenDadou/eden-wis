@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
+import { useLanguageAnimation } from "../../hooks/useLanguageAnimation";
 
 // Optimized images (WebP with JPEG fallback, ~400KB total vs 12MB original)
 const profileImages = [
@@ -26,6 +27,7 @@ interface AboutSectionProps {
 
 export function AboutSection({ section, showCard, targetSection, isNavigating, onNavigateToContact }: AboutSectionProps) {
   const { t } = useTranslation("common");
+  const { animationKey } = useLanguageAnimation();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // About is now section 12
@@ -220,19 +222,23 @@ export function AboutSection({ section, showCard, targetSection, isNavigating, o
                     >
                       {t("about.name")}
                     </motion.h1>
-                    <motion.p
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.4 }}
-                      className="text-lg font-semibold mt-1"
-                      style={{
-                        background: "linear-gradient(135deg, #22d3ee 0%, #8b5cf6 100%)",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                      }}
-                    >
-                      {t("about.role")}
-                    </motion.p>
+                    <AnimatePresence mode="wait">
+                      <motion.p
+                        key={`role-${animationKey}`}
+                        initial={{ opacity: 0, x: -20, filter: 'blur(2px)' }}
+                        animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+                        exit={{ opacity: 0, x: 10, filter: 'blur(2px)' }}
+                        transition={{ duration: 0.25 }}
+                        className="text-lg font-semibold mt-1"
+                        style={{
+                          background: "linear-gradient(135deg, #22d3ee 0%, #8b5cf6 100%)",
+                          WebkitBackgroundClip: "text",
+                          WebkitTextFillColor: "transparent",
+                        }}
+                      >
+                        {t("about.role")}
+                      </motion.p>
+                    </AnimatePresence>
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -240,20 +246,35 @@ export function AboutSection({ section, showCard, targetSection, isNavigating, o
                       className="flex items-center justify-center md:justify-start gap-2 mt-2"
                     >
                       <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]" />
-                      <span className="text-sm text-white/60 font-medium">{t("about.available")}</span>
+                      <AnimatePresence mode="wait">
+                        <motion.span
+                          key={`available-${animationKey}`}
+                          initial={{ opacity: 0, x: 5 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: -5 }}
+                          transition={{ duration: 0.2 }}
+                          className="text-sm text-white/60 font-medium"
+                        >
+                          {t("about.available")}
+                        </motion.span>
+                      </AnimatePresence>
                     </motion.div>
                   </div>
                 </div>
 
                 {/* Bio */}
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                  className="text-white/75 leading-relaxed text-base md:text-lg mb-6 font-light"
-                >
-                  {t("about.bio")}
-                </motion.p>
+                <AnimatePresence mode="wait">
+                  <motion.p
+                    key={`bio-${animationKey}`}
+                    initial={{ opacity: 0, y: 20, filter: 'blur(4px)' }}
+                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    exit={{ opacity: 0, y: -10, filter: 'blur(4px)' }}
+                    transition={{ duration: 0.3 }}
+                    className="text-white/75 leading-relaxed text-base md:text-lg mb-6 font-light"
+                  >
+                    {t("about.bio")}
+                  </motion.p>
+                </AnimatePresence>
 
                 {/* Experience highlight - Inner glass card */}
                 <motion.div

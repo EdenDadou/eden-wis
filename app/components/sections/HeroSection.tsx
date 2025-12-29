@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import {
   CyberText,
@@ -9,6 +9,7 @@ import {
 } from "../GlitchText";
 import { ParticleText } from "../ParticleText";
 import { RotatingParticleText } from "../RotatingParticleText";
+import { useLanguageAnimation } from "../../hooks/useLanguageAnimation";
 
 interface HeroSectionProps {
   isVisible: boolean;
@@ -16,6 +17,7 @@ interface HeroSectionProps {
 
 export function HeroSection({ isVisible }: HeroSectionProps) {
   const { t } = useTranslation("common");
+  const { animationKey } = useLanguageAnimation();
 
   if (!isVisible) return null;
 
@@ -97,9 +99,18 @@ export function HeroSection({ isVisible }: HeroSectionProps) {
         transition={{ duration: 0.5, delay: 1.2 }}
         className="pb-8 flex flex-col items-center"
       >
-        <span className="text-white/50 text-sm mb-2">
-          {t("sections.scrollToExplore")}
-        </span>
+        <AnimatePresence mode="wait">
+          <motion.span
+            key={animationKey}
+            className="text-white/50 text-sm mb-2"
+            initial={{ opacity: 0, y: 6, filter: 'blur(2px)' }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, y: -6, filter: 'blur(2px)' }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+          >
+            {t("sections.scrollToExplore")}
+          </motion.span>
+        </AnimatePresence>
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{

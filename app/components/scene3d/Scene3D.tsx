@@ -1,5 +1,4 @@
 import { experienceData, type Experience as ExperienceType } from "../Timeline3D";
-import ExperienceDetail3D from "../ExperienceDetail3D";
 import SceneEnvironment from "./SceneEnvironment";
 import SceneContent from "./SceneContent";
 import CameraRig from "./CameraRig";
@@ -18,7 +17,6 @@ export default function Scene3D({
   section,
   onExperienceSelect,
   selectedExperienceId,
-  detailScrollOffset = 0,
   onNavigationComplete,
   onSkillClick,
 }: Scene3DProps) {
@@ -33,28 +31,18 @@ export default function Scene3D({
       <SceneEnvironment />
 
       <CameraRig
-        selectedExperience={selectedExperience}
+        selectedExperience={null}
         targetSection={section}
         onNavigationComplete={onNavigationComplete}
       />
 
-      {/* Main content - hidden when in detail view */}
-      {!selectedExperience && (
-        <SceneContent
-          section={section}
-          onExperienceSelect={onExperienceSelect}
-          selectedExperienceId={selectedExperienceId}
-          onSkillClick={onSkillClick}
-        />
-      )}
-
-      {/* Experience Detail View */}
-      {selectedExperience && (
-        <ExperienceDetail3D
-          experience={selectedExperience}
-          scrollOffset={detailScrollOffset}
-        />
-      )}
+      {/* Main content - always visible, modal handles experience detail */}
+      <SceneContent
+        section={section}
+        onExperienceSelect={onExperienceSelect}
+        selectedExperienceId={selectedExperienceId}
+        onSkillClick={onSkillClick}
+      />
     </>
   );
 }

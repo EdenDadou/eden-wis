@@ -1,9 +1,153 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Text, RoundedBox, Float } from '@react-three/drei';
 import * as THREE from 'three';
 import { useTranslation } from 'react-i18next';
 import { SECTION_ANGLES, ORBIT_RADIUS } from './scene3d';
+
+// Composant Text 3D avec effet morphing lors du changement de langue
+// Inspiré de Magic UI MorphingText - effet de fondu croisé smooth
+interface MorphingText3DProps {
+  children: string;
+  position?: [number, number, number];
+  fontSize?: number;
+  color?: string;
+  anchorX?: 'left' | 'center' | 'right';
+  anchorY?: 'top' | 'middle' | 'bottom';
+  fontWeight?: 'normal' | 'bold';
+}
+
+interface MorphState {
+  oldText: string;
+  newText: string;
+  progress: number; // 0 = old text visible, 1 = new text visible
+}
+
+function MorphingText3D({
+  children,
+  position = [0, 0, 0],
+  fontSize = 0.22,
+  color = 'white',
+  anchorX = 'center',
+  anchorY = 'middle',
+  fontWeight = 'bold',
+}: MorphingText3DProps) {
+  const { i18n } = useTranslation();
+  const [morphState, setMorphState] = useState<MorphState>({
+    oldText: children,
+    newText: children,
+    progress: 1,
+  });
+  const prevLangRef = useRef(i18n.language);
+  const prevChildrenRef = useRef(children);
+  const animationRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    // Update without animation if only children changed (not language)
+    if (prevChildrenRef.current !== children && prevLangRef.current === i18n.language) {
+      prevChildrenRef.current = children;
+      setMorphState({ oldText: children, newText: children, progress: 1 });
+      return;
+    }
+
+    // Skip if language didn't change
+    if (prevLangRef.current === i18n.language) {
+      return;
+    }
+
+    const oldText = prevChildrenRef.current;
+    prevLangRef.current = i18n.language;
+    prevChildrenRef.current = children;
+
+    // Cancel any existing animation
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
+    }
+
+    const morphDuration = 800; // ms for full morph
+    const startTime = performance.now();
+
+    const animate = (timestamp: number) => {
+      const elapsed = timestamp - startTime;
+      const progress = Math.min(elapsed / morphDuration, 1);
+
+      // Smooth easing
+      const eased = 1 - Math.pow(1 - progress, 3);
+
+      setMorphState({
+        oldText,
+        newText: children,
+        progress: eased,
+      });
+
+      if (progress < 1) {
+        animationRef.current = requestAnimationFrame(animate);
+      } else {
+        setMorphState({ oldText: children, newText: children, progress: 1 });
+      }
+    };
+
+    setMorphState({ oldText, newText: children, progress: 0 });
+    animationRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [children, i18n.language]);
+
+  const { oldText, newText, progress } = morphState;
+
+  // Calculate opacities with smooth crossfade
+  const oldOpacity = Math.pow(1 - progress, 0.4);
+  const newOpacity = Math.pow(progress, 0.4);
+
+  // If not morphing, just show single text
+  if (progress === 1) {
+    return (
+      <Text
+        position={position}
+        fontSize={fontSize}
+        color={color}
+        anchorX={anchorX}
+        anchorY={anchorY}
+        fontWeight={fontWeight}
+      >
+        {newText}
+      </Text>
+    );
+  }
+
+  return (
+    <group position={position}>
+      {/* Old text fading out */}
+      <Text
+        position={[0, 0, -0.01]}
+        fontSize={fontSize}
+        color={color}
+        anchorX={anchorX}
+        anchorY={anchorY}
+        fontWeight={fontWeight}
+        fillOpacity={oldOpacity}
+      >
+        {oldText}
+      </Text>
+      {/* New text fading in */}
+      <Text
+        position={[0, 0, 0.01]}
+        fontSize={fontSize}
+        color={color}
+        anchorX={anchorX}
+        anchorY={anchorY}
+        fontWeight={fontWeight}
+        fillOpacity={newOpacity}
+      >
+        {newText}
+      </Text>
+    </group>
+  );
+}
 
 export interface Project {
   name: string;
@@ -21,17 +165,33 @@ export interface Experience {
   color: string;
   row: 'top' | 'bottom';
   projects: Project[];
+  isEducation?: boolean; // Pour différencier études et expériences pro
 }
 
-// Tes vraies données d'expérience
+// Données d'expérience et formation
 export const experienceData: Experience[] = [
+  {
+    id: 'etude',
+    company: 'Étude',
+    role: 'Licence Concepteur Développeur Web & Mobile',
+    period: 'Sept 2018 - Nov 2019',
+    startYear: 2019,
+    endYear: 2019.85, // ~Novembre
+    color: '#3b82f6', // Bleu
+    row: 'top',
+    isEducation: true,
+    projects: [
+      { name: 'Projet de fin d\'études', description: 'Application web complète avec authentification et gestion de données', tech: ['PHP', 'MySQL', 'JavaScript'] },
+      { name: 'Stage développeur', description: 'Stage de 3 mois en entreprise', tech: ['HTML', 'CSS', 'JavaScript'] },
+    ]
+  },
   {
     id: 'e4ia',
     company: 'E4iA',
     role: 'Développeur',
-    period: 'Jan 2020 - Août 2020',
+    period: 'Jan 2020 - Juil 2020',
     startYear: 2020,
-    endYear: 2020.6, // ~Août
+    endYear: 2020.5, // ~Juillet
     color: '#8b5cf6', // Violet
     row: 'top',
     projects: [
@@ -56,8 +216,8 @@ export const experienceData: Experience[] = [
     id: 'freelance',
     company: 'Freelance',
     role: 'Développeur Indépendant',
-    period: 'Jan 2020 - Aujourd\'hui',
-    startYear: 2020,
+    period: 'Jan 2019 - Aujourd\'hui',
+    startYear: 2019,
     endYear: null,
     color: '#10b981', // Vert
     row: 'bottom',
@@ -69,8 +229,8 @@ export const experienceData: Experience[] = [
 ];
 
 // Années sur la timeline
-const TIMELINE_START = 2020;
-const TIMELINE_END = 2025;
+const TIMELINE_START = 2019;
+const TIMELINE_END = 2026;
 const TIMELINE_WIDTH = 12; // Largeur totale de la timeline
 
 function yearToX(year: number): number {
@@ -85,14 +245,18 @@ interface ExperienceBlockProps {
 }
 
 function ExperienceBlock({ experience, isSelected, onSelect }: ExperienceBlockProps) {
+  const { t } = useTranslation('common');
   const groupRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
 
   const startX = yearToX(experience.startYear);
   const endX = yearToX(experience.endYear || TIMELINE_END);
-  const width = endX - startX;
-  const centerX = startX + width / 2;
+  const naturalWidth = endX - startX;
   const yPos = experience.row === 'top' ? 1.2 : -1.2;
+  // Use natural width but with a minimum for readability
+  const blockWidth = Math.max(naturalWidth - 0.1, 1.2);
+  // Anchor the block at its start position, extending to the right
+  const centerX = startX + blockWidth / 2;
 
   useFrame((state) => {
     if (!groupRef.current) return;
@@ -115,7 +279,7 @@ function ExperienceBlock({ experience, isSelected, onSelect }: ExperienceBlockPr
     <group ref={groupRef} position={[centerX, yPos, 0]}>
       {/* Main block - width based on duration */}
       <RoundedBox
-        args={[Math.max(width - 0.2, 1.5), 0.9, 0.2]}
+        args={[blockWidth, 0.9, 0.2]}
         radius={0.08}
         smoothness={4}
         onClick={handleClick}
@@ -131,29 +295,17 @@ function ExperienceBlock({ experience, isSelected, onSelect }: ExperienceBlockPr
         />
       </RoundedBox>
 
-      {/* Company name */}
-      <Text
-        position={[0, 0.15, 0.15]}
-        fontSize={0.16}
+      {/* Company name - single word, big and readable with shuffle effect */}
+      <MorphingText3D
+        position={[0, 0, 0.15]}
+        fontSize={0.22}
         color="white"
         anchorX="center"
         anchorY="middle"
-        maxWidth={Math.max(width - 0.4, 1.2)}
+        fontWeight="bold"
       >
-        {experience.company}
-      </Text>
-
-      {/* Role */}
-      <Text
-        position={[0, -0.12, 0.15]}
-        fontSize={0.09}
-        color="rgba(255,255,255,0.8)"
-        anchorX="center"
-        anchorY="middle"
-        maxWidth={Math.max(width - 0.4, 1.2)}
-      >
-        {experience.role}
-      </Text>
+        {experience.id === 'etude' ? t('experience.study') : experience.company}
+      </MorphingText3D>
 
       {/* Vertical connector to timeline */}
       <mesh position={[0, experience.row === 'top' ? -0.6 : 0.6, -0.05]}>
@@ -169,28 +321,30 @@ function ExperienceBlock({ experience, isSelected, onSelect }: ExperienceBlockPr
   );
 }
 
-// Timeline title
+// Timeline title with shuffle effect
 function TimelineTitle({ position, title, subtitle }: { position: [number, number, number]; title: string; subtitle: string }) {
   return (
     <Float rotationIntensity={0.02} floatIntensity={0.05} speed={2}>
       <group position={position}>
-        <Text
+        <MorphingText3D
           fontSize={0.35}
           color="#06b6d4"
           anchorX="center"
           anchorY="middle"
+          fontWeight="bold"
         >
           {title}
-        </Text>
-        <Text
+        </MorphingText3D>
+        <MorphingText3D
           position={[0, -0.45, 0]}
           fontSize={0.12}
           color="rgba(255,255,255,0.5)"
           anchorX="center"
           anchorY="middle"
+          fontWeight="normal"
         >
           {subtitle}
-        </Text>
+        </MorphingText3D>
       </group>
     </Float>
   );
@@ -198,7 +352,7 @@ function TimelineTitle({ position, title, subtitle }: { position: [number, numbe
 
 // Year markers on timeline
 function YearMarkers() {
-  const years = [2020, 2021, 2022, 2023, 2024, 2025];
+  const years = [2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026];
 
   return (
     <group>
@@ -285,26 +439,6 @@ export default function Timeline3D({ onExperienceSelect, selectedId }: Timeline3
       {/* Year markers */}
       <YearMarkers />
 
-      {/* Row labels */}
-      <Text
-        position={[-TIMELINE_WIDTH / 2 - 0.8, 1.2, 0]}
-        fontSize={0.12}
-        color="rgba(255,255,255,0.4)"
-        anchorX="right"
-        anchorY="middle"
-      >
-        {t('timeline.permanent')}
-      </Text>
-      <Text
-        position={[-TIMELINE_WIDTH / 2 - 0.8, -1.2, 0]}
-        fontSize={0.12}
-        color="rgba(255,255,255,0.4)"
-        anchorX="right"
-        anchorY="middle"
-      >
-        {t('timeline.freelancer')}
-      </Text>
-
       {/* Experience blocks */}
       {experienceData.map((exp) => (
         <ExperienceBlock
@@ -316,16 +450,17 @@ export default function Timeline3D({ onExperienceSelect, selectedId }: Timeline3
       ))}
 
       {/* "Today" marker */}
-      <group position={[yearToX(2025), 0, 0]}>
-        <Text
+      <group position={[yearToX(2026), 0, 0]}>
+        <MorphingText3D
           position={[0.3, 0.5, 0]}
           fontSize={0.1}
           color="#06b6d4"
           anchorX="left"
           anchorY="middle"
+          fontWeight="normal"
         >
           {t('timeline.today')}
-        </Text>
+        </MorphingText3D>
         <mesh position={[0, 0, 0]}>
           <boxGeometry args={[0.02, 2.8, 0.02]} />
           <meshBasicMaterial color="#06b6d4" opacity={0.3} transparent />

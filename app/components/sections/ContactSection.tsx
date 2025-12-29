@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
+import { useLanguageAnimation } from "../../hooks/useLanguageAnimation";
 
 interface ContactSectionProps {
   section: number;
@@ -236,6 +237,7 @@ function ContactModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
 
 export function ContactSection({ section, showCard, targetSection, isNavigating }: ContactSectionProps) {
   const { t } = useTranslation("common");
+  const { animationKey } = useLanguageAnimation();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Contact is section 13
@@ -327,29 +329,37 @@ export function ContactSection({ section, showCard, targetSection, isNavigating 
                   </motion.div>
 
                   {/* Title */}
-                  <motion.h2
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="text-3xl font-bold mb-3"
-                    style={{
-                      background: "linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.8) 100%)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                    }}
-                  >
-                    {t("contact.heading")}
-                  </motion.h2>
+                  <AnimatePresence mode="wait">
+                    <motion.h2
+                      key={`heading-${animationKey}`}
+                      initial={{ opacity: 0, y: 20, filter: 'blur(4px)' }}
+                      animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                      exit={{ opacity: 0, y: -10, filter: 'blur(4px)' }}
+                      transition={{ duration: 0.3 }}
+                      className="text-3xl font-bold mb-3"
+                      style={{
+                        background: "linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.8) 100%)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                      }}
+                    >
+                      {t("contact.heading")}
+                    </motion.h2>
+                  </AnimatePresence>
 
                   {/* Description */}
-                  <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 }}
-                    className="text-white/60 mb-8 leading-relaxed"
-                  >
-                    {t("contact.description")}
-                  </motion.p>
+                  <AnimatePresence mode="wait">
+                    <motion.p
+                      key={`desc-${animationKey}`}
+                      initial={{ opacity: 0, y: 20, filter: 'blur(4px)' }}
+                      animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                      exit={{ opacity: 0, y: -10, filter: 'blur(4px)' }}
+                      transition={{ duration: 0.3, delay: 0.05 }}
+                      className="text-white/60 mb-8 leading-relaxed"
+                    >
+                      {t("contact.description")}
+                    </motion.p>
+                  </AnimatePresence>
 
                   {/* CTA Button */}
                   <motion.div

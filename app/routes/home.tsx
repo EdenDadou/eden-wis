@@ -32,7 +32,7 @@ export default function Home() {
   const [section, setSection] = useState(0);
   const [selectedExperience, setSelectedExperience] =
     useState<Experience | null>(null);
-  const [detailScrollOffset, setDetailScrollOffset] = useState(0);
+  const [showExperienceModal, setShowExperienceModal] = useState(false);
   const [showCard, setShowCard] = useState(true);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isNavigating, setIsNavigating] = useState(false);
@@ -88,27 +88,23 @@ export default function Home() {
     setShowCard(true);
   }, []);
 
-  // Experience detail scroll handling
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const isSnappingRef = useRef(false);
-  const targetOffsetRef = useRef(0);
-  const maxScrollRef = useRef(0);
-
-  // Handle experience selection
+  // Handle experience selection - now opens modal
   const handleExperienceSelect = useCallback(
     (experience: Experience | null) => {
       setSelectedExperience(experience);
-      setDetailScrollOffset(0);
       if (experience) {
-        maxScrollRef.current = Math.max(0, experience.projects.length - 1);
+        setShowExperienceModal(true);
       }
     },
     []
   );
 
-  const handleBackToTimeline = useCallback(() => {
-    setSelectedExperience(null);
-    setDetailScrollOffset(0);
+  const handleCloseExperienceModal = useCallback(() => {
+    setShowExperienceModal(false);
+    // Reset selected experience after modal close animation
+    setTimeout(() => {
+      setSelectedExperience(null);
+    }, 300);
   }, []);
 
   // Portfolio scroll ref
@@ -253,7 +249,6 @@ export default function Home() {
           section={section}
           onExperienceSelect={handleExperienceSelect}
           selectedExperienceId={selectedExperience?.id || null}
-          detailScrollOffset={detailScrollOffset}
           onNavigationComplete={handleNavigationComplete}
           onSkillClick={handleSkillClick}
         />
@@ -286,10 +281,8 @@ export default function Home() {
       <ExperienceSection
         section={section}
         selectedExperience={selectedExperience}
-        detailScrollOffset={detailScrollOffset}
-        targetOffsetRef={targetOffsetRef}
-        isSnappingRef={isSnappingRef}
-        onBackToTimeline={handleBackToTimeline}
+        showModal={showExperienceModal}
+        onCloseModal={handleCloseExperienceModal}
       />
 
       {/* Section 11 - Portfolio */}

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { Variants } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import PixelHeart from "../PixelHeart";
+import { MorphingText } from "../ui";
 
 interface TopNavProps {
   section: number;
@@ -110,12 +111,14 @@ export function TopNav({ section, onNavigate }: TopNavProps) {
               whileHover={{ y: -2 }}
               whileTap={{ scale: 0.95 }}
             >
-              {t(`nav.${item.key}`)}
+              <MorphingText>
+                {t(`nav.${item.key}`)}
+              </MorphingText>
               {/* Indicateur sous chaque bouton avec AnimatePresence */}
               <AnimatePresence mode="wait" custom={direction}>
                 {item.sectionCheck(section) && (
                   <motion.div
-                    key={`indicator-${item.key}`}
+                    key={`indicator-${item.key}-${i18n.language}`}
                     className="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-400 rounded-full"
                     variants={indicatorVariants}
                     custom={direction}
