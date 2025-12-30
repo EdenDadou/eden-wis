@@ -7,6 +7,7 @@ import { easeInOutQuint, getMajorSection, type MajorSection } from "../camera.ut
 // Get rotation angle for major section (to bring it to front)
 function getRotationForSection(majorSection: MajorSection): number {
   switch (majorSection) {
+    case "hero":
     case "skills":
       return 0;
     case "experience":
@@ -53,7 +54,7 @@ export default function RotatingWorld({
   onAnimatingChange,
 }: RotatingWorldProps) {
   const groupRef = useRef<THREE.Group>(null);
-  const currentMajorSection = useRef<MajorSection>("skills");
+  const currentMajorSection = useRef<MajorSection>("hero");
   const isAnimating = useRef(false);
   const animationProgress = useRef(0);
   const startRotation = useRef(0);

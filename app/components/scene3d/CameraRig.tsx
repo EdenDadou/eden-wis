@@ -34,6 +34,8 @@ export default function CameraRig({
   useFrame((state, delta) => {
     // Handle navigation to target section
     if (targetSection !== lastTargetSection.current) {
+      // Calculate animation duration based on transition type BEFORE updating lastTargetSection
+      const prevSection = lastTargetSection.current ?? 0;
       lastTargetSection.current = targetSection;
       navigationCompleted.current = false;
 
@@ -50,8 +52,7 @@ export default function CameraRig({
 
       const distance = navStartPos.current.distanceTo(navTargetPos.current);
 
-      // Calculate animation duration based on transition type
-      const prevSection = lastTargetSection.current ?? 0;
+      // Determine transition type
       const isSkillTransition = prevSection >= 1 && prevSection <= 9 && targetSection >= 1 && targetSection <= 9;
       const isSameSkillGroup = getSkillGroup(prevSection) === getSkillGroup(targetSection);
       const isHeroTransition = prevSection === 0 || targetSection === 0;
@@ -71,9 +72,9 @@ export default function CameraRig({
         maxDuration = 1.2;
         navTransitionType.current = 'skill-different';
       } else if (isHeroTransition) {
-        // Hero to/from skills: dramatic, slower
-        baseDuration = 1.2;
-        maxDuration = 2.0;
+        // Hero to/from skills: smooth, fluid transition
+        baseDuration = 0.8;
+        maxDuration = 1.2;
         navTransitionType.current = 'hero';
       } else if (isMajorSectionTransition) {
         // Between major sections (Experience, Portfolio, etc.)
@@ -88,7 +89,7 @@ export default function CameraRig({
 
       navAnimationDuration.current = Math.min(
         maxDuration,
-        Math.max(baseDuration, baseDuration + distance * 0.015)
+        Math.max(baseDuration, baseDuration + distance * 0.01)
       );
 
       navAnimationProgress.current = 0;
@@ -120,23 +121,17 @@ export default function CameraRig({
         easePosition = 1 - Math.pow(1 - t, 3);
         easeLookAt = 1 - Math.pow(1 - t, 2.5);
       } else if (transitionType === 'skill-different') {
-        // Smooth ease-in-out with slight overshoot feel
-        easePosition = t < 0.5
-          ? 4 * t * t * t
-          : 1 - Math.pow(-2 * t + 2, 3) / 2;
-        easeLookAt = t < 0.5
-          ? 2 * t * t
-          : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        // Smooth ease-out cubic
+        easePosition = 1 - Math.pow(1 - t, 3);
+        easeLookAt = 1 - Math.pow(1 - t, 2.5);
       } else if (transitionType === 'hero') {
-        // Dramatic ease-in-out quint for hero transitions
-        easePosition = t < 0.5
-          ? 16 * t * t * t * t * t
-          : 1 - Math.pow(-2 * t + 2, 5) / 2;
-        easeLookAt = easePosition;
+        // Smooth ease-out for hero transitions - starts immediately, decelerates smoothly
+        easePosition = 1 - Math.pow(1 - t, 2.5);
+        easeLookAt = 1 - Math.pow(1 - t, 2);
       } else {
-        // Standard smooth cubic for major section transitions
-        easePosition = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-        easeLookAt = easePosition;
+        // Standard smooth ease-out for major section transitions
+        easePosition = 1 - Math.pow(1 - t, 3);
+        easeLookAt = 1 - Math.pow(1 - t, 2.5);
       }
 
       // Calculate base interpolated position
@@ -158,14 +153,8 @@ export default function CameraRig({
 
       // Add subtle arc effect for skill-different transitions (camera pulls back slightly)
       if (transitionType === 'skill-different') {
-        const arcHeight = Math.sin(t * Math.PI) * 0.8; // Gentle arc
+        const arcHeight = Math.sin(t * Math.PI) * 0.5; // Subtle arc
         z += arcHeight;
-      }
-
-      // Add gentle sway for hero transitions
-      if (transitionType === 'hero') {
-        const sway = Math.sin(t * Math.PI) * 0.3;
-        x += sway * (navTargetPos.current.x > navStartPos.current.x ? 1 : -1);
       }
 
       const lookAtX = THREE.MathUtils.lerp(

@@ -8,14 +8,22 @@ export const POS_FRONTEND = [-GRID_X, GRID_Y, 0] as [number, number, number];
 export const POS_MOBILE = [-GRID_X, 0, 0] as [number, number, number];
 export const POS_BACKOFFICE = [-GRID_X, -GRID_Y, 0] as [number, number, number];
 
-// BACKEND GROUP (CENTER column, x = 0, shifted down by 1.5)
-export const POS_SERVER = [0, GRID_Y * 0.5 - 1.5, 0] as [number, number, number];
-export const POS_DATABASE = [0, -GRID_Y * 0.5 - 1.5, 0] as [number, number, number];
+// BACKEND GROUP (CENTER column, x = 0, shifted down by 1.5, adjusted left to compensate rotation)
+export const POS_SERVER = [-0.15, GRID_Y * 0.5 - 1.5, 0] as [
+  number,
+  number,
+  number,
+];
+export const POS_DATABASE = [-0.15, -GRID_Y * 0.5 - 1.5, 0] as [
+  number,
+  number,
+  number,
+];
 
-// DEVOPS GROUP (RIGHT column, x = GRID_X)
-export const POS_CICD = [GRID_X, GRID_Y, 0] as [number, number, number];
-export const POS_CLOUD = [GRID_X, 0, 0] as [number, number, number];
-export const POS_ARCHI = [GRID_X, -GRID_Y, 0] as [number, number, number];
+// DEVOPS GROUP (RIGHT column, x = GRID_X, adjusted left to compensate rotation)
+export const POS_CICD = [GRID_X - 0.3, GRID_Y, 0] as [number, number, number];
+export const POS_CLOUD = [GRID_X - 0.3, 0, 0] as [number, number, number];
+export const POS_ARCHI = [GRID_X - 0.3, -GRID_Y, 0] as [number, number, number];
 
 // Connection point offset from skill center
 const CONN_OFFSET = 0.9;

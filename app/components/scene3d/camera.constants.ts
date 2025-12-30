@@ -15,11 +15,11 @@ export const SECTION_ANGLES = {
   contact: (Math.PI * 8) / 5,            // 288°
 } as const;
 
-// Camera X offset to center view between card and 3D elements
-const CAM_X_OFFSET = -0.5;
+// Camera X offset to position 3D block on the left side of screen
+const CAM_X_OFFSET = -2;
 
 // Skills container X offset (from WebsiteBuilder)
-const SKILLS_X_OFFSET = 3;
+const SKILLS_X_OFFSET = -2;
 
 // Closer camera distance for skill detail views
 const SKILL_DETAIL_Z = 4;
@@ -41,13 +41,13 @@ export const SECTION_CAMERA_POSITIONS: Record<
   // Intro - far back view
   0: { x: 0, y: 0, z: ORBIT_RADIUS + 12, lookX: 0, lookY: 0, lookZ: 0 },
 
-  // Skills Overview - wide view of all skills, centered on Backend column
+  // Skills Overview - 3D block centered-right on screen, card stays left
   1: {
-    x: CAM_X_OFFSET,
-    y: -0.5,
+    x: -1.5,
+    y: 0.5,
     z: ORBIT_RADIUS + CAMERA_DISTANCE,
-    lookX: CAM_X_OFFSET,
-    lookY: -0.5,
+    lookX: -1.5,
+    lookY: 0.5,
     lookZ: ORBIT_RADIUS,
   },
 

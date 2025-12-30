@@ -2,6 +2,7 @@ import { forwardRef, useMemo, useRef } from "react";
 import { Text, Line, RoundedBox } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { useFadeOpacity } from "~/components/scene3d/world/FadingSection";
 import {
   GRID_X,
   GRID_Y,
@@ -61,25 +62,36 @@ export const CategoryBox = forwardRef<THREE.Group, CategoryBoxProps>(
     const halfH = height / 2;
     const radius = 0.1;
 
+    // Get fade opacity from parent FadingSection
+    const fadeOpacity = useFadeOpacity();
+
     // Refs for neon animation
     const line1Ref = useRef<any>(null);
     const line2Ref = useRef<any>(null);
     const glowMatRef = useRef<THREE.MeshBasicMaterial>(null);
+    const tintMatRef = useRef<THREE.MeshBasicMaterial>(null);
 
-    // Animate neon glow
+    // Animate neon glow (multiplied by fade opacity)
     useFrame((state) => {
       const time = state.clock.elapsedTime;
+      const fade = fadeOpacity.current;
       const pulse = 0.7 + Math.sin(time * 2 + (type === "frontend" ? 0 : type === "backend" ? 2 : 4)) * 0.3;
       const fastPulse = 0.8 + Math.sin(time * 4) * 0.2;
 
       if (line1Ref.current?.material) {
-        line1Ref.current.material.opacity = isActive ? pulse : 0.5 + Math.sin(time * 1.5) * 0.2;
+        const baseOpacity = isActive ? pulse : 0.5 + Math.sin(time * 1.5) * 0.2;
+        line1Ref.current.material.opacity = baseOpacity * fade;
       }
       if (line2Ref.current?.material) {
-        line2Ref.current.material.opacity = isActive ? fastPulse * 0.6 : 0.3 + Math.sin(time * 1.5) * 0.1;
+        const baseOpacity = isActive ? fastPulse * 0.6 : 0.3 + Math.sin(time * 1.5) * 0.1;
+        line2Ref.current.material.opacity = baseOpacity * fade;
       }
       if (glowMatRef.current) {
-        glowMatRef.current.opacity = isActive ? 0.9 + Math.sin(time * 2) * 0.05 : 0.85;
+        const baseOpacity = isActive ? 0.9 + Math.sin(time * 2) * 0.05 : 0.85;
+        glowMatRef.current.opacity = baseOpacity * fade;
+      }
+      if (tintMatRef.current) {
+        tintMatRef.current.opacity = 0.15 * fade;
       }
     });
 
@@ -137,6 +149,7 @@ export const CategoryBox = forwardRef<THREE.Group, CategoryBoxProps>(
           position={[0, 0, -0.01]}
         >
           <meshBasicMaterial
+            ref={tintMatRef}
             color={config.color}
             transparent
             opacity={0.15}

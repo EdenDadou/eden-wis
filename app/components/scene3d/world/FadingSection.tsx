@@ -103,47 +103,56 @@ export default function FadingSection({
         if (textMesh.sync) textMesh.sync();
       }
 
-      if (
+      // Check if this is a renderable object with material
+      // This includes THREE.Mesh, THREE.Line, THREE.Points, and drei's Line2/LineSegments2
+      const isRenderableObject =
         child instanceof THREE.Mesh ||
         child instanceof THREE.Line ||
-        child instanceof THREE.Points
-      ) {
-        // Hide mesh when section is faded
-        child.visible = currentOpacity.current > 0.01;
+        child instanceof THREE.Points ||
+        child.isLine2 || // drei Line uses Line2 from three-stdlib
+        child.isLineSegments2;
 
+      if (isRenderableObject && child.material) {
         const materials = Array.isArray(child.material)
           ? child.material
           : [child.material];
 
-        materials.forEach((material) => {
-          if (material && "opacity" in material) {
-            const mat = material as THREE.Material & {
-              _externallyManaged?: boolean;
-              depthWrite?: boolean;
-              uniforms?: { opacity?: { value: number } };
-            };
-            if (mat._externallyManaged) return;
+        materials.forEach((material: any) => {
+          if (!material) return;
 
-            const extMat = material as { _originalOpacity?: number };
+          const mat = material as THREE.Material & {
+            _externallyManaged?: boolean;
+            _originalOpacity?: number;
+            _originalTransparent?: boolean;
+            depthWrite?: boolean;
+            uniforms?: { opacity?: { value: number } };
+          };
 
-            // Store original opacity on first encounter
-            // Materials are created with their intended opacity before any fading
-            if (extMat._originalOpacity === undefined) {
-              extMat._originalOpacity = material.opacity;
-            }
+          if (mat._externallyManaged) return;
 
-            // Apply fade - use original opacity as base
-            const originalOpacity = extMat._originalOpacity ?? 1;
-            const newOpacity = originalOpacity * currentOpacity.current;
-            material.opacity = newOpacity;
-            material.transparent = true;
+          // Store original values on first encounter
+          if (mat._originalOpacity === undefined) {
+            mat._originalOpacity = material.opacity ?? 1;
+            mat._originalTransparent = material.transparent ?? false;
+          }
 
-            // Handle shader materials with opacity uniform (e.g., drei Text)
-            if (mat.uniforms?.opacity) {
-              mat.uniforms.opacity.value = newOpacity;
-            }
+          // Apply fade - use original opacity as base
+          const originalOpacity = mat._originalOpacity;
+          const newOpacity = originalOpacity * currentOpacity.current;
+
+          // Force transparency when fading
+          material.transparent = true;
+          material.opacity = newOpacity;
+          material.needsUpdate = true;
+
+          // Handle shader materials with opacity uniform (e.g., drei Text)
+          if (mat.uniforms?.opacity) {
+            mat.uniforms.opacity.value = newOpacity;
           }
         });
+
+        // Hide mesh when section is fully faded
+        child.visible = currentOpacity.current > 0.01;
       }
     });
 

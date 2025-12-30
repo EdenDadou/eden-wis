@@ -102,9 +102,12 @@ export default function WebsiteBuilder({
     },
   });
 
-  // Visibility
-  const showElements = currentSection >= 1;
-  const showCategoryBoxes = currentSection >= 1;
+  // Always render elements but hide them when on Hero section
+  // This prevents the freeze when transitioning from Hero to Skills
+  // because Three.js objects are already created and in memory
+  const isOnHero = currentSection === 0;
+  const showElements = true; // Always render
+  const showCategoryBoxes = true; // Always render
 
   // Active states using section boundaries
   const { FRONTEND_START, FRONTEND_END, BACKEND_START, BACKEND_END, DEVOPS_START, DEVOPS_END } = SECTION_BOUNDARIES;
@@ -129,7 +132,7 @@ export default function WebsiteBuilder({
     <group ref={sceneRef}>
       <group
         ref={skillsContainerRef}
-        position={[3, 0, 0]}
+        position={[-2, 0, 0]}
         rotation={[0, FACE_CAMERA_ROTATION, 0]}
       >
         {/* Category Boxes */}
