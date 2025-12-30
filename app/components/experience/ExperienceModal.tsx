@@ -10,6 +10,7 @@ import type {
 } from "../Timeline3D";
 import { MorphingText } from "../ui";
 import { useTranslatedProjects } from "~/hooks";
+import PixelHeart from "../PixelHeart";
 
 // Mapping des dates pour les projets par expérience
 const PROJECT_DATES: Record<string, Record<string, string>> = {
@@ -45,6 +46,11 @@ const PORTFOLIO_PROJECT_IDS: Record<string, string> = {
   "SayYes - Portfolio & Landing Builder": "sayyes",
 };
 
+// Mapping des logos pour chaque expérience (entreprise)
+const EXPERIENCE_LOGOS: Record<string, string> = {
+  atecna: "/images/logos/atecna.jpeg",
+};
+
 // Mapping des logos pour chaque projet
 const PROJECT_LOGOS: Record<string, string> = {
   "OPPBTP : PreventionBTP v3": "/images/logos/oppbtp-prevention.png",
@@ -66,114 +72,6 @@ const PROJECT_LOGOS: Record<string, string> = {
 interface ExperienceModalProps {
   experience: Experience;
   onClose: () => void;
-}
-
-// Composant pour afficher une carte de projet en aperçu
-function ProjectCard({
-  project,
-  experienceColor,
-  isHovered,
-  onClick,
-  onMouseEnter,
-  onMouseLeave,
-  hasDetails,
-  syncHeight,
-}: {
-  project: Project;
-  experienceColor: string;
-  index: number;
-  isHovered: boolean;
-  onClick: () => void;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
-  hasDetails: boolean;
-  syncHeight?: boolean;
-}) {
-  return (
-    <motion.div
-      onClick={onClick}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      className={`group relative p-6 rounded-2xl border cursor-pointer transition-all duration-300 ${
-        isHovered ? "border-white/30 bg-white/10" : "border-white/10 bg-white/5"
-      }`}
-      style={{
-        boxShadow: isHovered ? `0 0 30px ${experienceColor}30` : undefined,
-        height: syncHeight ? "176px" : undefined,
-      }}
-      whileHover={{ scale: 1.02, y: -2 }}
-      whileTap={{ scale: 0.98 }}
-    >
-      {/* Accent bar */}
-      <div
-        className="absolute top-0 left-6 right-6 h-0.5 rounded-full opacity-60"
-        style={{ background: experienceColor }}
-      />
-
-      {/* Project name */}
-      <h4 className="text-lg font-bold text-white mb-2 group-hover:text-white/90 flex items-center gap-2">
-        {project.name}
-        {hasDetails && (
-          <span
-            className="text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider"
-            style={{
-              background: `${experienceColor}20`,
-              color: experienceColor,
-            }}
-          >
-            Détails
-          </span>
-        )}
-      </h4>
-
-      {/* Description */}
-      <p className="text-white/60 text-sm mb-4 leading-relaxed">
-        {project.description}
-      </p>
-
-      {/* Technologies - limité à 6 en aperçu */}
-      <div className="flex flex-wrap gap-2">
-        {project.tech.slice(0, 6).map((tech) => (
-          <span
-            key={tech}
-            className="px-2.5 py-1 rounded-md text-xs border transition-colors"
-            style={{
-              borderColor: `${experienceColor}40`,
-              color: experienceColor,
-              background: `${experienceColor}15`,
-            }}
-          >
-            {tech}
-          </span>
-        ))}
-        {project.tech.length > 6 && (
-          <span className="px-2.5 py-1 rounded-md text-xs text-white/40">
-            +{project.tech.length - 6}
-          </span>
-        )}
-      </div>
-
-      {/* Hover indicator */}
-      {hasDetails && (
-        <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 text-white/40 text-xs">
-          <span>Voir détails</span>
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </div>
-      )}
-    </motion.div>
-  );
 }
 
 // Composant pour afficher une section d'architecture
@@ -743,48 +641,6 @@ function ProjectDetailView({
   );
 }
 
-function YearMarker({
-  year,
-  isActive,
-  color,
-  index,
-}: {
-  year: number;
-  isActive: boolean;
-  color: string;
-  index: number;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.4, delay: 0.1 + index * 0.05 }}
-      className="flex items-center gap-3"
-    >
-      {/* Year label */}
-      <span
-        className={`text-sm font-mono transition-colors ${
-          isActive ? "text-white font-bold" : "text-white/40"
-        }`}
-      >
-        {year}
-      </span>
-
-      {/* Dot */}
-      <div
-        className={`w-3 h-3 rounded-full border-2 transition-all ${
-          isActive ? "scale-125" : "scale-100"
-        }`}
-        style={{
-          borderColor: isActive ? color : "rgba(255,255,255,0.3)",
-          background: isActive ? color : "transparent",
-          boxShadow: isActive ? `0 0 10px ${color}` : undefined,
-        }}
-      />
-    </motion.div>
-  );
-}
-
 export function ExperienceModal({ experience, onClose }: ExperienceModalProps) {
   const { t } = useTranslation("common");
   const { translateProjects } = useTranslatedProjects();
@@ -796,10 +652,8 @@ export function ExperienceModal({ experience, onClose }: ExperienceModalProps) {
   >(null);
   const [showDetailView, setShowDetailView] = useState(false);
 
-  // Refs pour synchroniser le scroll entre gauche et droite
-  const leftScrollRef = useRef<HTMLDivElement>(null);
-  const rightScrollRef = useRef<HTMLDivElement>(null);
-  const isScrollingRef = useRef<"left" | "right" | null>(null);
+  // Ref pour le container scrollable
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Traduire les projets
   const translatedProjects = useMemo(
@@ -807,43 +661,6 @@ export function ExperienceModal({ experience, onClose }: ExperienceModalProps) {
     [experience.projects, translateProjects]
   );
 
-  // Synchroniser le scroll entre les deux panneaux
-  const handleScroll = useCallback((source: "left" | "right") => {
-    if (isScrollingRef.current && isScrollingRef.current !== source) return;
-
-    const leftEl = leftScrollRef.current;
-    const rightEl = rightScrollRef.current;
-
-    if (!leftEl || !rightEl) return;
-
-    isScrollingRef.current = source;
-
-    const sourceEl = source === "left" ? leftEl : rightEl;
-    const targetEl = source === "left" ? rightEl : leftEl;
-
-    // Calculer le ratio de scroll
-    const scrollRatio =
-      sourceEl.scrollTop / (sourceEl.scrollHeight - sourceEl.clientHeight || 1);
-    const targetScrollTop =
-      scrollRatio * (targetEl.scrollHeight - targetEl.clientHeight);
-
-    targetEl.scrollTop = targetScrollTop;
-
-    // Reset après un court délai
-    requestAnimationFrame(() => {
-      isScrollingRef.current = null;
-    });
-  }, []);
-
-  // Generate years for the timeline
-  const startYear = Math.floor(experience.startYear);
-  const endYear = experience.endYear
-    ? Math.ceil(experience.endYear)
-    : new Date().getFullYear();
-  const years = Array.from(
-    { length: endYear - startYear + 1 },
-    (_, i) => startYear + i
-  );
 
   const isEducation = experience.isEducation;
   const selectedProject =
@@ -869,39 +686,6 @@ export function ExperienceModal({ experience, onClose }: ExperienceModalProps) {
     };
   }, [onClose, showDetailView]);
 
-  // Animation variants for staggered children
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.05,
-        delayChildren: 0.1,
-      },
-    },
-    exit: {
-      opacity: 0,
-      transition: {
-        staggerChildren: 0.03,
-        staggerDirection: -1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.3, ease: "easeOut" as const },
-    },
-    exit: {
-      opacity: 0,
-      y: -10,
-      transition: { duration: 0.2, ease: "easeIn" as const },
-    },
-  };
-
   const handleProjectClick = (index: number) => {
     const project = translatedProjects[index];
     setSelectedProjectIndex(index);
@@ -924,61 +708,129 @@ export function ExperienceModal({ experience, onClose }: ExperienceModalProps) {
     >
       {/* Backdrop */}
       <motion.div
-        className="absolute inset-0 bg-black/95 backdrop-blur-2xl"
+        className="absolute inset-0 bg-black/50 backdrop-blur-lg"
         onClick={showDetailView ? handleBackToList : onClose}
         initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
-        animate={{ opacity: 1, backdropFilter: "blur(24px)" }}
+        animate={{ opacity: 1, backdropFilter: "blur(12px)" }}
         exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
         transition={{ duration: 0.3 }}
       />
 
+      {/* Logo EW - Floating above backdrop, clickable to close */}
+      <motion.button
+        onClick={onClose}
+        className="absolute top-4 left-6 flex items-center gap-2 text-white/90 font-bold text-lg tracking-tight cursor-pointer"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <PixelHeart size={20} />
+        EW
+      </motion.button>
+
       {/* Modal content */}
       <motion.div
-        className="relative w-full h-full md:h-[90vh] md:max-w-5xl md:rounded-2xl overflow-hidden bg-gray-900/95 md:border border-white/10"
-        initial={{ opacity: 0, scale: 0.9, y: 40 }}
+        className="relative w-full h-full md:h-[90vh] md:max-w-5xl md:rounded-3xl overflow-hidden"
+        style={{
+          background: 'linear-gradient(180deg, rgba(17,17,23,0.85) 0%, rgba(10,10,14,0.9) 100%)',
+          backdropFilter: 'blur(20px)',
+        }}
+        initial={{ opacity: 0, scale: 0.92, y: 50 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        exit={{ opacity: 0, scale: 0.95, y: 30 }}
         transition={{
           type: "spring",
-          damping: 30,
-          stiffness: 400,
-          mass: 0.8,
+          damping: 28,
+          stiffness: 350,
+          mass: 0.9,
         }}
       >
-        {/* Top accent bar */}
+        {/* Outer glow effect */}
+        <div
+          className="absolute -inset-px rounded-3xl pointer-events-none hidden md:block"
+          style={{
+            background: `linear-gradient(135deg, ${experience.color}30, transparent 40%, transparent 60%, ${experience.color}20)`,
+            padding: '1px',
+          }}
+        />
+
+        {/* Border */}
+        <div
+          className="absolute inset-0 rounded-3xl pointer-events-none hidden md:block"
+          style={{
+            border: '1px solid rgba(255,255,255,0.08)',
+            boxShadow: `0 0 80px ${experience.color}15, 0 25px 50px -12px rgba(0,0,0,0.8)`,
+          }}
+        />
+
+        {/* Top accent bar with glow */}
         <motion.div
-          className="absolute top-0 left-0 right-0 h-1 z-10"
-          style={{ background: experience.color }}
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          exit={{ scaleX: 0 }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
+          className="absolute top-0 left-0 right-0 h-[3px] z-10"
+          style={{
+            background: `linear-gradient(to right, transparent, ${experience.color}, transparent)`,
+            boxShadow: `0 0 20px ${experience.color}60, 0 0 40px ${experience.color}30`,
+          }}
+          initial={{ scaleX: 0, opacity: 0 }}
+          animate={{ scaleX: 1, opacity: 1 }}
+          exit={{ scaleX: 0, opacity: 0 }}
+          transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+        />
+
+        {/* Corner accents */}
+        <motion.div
+          className="absolute top-0 right-0 w-32 h-32 pointer-events-none"
+          style={{
+            background: `radial-gradient(circle at top right, ${experience.color}10 0%, transparent 70%)`,
+          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
         />
 
         {/* Close button */}
         <motion.button
           onClick={onClose}
-          className="absolute top-4 right-4 z-50 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-xl flex items-center justify-center transition-colors border border-white/10"
-          initial={{ opacity: 0, scale: 0.8, rotate: -90 }}
-          animate={{ opacity: 1, scale: 1, rotate: 0 }}
-          exit={{ opacity: 0, scale: 0.8, rotate: 90 }}
-          transition={{ duration: 0.3, delay: 0.1 }}
-          whileHover={{ scale: 1.1 }}
+          className="absolute top-5 right-5 z-50 group"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+          transition={{ duration: 0.3, delay: 0.15 }}
+          whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <svg
-            className="w-5 h-5 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+          <div
+            className="relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300"
+            style={{
+              background: 'rgba(255,255,255,0.05)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+            }}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
+            {/* Hover background */}
+            <div
+              className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              style={{
+                background: `linear-gradient(135deg, ${experience.color}20, transparent)`,
+                border: `1px solid ${experience.color}30`,
+              }}
             />
-          </svg>
+            <svg
+              className="relative w-4 h-4 text-white/60 group-hover:text-white transition-colors duration-300"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </div>
         </motion.button>
 
         {/* Main layout */}
@@ -988,47 +840,143 @@ export function ExperienceModal({ experience, onClose }: ExperienceModalProps) {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3, delay: 0.15 }}
-            className="shrink-0 px-6 md:px-8 pt-6 md:pt-8 pb-4 border-b border-white/10 md:pr-20"
+            transition={{ duration: 0.4, delay: 0.15, ease: [0.23, 1, 0.32, 1] }}
+            className="shrink-0 px-6 md:px-8 pt-6 md:pt-8 pb-5 border-b border-white/5 md:pr-20 relative overflow-hidden"
           >
-            <div className="flex items-start justify-between">
+            {/* Background gradient decoration */}
+            <div
+              className="absolute inset-0 opacity-30"
+              style={{
+                background: `radial-gradient(ellipse 80% 50% at 20% 0%, ${experience.color}15 0%, transparent 50%)`,
+              }}
+            />
+
+            <div className="relative flex items-start justify-between">
               <div>
                 {/* Badge Formation/Expérience */}
                 {isEducation && (
-                  <span
-                    className="inline-block px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider mb-2"
+                  <motion.span
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3, delay: 0.2 }}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider mb-3"
                     style={{
-                      background: `${experience.color}30`,
+                      background: `${experience.color}20`,
                       color: experience.color,
+                      border: `1px solid ${experience.color}30`,
                     }}
                   >
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                    </svg>
                     <MorphingText>{t("experience.education")}</MorphingText>
-                  </span>
+                  </motion.span>
                 )}
-                <h2 className="text-2xl font-bold text-white mb-1">
-                  <MorphingText>
-                    {experience.id === "etude"
-                      ? t("experience.study")
-                      : experience.company}
-                  </MorphingText>
-                </h2>
-                <p className="text-sm text-white/60">{experience.role}</p>
-              </div>
-              <div className="text-right">
-                <p
-                  className="text-sm font-medium"
-                  style={{ color: experience.color }}
+
+                <motion.div
+                  className="flex items-center gap-3 mb-2"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4, delay: 0.25 }}
                 >
-                  {experience.period}
-                </p>
-                <p className="text-xs text-white/40 mt-1">
-                  {translatedProjects.length}{" "}
+                  {/* Logo de l'expérience */}
+                  {EXPERIENCE_LOGOS[experience.id] && (
+                    <motion.div
+                      className="shrink-0 w-12 h-12 rounded-full overflow-hidden ring-2 ring-white/20"
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.3, delay: 0.3 }}
+                      style={{
+                        boxShadow: `0 4px 20px ${experience.color}30`,
+                      }}
+                    >
+                      <img
+                        src={EXPERIENCE_LOGOS[experience.id]}
+                        alt={`${experience.company} logo`}
+                        className="w-full h-full object-cover"
+                      />
+                    </motion.div>
+                  )}
+
+                  <h2 className="text-2xl md:text-3xl font-bold text-white">
+                    <MorphingText>
+                      {experience.id === "etude"
+                        ? t("experience.study")
+                        : experience.company}
+                    </MorphingText>
+                  </h2>
+                </motion.div>
+
+                <motion.p
+                  className="text-sm text-white/50 font-medium"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3, delay: 0.35 }}
+                >
+                  {experience.role}
+                </motion.p>
+              </div>
+
+              <motion.div
+                className="text-right"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4, delay: 0.3 }}
+              >
+                {/* Period badge */}
+                <div
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl mb-2"
+                  style={{
+                    background: `${experience.color}15`,
+                    border: `1px solid ${experience.color}25`,
+                  }}
+                >
+                  <svg
+                    className="w-3.5 h-3.5"
+                    style={{ color: experience.color }}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <span
+                    className="text-sm font-bold"
+                    style={{ color: experience.color }}
+                  >
+                    {experience.period}
+                  </span>
+                </div>
+
+                {/* Project count */}
+                <p className="text-xs text-white/40 flex items-center justify-end gap-1.5">
+                  <span
+                    className="inline-flex items-center justify-center w-5 h-5 rounded-md text-[10px] font-bold"
+                    style={{
+                      background: 'rgba(255,255,255,0.1)',
+                      color: 'rgba(255,255,255,0.7)',
+                    }}
+                  >
+                    {translatedProjects.length}
+                  </span>
                   {translatedProjects.length > 1
                     ? t("experience.projectCountPlural")
                     : t("experience.projectCount")}
                 </p>
-              </div>
+              </motion.div>
             </div>
+
+            {/* Decorative bottom line */}
+            <motion.div
+              className="absolute bottom-0 left-0 right-0 h-px"
+              style={{
+                background: `linear-gradient(to right, transparent, ${experience.color}40, transparent)`,
+              }}
+              initial={{ scaleX: 0, opacity: 0 }}
+              animate={{ scaleX: 1, opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            />
           </motion.div>
 
           {/* Content area */}
@@ -1053,234 +1001,288 @@ export function ExperienceModal({ experience, onClose }: ExperienceModalProps) {
               ) : (
                 <motion.div
                   key="list"
-                  className="flex-1 flex flex-col md:flex-row overflow-hidden"
+                  className="flex-1 overflow-hidden"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                 >
-                  {/* Left side - Timeline dates for experiences with project dates */}
-                  {PROJECT_DATES[experience.id] && (
-                    <motion.div
-                      className="hidden md:block w-56 shrink-0 border-r border-white/10 bg-black/20"
-                      initial={{ opacity: 0, x: -30 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -20 }}
-                      transition={{ duration: 0.4, delay: 0.1 }}
-                    >
-                      <div
-                        ref={leftScrollRef}
-                        className="h-full overflow-y-auto scrollbar-none py-4 px-4"
-                        onScroll={() => handleScroll("left")}
-                      >
-                        <div className="flex flex-col gap-4 pb-8">
-                          {experience.projects.map((project, index) => {
-                            const projectDate =
-                              PROJECT_DATES[experience.id]?.[project.name];
-                            return (
-                              <motion.div
-                                key={project.name}
-                                data-index={index}
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{
-                                  duration: 0.3,
-                                  delay: 0.1 + index * 0.05,
-                                }}
-                                className={`relative pl-4 pr-2 border-l-2 transition-all cursor-pointer rounded-r-lg flex flex-col justify-center`}
-                                style={{
-                                  height: "176px",
-                                  borderLeftColor:
-                                    hoveredProjectIndex === index
-                                      ? experience.color
-                                      : "rgba(255,255,255,0.2)",
-                                  backgroundColor:
-                                    hoveredProjectIndex === index
-                                      ? "rgba(255,255,255,0.05)"
-                                      : undefined,
-                                }}
-                                onMouseEnter={() =>
-                                  setHoveredProjectIndex(index)
-                                }
-                                onMouseLeave={() =>
-                                  setHoveredProjectIndex(null)
-                                }
-                                onClick={() => {
-                                  setSelectedProjectIndex(index);
-                                  const proj = translatedProjects[index];
-                                  if (proj?.details) {
-                                    setShowDetailView(true);
-                                  }
-                                }}
-                              >
-                                {/* Logo */}
-                                {PROJECT_LOGOS[project.name] && (
-                                  <div className="mb-2 flex items-center">
-                                    <div className="bg-white rounded-lg p-2 flex items-center justify-center">
-                                      <img
-                                        src={PROJECT_LOGOS[project.name]}
-                                        alt={`${project.name} logo`}
-                                        className={`object-contain transition-opacity ${
-                                          project.name ===
-                                          "Au Vieux Campeur - App Mobile v2"
-                                            ? "h-6 w-[140px]"
-                                            : project.name === "Elistair - Portail Client Drones"
-                                              ? "max-h-7 max-w-[100px]"
-                                              : [
-                                                  "GoCrisis - Gestion de Crise",
-                                                  "Cora Wine - E-commerce Vins",
-                                                  "Wipple - Réservation Salles",
-                                                ].includes(project.name)
-                                              ? "max-h-10 max-w-[160px]"
-                                              : "max-h-8 max-w-[120px]"
-                                        }`}
-                                        style={{
-                                          filter:
-                                            hoveredProjectIndex === index
-                                              ? "none"
-                                              : "grayscale(30%)",
-                                          opacity:
-                                            hoveredProjectIndex === index
-                                              ? 1
-                                              : 0.8,
-                                        }}
-                                      />
-                                    </div>
-                                  </div>
-                                )}
-                                {/* Date badge */}
-                                {projectDate && (
-                                  <span
-                                    className="text-[11px] font-bold uppercase tracking-wider mb-1 block"
-                                    style={{ color: experience.color }}
-                                  >
-                                    {projectDate}
-                                  </span>
-                                )}
-                                {/* Project name */}
-                                <p
-                                  className={`text-xs leading-snug transition-colors font-medium ${
-                                    hoveredProjectIndex === index
-                                      ? "text-white"
-                                      : "text-white/60"
-                                  }`}
-                                >
-                                  {project.name}
-                                </p>
-                              </motion.div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {/* Left side - Years timeline for experiences without project dates */}
-                  {!PROJECT_DATES[experience.id] && (
-                    <motion.div
-                      className="hidden md:block w-48 shrink-0 p-6 border-r border-white/10 bg-black/20"
-                      initial={{ opacity: 0, x: -30 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -20 }}
-                      transition={{ duration: 0.4, delay: 0.1 }}
-                    >
-                      <div className="relative">
-                        {/* Vertical line */}
-                        <motion.div
-                          initial={{ scaleY: 0 }}
-                          animate={{ scaleY: 1 }}
-                          exit={{ scaleY: 0 }}
-                          transition={{ duration: 0.5, delay: 0.2 }}
-                          className="absolute left-[4.75rem] top-0 bottom-0 w-0.5 bg-gradient-to-b from-white/20 via-white/10 to-transparent origin-top"
-                          style={{ height: `${years.length * 40}px` }}
-                        />
-
-                        {/* Arrow at the bottom */}
-                        <motion.div
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0.3, delay: 0.4 }}
-                          className="absolute left-[4.25rem] -bottom-2"
-                          style={{ top: `${years.length * 40 - 8}px` }}
-                        >
-                          <svg
-                            className="w-4 h-4 text-white/30"
-                            fill="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path d="M12 16l-6-6h12z" />
-                          </svg>
-                        </motion.div>
-
-                        {/* Year markers */}
-                        <motion.div
-                          className="flex flex-col gap-6"
-                          variants={containerVariants}
-                          initial="hidden"
-                          animate="visible"
-                          exit="exit"
-                        >
-                          {years.map((year, index) => (
-                            <YearMarker
-                              key={year}
-                              year={year}
-                              isActive={year === startYear || year === endYear}
-                              color={experience.color}
-                              index={index}
-                            />
-                          ))}
-                        </motion.div>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {/* Right side - Projects */}
-                  <motion.div
-                    className={`flex-1 overflow-hidden ${PROJECT_DATES[experience.id] ? "" : "p-6 md:p-8"}`}
-                    initial={{ opacity: 0, x: 30 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 20 }}
-                    transition={{ duration: 0.4, delay: 0.15 }}
+                  {/* Single scrollable container */}
+                  <div
+                    ref={scrollContainerRef}
+                    className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent"
                   >
-                    <div className="h-full flex flex-col">
-                      {/* Projects grid */}
-                      <div
-                        ref={
-                          PROJECT_DATES[experience.id]
-                            ? rightScrollRef
-                            : undefined
-                        }
-                        className={`flex-1 overflow-y-auto pr-2 flex flex-col gap-4 ${PROJECT_DATES[experience.id] ? "py-4 pb-8 px-6 md:px-8" : ""}`}
-                        onScroll={
-                          PROJECT_DATES[experience.id]
-                            ? () => handleScroll("right")
-                            : undefined
-                        }
-                      >
-                        {translatedProjects.map((project, index) => (
+                    <div className="flex flex-col gap-4 p-6 md:p-8 pb-12">
+                      {translatedProjects.map((project, index) => {
+                        const projectDate = PROJECT_DATES[experience.id]?.[experience.projects[index]?.name];
+                        const isHovered = hoveredProjectIndex === index;
+                        const hasProjectDates = !!PROJECT_DATES[experience.id];
+
+                        // Extraire durée et années depuis projectDate
+                        const dateParts = projectDate?.split(" • ") || [];
+                        const duration = dateParts[0] || "";
+                        const yearRange = dateParts[1] || "";
+
+                        return (
                           <motion.div
                             key={index}
-                            data-index={index}
-                            variants={itemVariants}
-                            initial="hidden"
-                            animate="visible"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{
+                              duration: 0.4,
+                              delay: 0.1 + index * 0.05,
+                              ease: [0.23, 1, 0.32, 1],
+                            }}
+                            className="group cursor-pointer"
+                            onMouseEnter={() => setHoveredProjectIndex(index)}
+                            onMouseLeave={() => setHoveredProjectIndex(null)}
+                            onClick={() => handleProjectClick(index)}
                           >
-                            <ProjectCard
-                              project={project}
-                              experienceColor={experience.color}
-                              index={index}
-                              isHovered={hoveredProjectIndex === index}
-                              onClick={() => handleProjectClick(index)}
-                              onMouseEnter={() => setHoveredProjectIndex(index)}
-                              onMouseLeave={() => setHoveredProjectIndex(null)}
-                              hasDetails={!!project.details}
-                              syncHeight={!!PROJECT_DATES[experience.id]}
-                            />
+                            {/* Row container with 2 columns on desktop */}
+                            <motion.div
+                              className={`relative rounded-2xl overflow-hidden transition-all duration-300 ${
+                                hasProjectDates ? 'md:grid md:grid-cols-[280px_1fr]' : ''
+                              }`}
+                              animate={{
+                                scale: isHovered ? 1.01 : 1,
+                              }}
+                              style={{
+                                background: isHovered
+                                  ? `linear-gradient(135deg, ${experience.color}08 0%, rgba(255,255,255,0.03) 100%)`
+                                  : 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
+                                border: isHovered
+                                  ? `1px solid ${experience.color}40`
+                                  : '1px solid rgba(255,255,255,0.06)',
+                                boxShadow: isHovered
+                                  ? `0 20px 40px -15px ${experience.color}20, 0 0 0 1px ${experience.color}10`
+                                  : '0 4px 20px -10px rgba(0,0,0,0.3)',
+                              }}
+                            >
+                              {/* Top accent line */}
+                              <motion.div
+                                className="absolute top-0 left-0 right-0 h-[2px] z-10"
+                                style={{
+                                  background: `linear-gradient(to right, transparent, ${experience.color}, transparent)`,
+                                }}
+                                animate={{
+                                  opacity: isHovered ? 1 : 0.3,
+                                  scaleX: isHovered ? 1 : 0.5,
+                                }}
+                                transition={{ duration: 0.4 }}
+                              />
+
+                              {/* LEFT COLUMN - Date, Duration, Logo (only if hasProjectDates) */}
+                              {hasProjectDates && (
+                                <div
+                                  className="hidden md:flex flex-col justify-center p-5 border-r transition-all duration-300"
+                                  style={{
+                                    borderColor: isHovered
+                                      ? `${experience.color}20`
+                                      : 'rgba(255,255,255,0.05)',
+                                    background: isHovered
+                                      ? `linear-gradient(135deg, ${experience.color}10 0%, transparent 100%)`
+                                      : 'rgba(0,0,0,0.2)',
+                                  }}
+                                >
+                                  {/* Logo */}
+                                  {PROJECT_LOGOS[experience.projects[index]?.name] && (
+                                    <motion.div
+                                      className="mb-3"
+                                      animate={{ y: isHovered ? -2 : 0 }}
+                                      transition={{ duration: 0.3 }}
+                                    >
+                                      <div
+                                        className="inline-flex items-center justify-center rounded-xl p-2.5 transition-all duration-300"
+                                        style={{
+                                          background: 'rgba(255,255,255,0.95)',
+                                          boxShadow: isHovered
+                                            ? `0 8px 24px ${experience.color}25, 0 4px 8px rgba(0,0,0,0.2)`
+                                            : '0 4px 12px rgba(0,0,0,0.15)',
+                                        }}
+                                      >
+                                        <img
+                                          src={PROJECT_LOGOS[experience.projects[index]?.name]}
+                                          alt={`${project.name} logo`}
+                                          className={`object-contain transition-all duration-300 ${
+                                            experience.projects[index]?.name === "Au Vieux Campeur - App Mobile v2"
+                                              ? "h-5 w-[120px]"
+                                              : experience.projects[index]?.name === "Elistair - Portail Client Drones"
+                                                ? "max-h-6 max-w-[90px]"
+                                                : ["GoCrisis - Gestion de Crise", "Cora Wine - E-commerce Vins", "Wipple - Réservation Salles"].includes(experience.projects[index]?.name || "")
+                                                  ? "max-h-8 max-w-[140px]"
+                                                  : "max-h-7 max-w-[100px]"
+                                          }`}
+                                          style={{
+                                            filter: isHovered ? "none" : "grayscale(15%)",
+                                            opacity: isHovered ? 1 : 0.9,
+                                          }}
+                                        />
+                                      </div>
+                                    </motion.div>
+                                  )}
+
+                                  {/* Duration & Year badges */}
+                                  {projectDate && (
+                                    <div className="flex flex-wrap items-center gap-2">
+                                      <motion.span
+                                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                                        style={{
+                                          background: isHovered ? `${experience.color}25` : 'rgba(255,255,255,0.08)',
+                                          color: isHovered ? experience.color : 'rgba(255,255,255,0.6)',
+                                          border: `1px solid ${isHovered ? experience.color + '40' : 'transparent'}`,
+                                        }}
+                                        animate={{ scale: isHovered ? 1.03 : 1 }}
+                                        transition={{ duration: 0.2 }}
+                                      >
+                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        {duration}
+                                      </motion.span>
+                                      <span
+                                        className="text-[10px] font-medium tracking-wide transition-colors duration-300"
+                                        style={{ color: isHovered ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.4)' }}
+                                      >
+                                        {yearRange}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+
+                              {/* RIGHT COLUMN - Project info */}
+                              <div className="relative p-5 flex flex-col">
+                                {/* Glow effect */}
+                                <motion.div
+                                  className="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-3xl pointer-events-none"
+                                  style={{ background: experience.color }}
+                                  animate={{
+                                    opacity: isHovered ? 0.12 : 0,
+                                    scale: isHovered ? 1 : 0.5,
+                                  }}
+                                  transition={{ duration: 0.4 }}
+                                />
+
+                                {/* Mobile: Show date info inline */}
+                                {hasProjectDates && projectDate && (
+                                  <div className="md:hidden flex items-center gap-2 mb-3">
+                                    {PROJECT_LOGOS[experience.projects[index]?.name] && (
+                                      <div className="shrink-0 bg-white rounded-lg p-1.5">
+                                        <img
+                                          src={PROJECT_LOGOS[experience.projects[index]?.name]}
+                                          alt=""
+                                          className="h-5 w-auto object-contain"
+                                        />
+                                      </div>
+                                    )}
+                                    <span
+                                      className="text-[10px] font-bold uppercase tracking-wider"
+                                      style={{ color: experience.color }}
+                                    >
+                                      {duration} • {yearRange}
+                                    </span>
+                                  </div>
+                                )}
+
+                                {/* Header */}
+                                <div className="flex items-start justify-between gap-3 mb-2">
+                                  <motion.h4
+                                    className="text-base font-bold text-white leading-snug flex-1"
+                                    animate={{ color: isHovered ? 'rgba(255,255,255,1)' : 'rgba(255,255,255,0.9)' }}
+                                  >
+                                    {project.name}
+                                  </motion.h4>
+
+                                  {project.details && (
+                                    <motion.span
+                                      className="shrink-0 flex items-center gap-1 text-[9px] px-2 py-1 rounded-full uppercase tracking-wider font-bold"
+                                      style={{
+                                        background: `${experience.color}20`,
+                                        color: experience.color,
+                                        border: `1px solid ${experience.color}30`,
+                                      }}
+                                      animate={{
+                                        scale: isHovered ? 1.05 : 1,
+                                        background: isHovered ? `${experience.color}30` : `${experience.color}20`,
+                                      }}
+                                      transition={{ duration: 0.2 }}
+                                    >
+                                      <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                      </svg>
+                                      Détails
+                                    </motion.span>
+                                  )}
+                                </div>
+
+                                {/* Description */}
+                                <p
+                                  className="text-sm mb-4 leading-relaxed transition-colors duration-300"
+                                  style={{ color: isHovered ? 'rgba(255,255,255,0.75)' : 'rgba(255,255,255,0.55)' }}
+                                >
+                                  {project.description}
+                                </p>
+
+                                {/* Technologies */}
+                                <div className="flex flex-wrap gap-1.5">
+                                  {project.tech.slice(0, 6).map((tech, i) => (
+                                    <motion.span
+                                      key={tech}
+                                      className="px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all duration-300"
+                                      style={{
+                                        background: isHovered ? `${experience.color}15` : 'rgba(255,255,255,0.06)',
+                                        color: isHovered ? experience.color : 'rgba(255,255,255,0.6)',
+                                        border: `1px solid ${isHovered ? experience.color + '30' : 'rgba(255,255,255,0.08)'}`,
+                                      }}
+                                      animate={{ y: isHovered ? -1 : 0 }}
+                                      transition={{ duration: 0.2, delay: i * 0.02 }}
+                                    >
+                                      {tech}
+                                    </motion.span>
+                                  ))}
+                                  {project.tech.length > 6 && (
+                                    <span
+                                      className="px-2.5 py-1 rounded-lg text-[11px] font-medium"
+                                      style={{ color: isHovered ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.35)' }}
+                                    >
+                                      +{project.tech.length - 6}
+                                    </span>
+                                  )}
+                                </div>
+
+                                {/* CTA indicator */}
+                                {project.details && (
+                                  <motion.div
+                                    className="absolute bottom-4 right-4 flex items-center gap-1.5"
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{
+                                      opacity: isHovered ? 1 : 0,
+                                      x: isHovered ? 0 : -10,
+                                    }}
+                                    transition={{ duration: 0.25 }}
+                                  >
+                                    <span className="text-[10px] font-medium uppercase tracking-wider" style={{ color: experience.color }}>
+                                      Explorer
+                                    </span>
+                                    <motion.svg
+                                      className="w-4 h-4"
+                                      style={{ color: experience.color }}
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                      animate={{ x: isHovered ? 3 : 0 }}
+                                      transition={{ duration: 0.3, repeat: isHovered ? Infinity : 0, repeatType: "reverse" }}
+                                    >
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                    </motion.svg>
+                                  </motion.div>
+                                )}
+                              </div>
+                            </motion.div>
                           </motion.div>
-                        ))}
-                      </div>
+                        );
+                      })}
                     </div>
-                  </motion.div>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
