@@ -98,7 +98,67 @@ function ProjectBlock3D({ project, position, color, index }: ProjectBlock3DProps
   );
 }
 
-// Large arrow pointing UP
+// Frosted bar style (same as skill category boxes background)
+function FrostedBar({
+  position,
+  size,
+  color
+}: {
+  position: [number, number, number];
+  size: [number, number, number];
+  color: string;
+}) {
+  const radius = Math.min(size[0], size[1]) * 0.3;
+
+  return (
+    <group position={position}>
+      {/* Background - solid dark (same as CategoryBox: #0a1628, opacity 0.7) */}
+      <RoundedBox
+        args={[size[0] - 0.02, size[1] - 0.02, size[2]]}
+        radius={radius}
+        smoothness={4}
+        position={[0, 0, -0.01]}
+      >
+        <meshBasicMaterial
+          color="#0a1628"
+          transparent
+          opacity={0.7}
+        />
+      </RoundedBox>
+
+      {/* Color tint overlay (same as CategoryBox: color with opacity 0.15) */}
+      <RoundedBox
+        args={[size[0] - 0.03, size[1] - 0.03, size[2] * 0.5]}
+        radius={radius * 0.9}
+        smoothness={4}
+        position={[0, 0, 0]}
+      >
+        <meshBasicMaterial
+          color={color}
+          transparent
+          opacity={0.15}
+        />
+      </RoundedBox>
+
+      {/* Border line (same as CategoryBox) */}
+      <Line
+        points={[
+          [-size[0]/2, -size[1]/2, size[2]/2 + 0.01],
+          [size[0]/2, -size[1]/2, size[2]/2 + 0.01],
+          [size[0]/2, size[1]/2, size[2]/2 + 0.01],
+          [-size[0]/2, size[1]/2, size[2]/2 + 0.01],
+          [-size[0]/2, -size[1]/2, size[2]/2 + 0.01],
+        ]}
+        color={color}
+        lineWidth={1.5}
+        transparent
+        opacity={0.5}
+      />
+    </group>
+  );
+}
+
+// Large arrow pointing UP with frosted style
 function VerticalArrow({ color, height }: { color: string; height: number }) {
   const arrowRef = useRef<THREE.Group>(null);
 
@@ -112,32 +172,29 @@ function VerticalArrow({ color, height }: { color: string; height: number }) {
 
   return (
     <group ref={arrowRef} position={[0, 0, -0.5]}>
-      {/* Main arrow line */}
-      <mesh position={[0, -height / 2 + 2, 0]}>
-        <boxGeometry args={[0.08, height, 0.08]} />
-        <meshStandardMaterial
-          color={color}
-          emissive={color}
-          emissiveIntensity={0.3}
-          metalness={0.5}
-          roughness={0.3}
-        />
-      </mesh>
+      {/* Main arrow bar - frosted style */}
+      <FrostedBar
+        position={[0, -height / 2 + 2, 0]}
+        size={[0.15, height, 0.08]}
+        color={color}
+      />
 
       {/* Arrow head pointing UP */}
-      <mesh position={[0, 2.5, 0]}>
-        <coneGeometry args={[0.3, 0.8, 8]} />
-        <meshStandardMaterial
-          color={color}
-          emissive={color}
-          emissiveIntensity={0.5}
-          metalness={0.5}
-          roughness={0.3}
-        />
-      </mesh>
+      <group position={[0, 2.5, 0]}>
+        {/* Dark base */}
+        <mesh>
+          <coneGeometry args={[0.3, 0.8, 8]} />
+          <meshBasicMaterial color="#0a1628" transparent opacity={0.85} />
+        </mesh>
+        {/* Color tint */}
+        <mesh position={[0, 0, 0.01]}>
+          <coneGeometry args={[0.28, 0.75, 8]} />
+          <meshBasicMaterial color={color} transparent opacity={0.3} />
+        </mesh>
+      </group>
 
-      {/* Glow effect */}
-      <pointLight color={color} intensity={1} distance={5} position={[0, 2.5, 0.5]} />
+      {/* Subtle glow effect */}
+      <pointLight color={color} intensity={0.5} distance={3} position={[0, 2.5, 0.5]} />
     </group>
   );
 }
@@ -231,11 +288,12 @@ export default function ExperienceDetail3D({ experience, scrollOffset }: Experie
               />
             </mesh>
 
-            {/* Horizontal connector line */}
-            <mesh position={[-1.2, -i * projectSpacing, -0.3]}>
-              <boxGeometry args={[2.2, 0.03, 0.03]} />
-              <meshBasicMaterial color={experience.color} opacity={0.5} transparent />
-            </mesh>
+            {/* Horizontal connector line - frosted style */}
+            <FrostedBar
+              position={[-1.2, -i * projectSpacing, -0.3]}
+              size={[2.2, 0.08, 0.05]}
+              color={experience.color}
+            />
           </group>
         ))}
       </group>

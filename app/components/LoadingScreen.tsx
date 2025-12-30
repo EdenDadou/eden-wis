@@ -1,5 +1,16 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+
+// Fixed star positions to avoid hydration mismatch (Math.random during render)
+const STAR_POSITIONS = [
+  { left: 12, top: 8 }, { left: 87, top: 15 }, { left: 45, top: 3 },
+  { left: 23, top: 92 }, { left: 78, top: 67 }, { left: 5, top: 45 },
+  { left: 95, top: 82 }, { left: 34, top: 28 }, { left: 67, top: 55 },
+  { left: 8, top: 73 }, { left: 52, top: 95 }, { left: 91, top: 38 },
+  { left: 18, top: 62 }, { left: 73, top: 12 }, { left: 42, top: 78 },
+  { left: 3, top: 22 }, { left: 85, top: 48 }, { left: 28, top: 5 },
+  { left: 62, top: 88 }, { left: 97, top: 58 },
+];
 
 interface LoadingScreenProps {
   onLoadingComplete: () => void;
@@ -96,22 +107,22 @@ export default function LoadingScreen({
         >
           {/* Animated background stars */}
           <div className="absolute inset-0 overflow-hidden">
-            {[...Array(20)].map((_, i) => (
+            {STAR_POSITIONS.map((pos, i) => (
               <motion.div
                 key={i}
                 className="absolute w-1 h-1 bg-white rounded-full"
                 style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
+                  left: `${pos.left}%`,
+                  top: `${pos.top}%`,
                 }}
                 animate={{
                   opacity: [0.2, 0.8, 0.2],
                   scale: [0.8, 1.2, 0.8],
                 }}
                 transition={{
-                  duration: 2 + Math.random() * 2,
+                  duration: 2 + (i % 5) * 0.4,
                   repeat: Infinity,
-                  delay: Math.random() * 2,
+                  delay: (i % 7) * 0.3,
                 }}
               />
             ))}

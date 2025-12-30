@@ -5,6 +5,7 @@ export interface SectionContent {
   subtitle: string;
   category: string;
   items?: string[];
+  technologies?: string[];
 }
 
 // Section mapping (without transition slides):
@@ -37,18 +38,21 @@ export function useSectionContent(section: number): SectionContent {
       subtitle: t("content.siteWeb.subtitle"),
       category: t("sections.frontend"),
       items: t("content.siteWeb.items", { returnObjects: true }) as string[],
+      technologies: ["React", "Remix", "React Router", "TypeScript"],
     },
     3: {
       title: t("content.mobile.title"),
       subtitle: t("content.mobile.subtitle"),
       category: t("sections.mobile"),
       items: t("content.mobile.items", { returnObjects: true }) as string[],
+      technologies: ["React Native", "Expo", "TypeScript"],
     },
     4: {
       title: t("content.backoffice.title"),
       subtitle: t("content.backoffice.subtitle"),
       category: t("sections.administration"),
       items: t("content.backoffice.items", { returnObjects: true }) as string[],
+      technologies: ["React", "Remix", "React Router", "TypeScript"],
     },
     // Backend group (5-6)
     5: {
@@ -56,12 +60,14 @@ export function useSectionContent(section: number): SectionContent {
       subtitle: t("content.server.subtitle"),
       category: t("sections.backend"),
       items: t("content.server.items", { returnObjects: true }) as string[],
+      technologies: ["NodeJS", "Express", "Prisma", "Adonis", "TypeScript"],
     },
     6: {
       title: t("content.database.title"),
       subtitle: t("content.database.subtitle"),
       category: t("sections.data"),
       items: t("content.database.items", { returnObjects: true }) as string[],
+      technologies: ["MySQL", "NoSQL", "MariaDB", "MongoDB"],
     },
     // DevOps group (7-9)
     7: {
@@ -69,6 +75,7 @@ export function useSectionContent(section: number): SectionContent {
       subtitle: t("content.cicd.subtitle"),
       category: t("sections.pipeline"),
       items: t("content.cicd.items", { returnObjects: true }) as string[],
+      technologies: ["GitHub Actions", "GitLab CI", "Azure", "AWS"],
     },
     8: {
       title: t("content.cloud.title"),

@@ -167,6 +167,29 @@ export function SkillsSection({ section, showCard, targetSection, isFirstCardRea
               </AnimatePresence>
             )}
 
+            {content.technologies && content.technologies.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0, transition: { delay: 0.3 } }}
+                className="mt-5 flex flex-wrap gap-2"
+              >
+                {content.technologies.map((tech, i) => (
+                  <motion.span
+                    key={tech}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{
+                      opacity: 1,
+                      scale: 1,
+                      transition: { delay: 0.4 + i * 0.05 }
+                    }}
+                    className="px-3 py-1 text-xs font-medium bg-cyan-500/20 text-cyan-300 rounded-full border border-cyan-500/30"
+                  >
+                    {tech}
+                  </motion.span>
+                ))}
+              </motion.div>
+            )}
+
             {section === 1 && onNavigateToPortfolio && (
               <motion.button
                 whileHover={{ scale: 1.05 }}

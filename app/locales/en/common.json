@@ -1247,7 +1247,7 @@
       "title": "Database",
       "subtitle": "Data Management",
       "items": [
-        "PostgreSQL for relational data",
+        "MySQL / MariaDB for relational data",
         "MongoDB for flexible structures",
         "Redis for high-performance caching",
         "Versioned migrations and rollback",

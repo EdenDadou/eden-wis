@@ -1242,32 +1242,22 @@
         "Performance optimisée (Core Web Vitals)"
       ]
     },
-    "backend": {
-      "title": "Backend",
-      "subtitle": "Logique Serveur",
-      "items": [
-        "APIs REST et GraphQL scalables",
-        "Node.js, Express, NestJS",
-        "Bases de données SQL et NoSQL",
-        "Architecture microservices"
-      ]
-    },
     "server": {
       "title": "Server",
       "subtitle": "Serveurs Node.js Performants",
       "items": [
-        "API REST & GraphQL scalables",
+        "API REST scalables",
         "Authentification sécurisée (JWT, OAuth2)",
         "Architecture microservices modulaire",
         "Gestion des sessions et middleware",
-        "Validation des données et sécurité OWASP"
+        "Validation des données avec Zod"
       ]
     },
     "database": {
       "title": "Database",
       "subtitle": "Gestion des Données",
       "items": [
-        "PostgreSQL pour les données relationnelles",
+        "MySQL / MariaDB pour les données relationnelles",
         "MongoDB pour les structures flexibles",
         "Redis pour le cache haute performance",
         "Migrations versionnées et rollback",
@@ -1300,8 +1290,7 @@
       "title": "CI/CD",
       "subtitle": "Automatisation DevOps",
       "items": [
-        "GitHub Actions & GitLab CI configurés",
-        "Tests automatisés à chaque commit",
+        "GitHub Actions & GitLab CI",
         "Build et déploiement continu",
         "Environnements staging et production",
         "Rollback automatique en cas d'erreur"
@@ -1311,8 +1300,7 @@
       "title": "Cloud",
       "subtitle": "Infrastructure Scalable",
       "items": [
-        "Déploiement AWS, GCP, Vercel",
-        "CDN global pour performances optimales",
+        "Déploiement AWS & Azure",
         "Auto-scaling selon la charge",
         "Stockage sécurisé S3/Cloud Storage",
         "Monitoring et alertes 24/7"
@@ -1333,7 +1321,6 @@
       "subtitle": "Design Système",
       "items": [
         "Conception d'architectures scalables",
-        "Microservices et API Gateway",
         "Design patterns et best practices",
         "Documentation technique complète",
         "Revue de code et standards qualité"

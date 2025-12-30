@@ -201,7 +201,7 @@ export const experienceData: Experience[] = [
     period: "Sept 2018 - Nov 2019",
     startYear: 2019,
     endYear: 2019.85, // ~Novembre
-    color: "#3b82f6", // Bleu
+    color: "#2563eb", // Bleu
     row: "top",
     isEducation: true,
     projects: [
@@ -225,7 +225,7 @@ export const experienceData: Experience[] = [
     period: "Jan 2020 - Juil 2020",
     startYear: 2020,
     endYear: 2020.5, // ~Juillet
-    color: "#8b5cf6", // Violet
+    color: "#7c3aed", // Violet
     row: "top",
     projects: [
       {
@@ -242,7 +242,7 @@ export const experienceData: Experience[] = [
     period: "Oct 2020 - Aujourd'hui",
     startYear: 2020.8, // ~Octobre
     endYear: null,
-    color: "#f97316", // Orange
+    color: "#ea580c", // Orange
     row: "top",
     projects: [
       {
@@ -1153,7 +1153,7 @@ export const experienceData: Experience[] = [
     period: "Jan 2019 - Aujourd'hui",
     startYear: 2019,
     endYear: null,
-    color: "#10b981", // Vert
+    color: "#059669", // Vert
     row: "bottom",
     projects: [
       {
@@ -1560,6 +1560,8 @@ function ExperienceBlock({
           roughness={0.4}
           emissive={experience.color}
           emissiveIntensity={isSelected ? 0.5 : hovered ? 0.3 : 0.1}
+          transparent
+          opacity={0.85}
         />
       </RoundedBox>
 
@@ -1712,15 +1714,6 @@ export default function Timeline3D({
         <meshBasicMaterial color="#06b6d4" opacity={0.6} transparent />
       </mesh>
 
-      {/* Arrow at the start (left) - optional, represents past */}
-      <mesh
-        position={[-TIMELINE_WIDTH / 2 - 0.3, 0, -0.1]}
-        rotation={[0, 0, Math.PI / 2]}
-      >
-        <coneGeometry args={[0.08, 0.2, 8]} />
-        <meshBasicMaterial color="#06b6d4" opacity={0.3} transparent />
-      </mesh>
-
       {/* Year markers */}
       <YearMarkers />
 
@@ -1734,23 +1727,6 @@ export default function Timeline3D({
         />
       ))}
 
-      {/* "Today" marker */}
-      <group position={[yearToX(2026), 0, 0]}>
-        <MorphingText3D
-          position={[0.3, 0.5, 0]}
-          fontSize={0.1}
-          color="#06b6d4"
-          anchorX="left"
-          anchorY="middle"
-          fontWeight="normal"
-        >
-          {t("timeline.today")}
-        </MorphingText3D>
-        <mesh position={[0, 0, 0]}>
-          <boxGeometry args={[0.02, 2.8, 0.02]} />
-          <meshBasicMaterial color="#06b6d4" opacity={0.3} transparent />
-        </mesh>
-      </group>
     </group>
   );
 }

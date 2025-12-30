@@ -77,13 +77,13 @@ export default function CameraRig({
         maxDuration = 1.0;
         navTransitionType.current = 'hero';
       } else if (isMajorSectionTransition) {
-        // Between major sections
-        baseDuration = 0.8;
-        maxDuration = 1.2;
+        // Between major sections - cinematic slow sweep
+        baseDuration = 1.5;
+        maxDuration = 2.2;
         navTransitionType.current = 'major';
       } else {
-        baseDuration = 0.8;
-        maxDuration = 1.2;
+        baseDuration = 1.5;
+        maxDuration = 2.2;
         navTransitionType.current = 'major';
       }
 
@@ -164,6 +164,17 @@ export default function CameraRig({
         // Subtle arc for hero transitions
         const arcHeight = Math.sin(t * Math.PI) * 0.3;
         z += arcHeight;
+      } else if (transitionType === 'major') {
+        // Cinematic orbital navigation: subtle rise, pull back, then descend
+        const risePhase = t < 0.4
+          ? Math.sin((t / 0.4) * Math.PI * 0.5)
+          : Math.cos(((t - 0.4) / 0.6) * Math.PI * 0.5);
+
+        const verticalArc = risePhase * 2.5; // Reduced height
+        const pullBackArc = Math.sin(t * Math.PI) * 2.0; // Reduced pull back
+
+        y += verticalArc;
+        z += pullBackArc;
       }
 
       const lookAtX = THREE.MathUtils.lerp(
