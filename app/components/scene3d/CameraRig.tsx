@@ -62,34 +62,35 @@ export default function CameraRig({
       let maxDuration: number;
 
       if (isSkillTransition && isSameSkillGroup) {
-        // Same skill group: quick, snappy transition
-        baseDuration = 0.5;
-        maxDuration = 0.8;
+        // Same skill group: quick vertical slide
+        baseDuration = 0.4;
+        maxDuration = 0.6;
         navTransitionType.current = 'skill-same';
       } else if (isSkillTransition) {
-        // Different skill groups: smooth arc transition
-        baseDuration = 0.7;
-        maxDuration = 1.2;
+        // Different skill groups: smooth horizontal arc
+        baseDuration = 0.6;
+        maxDuration = 0.9;
         navTransitionType.current = 'skill-different';
       } else if (isHeroTransition) {
-        // Hero to/from skills: smooth, fluid transition
-        baseDuration = 0.8;
-        maxDuration = 1.2;
+        // Hero to/from skills: cinematic zoom
+        baseDuration = 0.7;
+        maxDuration = 1.0;
         navTransitionType.current = 'hero';
       } else if (isMajorSectionTransition) {
-        // Between major sections (Experience, Portfolio, etc.)
-        baseDuration = 1.0;
-        maxDuration = 1.5;
+        // Between major sections
+        baseDuration = 0.8;
+        maxDuration = 1.2;
         navTransitionType.current = 'major';
       } else {
-        baseDuration = 1.0;
-        maxDuration = 1.8;
+        baseDuration = 0.8;
+        maxDuration = 1.2;
         navTransitionType.current = 'major';
       }
 
+      // Scale duration slightly with distance but keep it snappy
       navAnimationDuration.current = Math.min(
         maxDuration,
-        Math.max(baseDuration, baseDuration + distance * 0.01)
+        baseDuration + distance * 0.008
       );
 
       navAnimationProgress.current = 0;
@@ -117,19 +118,22 @@ export default function CameraRig({
       let easeLookAt: number;
 
       if (transitionType === 'skill-same') {
-        // Snappy ease-out for same group transitions
-        easePosition = 1 - Math.pow(1 - t, 3);
-        easeLookAt = 1 - Math.pow(1 - t, 2.5);
+        // Snappy ease-out quartic for vertical slides within same group
+        easePosition = 1 - Math.pow(1 - t, 4);
+        easeLookAt = 1 - Math.pow(1 - t, 3);
       } else if (transitionType === 'skill-different') {
-        // Smooth ease-out cubic
-        easePosition = 1 - Math.pow(1 - t, 3);
+        // Smooth ease-in-out for horizontal movement between groups
+        const easeInOut = t < 0.5
+          ? 4 * t * t * t
+          : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        easePosition = easeInOut;
         easeLookAt = 1 - Math.pow(1 - t, 2.5);
       } else if (transitionType === 'hero') {
-        // Smooth ease-out for hero transitions - starts immediately, decelerates smoothly
-        easePosition = 1 - Math.pow(1 - t, 2.5);
+        // Cinematic ease-out expo for dramatic zoom effect
+        easePosition = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
         easeLookAt = 1 - Math.pow(1 - t, 2);
       } else {
-        // Standard smooth ease-out for major section transitions
+        // Standard smooth ease-out cubic for major sections
         easePosition = 1 - Math.pow(1 - t, 3);
         easeLookAt = 1 - Math.pow(1 - t, 2.5);
       }
@@ -151,9 +155,14 @@ export default function CameraRig({
         easePosition
       );
 
-      // Add subtle arc effect for skill-different transitions (camera pulls back slightly)
+      // Add arc effects for dynamic camera movement
       if (transitionType === 'skill-different') {
-        const arcHeight = Math.sin(t * Math.PI) * 0.5; // Subtle arc
+        // Pull back arc for horizontal transitions between skill groups
+        const arcHeight = Math.sin(t * Math.PI) * 1.2;
+        z += arcHeight;
+      } else if (transitionType === 'hero') {
+        // Subtle arc for hero transitions
+        const arcHeight = Math.sin(t * Math.PI) * 0.3;
         z += arcHeight;
       }
 
@@ -202,7 +211,8 @@ export default function CameraRig({
     const targetPos = new THREE.Vector3(x, y, z);
     const lookAt = new THREE.Vector3(lookX, lookY, lookZ ?? 0);
 
-    easing.damp3(state.camera.position, targetPos, 0.08, delta);
+    // Smooth damping for steady-state camera following
+    easing.damp3(state.camera.position, targetPos, 0.12, delta);
     state.camera.lookAt(lookAt);
   });
 

@@ -144,6 +144,7 @@ export default function WebsiteBuilder({
               isActive={isFrontendGroupActive}
               materialRef={frontendBoxMatRef}
               labelRef={frontendLabelRef}
+              dimmed={isInDetailSection && !isFrontendGroupActive}
             />
             <CategoryBox
               ref={backendGroupRef}
@@ -151,6 +152,7 @@ export default function WebsiteBuilder({
               isActive={isBackendGroupActive}
               materialRef={backendBoxMatRef}
               labelRef={backendLabelRef}
+              dimmed={isInDetailSection && !isBackendGroupActive}
             />
             <CategoryBox
               ref={devopsGroupRef}
@@ -158,6 +160,7 @@ export default function WebsiteBuilder({
               isActive={isDevopsGroupActive}
               materialRef={devopsBoxMatRef}
               labelRef={devopsLabelRef}
+              dimmed={isInDetailSection && !isDevopsGroupActive}
             />
           </>
         )}

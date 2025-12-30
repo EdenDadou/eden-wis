@@ -19,6 +19,7 @@ interface CategoryBoxProps {
   isActive: boolean;
   materialRef: React.RefObject<THREE.MeshBasicMaterial | null>;
   labelRef: React.RefObject<any>;
+  dimmed?: boolean; // When a skill from another category is selected
 }
 
 const CONFIG = {
@@ -55,7 +56,7 @@ const CONFIG = {
 };
 
 export const CategoryBox = forwardRef<THREE.Group, CategoryBoxProps>(
-  ({ type, isActive, materialRef, labelRef }, ref) => {
+  ({ type, isActive, materialRef, labelRef, dimmed = false }, ref) => {
     const config = CONFIG[type];
     const [width, height] = config.size;
     const halfW = width / 2;
@@ -65,33 +66,30 @@ export const CategoryBox = forwardRef<THREE.Group, CategoryBoxProps>(
     // Get fade opacity from parent FadingSection
     const fadeOpacity = useFadeOpacity();
 
-    // Refs for neon animation
-    const line1Ref = useRef<any>(null);
-    const line2Ref = useRef<any>(null);
+    // Refs for border animation
+    const lineRef = useRef<any>(null);
     const glowMatRef = useRef<THREE.MeshBasicMaterial>(null);
     const tintMatRef = useRef<THREE.MeshBasicMaterial>(null);
+    const smoothDimmed = useRef(1);
 
-    // Animate neon glow (multiplied by fade opacity)
-    useFrame((state) => {
-      const time = state.clock.elapsedTime;
+    // Simplified border animation (no expensive glow effects)
+    useFrame(() => {
       const fade = fadeOpacity.current;
-      const pulse = 0.7 + Math.sin(time * 2 + (type === "frontend" ? 0 : type === "backend" ? 2 : 4)) * 0.3;
-      const fastPulse = 0.8 + Math.sin(time * 4) * 0.2;
 
-      if (line1Ref.current?.material) {
-        const baseOpacity = isActive ? pulse : 0.5 + Math.sin(time * 1.5) * 0.2;
-        line1Ref.current.material.opacity = baseOpacity * fade;
-      }
-      if (line2Ref.current?.material) {
-        const baseOpacity = isActive ? fastPulse * 0.6 : 0.3 + Math.sin(time * 1.5) * 0.1;
-        line2Ref.current.material.opacity = baseOpacity * fade;
+      // Smooth dimming transition
+      const targetDim = dimmed ? 0.15 : 1;
+      smoothDimmed.current = THREE.MathUtils.lerp(smoothDimmed.current, targetDim, 0.1);
+      const dimFactor = smoothDimmed.current;
+
+      if (lineRef.current?.material) {
+        const baseOpacity = isActive ? 0.8 : 0.5;
+        lineRef.current.material.opacity = baseOpacity * fade * dimFactor;
       }
       if (glowMatRef.current) {
-        const baseOpacity = isActive ? 0.9 + Math.sin(time * 2) * 0.05 : 0.85;
-        glowMatRef.current.opacity = baseOpacity * fade;
+        glowMatRef.current.opacity = 0.7 * fade * dimFactor;
       }
       if (tintMatRef.current) {
-        tintMatRef.current.opacity = 0.15 * fade;
+        tintMatRef.current.opacity = 0.15 * fade * dimFactor;
       }
     });
 
@@ -137,7 +135,7 @@ export const CategoryBox = forwardRef<THREE.Group, CategoryBoxProps>(
             ref={glowMatRef}
             color="#0a1628"
             transparent
-            opacity={0.85}
+            opacity={0.7}
           />
         </RoundedBox>
 
@@ -156,24 +154,14 @@ export const CategoryBox = forwardRef<THREE.Group, CategoryBoxProps>(
           />
         </RoundedBox>
 
-        {/* Outer glow line (wider, more diffuse) */}
+        {/* Simple border line (performance optimized - no glow) */}
         <Line
-          ref={line2Ref}
-          points={borderPoints}
-          color={config.glowColor}
-          lineWidth={isActive ? 8 : 5}
-          transparent
-          opacity={0.3}
-        />
-
-        {/* Main neon border line */}
-        <Line
-          ref={line1Ref}
+          ref={lineRef}
           points={borderPoints}
           color={borderColor}
-          lineWidth={isActive ? 3 : 2}
+          lineWidth={isActive ? 2.5 : 1.5}
           transparent
-          opacity={isActive ? 0.9 : 0.6}
+          opacity={isActive ? 0.8 : 0.5}
         />
 
         {/* Hidden material for animation refs compatibility */}

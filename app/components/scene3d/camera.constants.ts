@@ -15,14 +15,24 @@ export const SECTION_ANGLES = {
   contact: (Math.PI * 8) / 5,            // 288°
 } as const;
 
-// Camera X offset to position 3D block on the left side of screen
-const CAM_X_OFFSET = -2;
+// Closer camera distance for skill detail views (lower = closer)
+const SKILL_DETAIL_Z = 2.8;
 
-// Skills container X offset (from WebsiteBuilder)
-const SKILLS_X_OFFSET = -2;
+// Model container offset in world space
+const MODEL_OFFSET_X = -2;
 
-// Closer camera distance for skill detail views
-const SKILL_DETAIL_Z = 4;
+// Skill local X positions (from WebsiteBuilder/constants.ts)
+const FRONTEND_LOCAL_X = -GRID_X;           // -3.2
+const BACKEND_LOCAL_X = -0.15;              // center
+const DEVOPS_LOCAL_X = GRID_X - 0.3;        // 2.9
+
+// Camera offset to shift view right (leave space for info card on left)
+const CAM_RIGHT_OFFSET = 4.0;
+
+// Camera X = model world position + right offset
+const CAM_X_FRONTEND = MODEL_OFFSET_X + FRONTEND_LOCAL_X + CAM_RIGHT_OFFSET;  // -5.2 + 1 = -4.2
+const CAM_X_BACKEND = MODEL_OFFSET_X + BACKEND_LOCAL_X + CAM_RIGHT_OFFSET;    // -2.15 + 1 = -1.15
+const CAM_X_DEVOPS = MODEL_OFFSET_X + DEVOPS_LOCAL_X + CAM_RIGHT_OFFSET;      // 0.9 + 1 = 1.9
 
 // Camera positions for each section
 // 0: Intro, 1: Overview, 2-4: Frontend details, 5-6: Backend details, 7-9: DevOps details
@@ -54,77 +64,77 @@ export const SECTION_CAMERA_POSITIONS: Record<
   // ===== FRONTEND GROUP (sections 2-4) =====
   // Frontend (Site Web) - section 2
   2: {
-    x: -GRID_X + SKILLS_X_OFFSET,
+    x: CAM_X_FRONTEND,
     y: GRID_Y,
     z: ORBIT_RADIUS + SKILL_DETAIL_Z,
-    lookX: -GRID_X + SKILLS_X_OFFSET,
+    lookX: CAM_X_FRONTEND,
     lookY: GRID_Y,
     lookZ: ORBIT_RADIUS,
   },
   // Mobile - section 3
   3: {
-    x: -GRID_X + SKILLS_X_OFFSET,
+    x: CAM_X_FRONTEND,
     y: 0,
     z: ORBIT_RADIUS + SKILL_DETAIL_Z,
-    lookX: -GRID_X + SKILLS_X_OFFSET,
+    lookX: CAM_X_FRONTEND,
     lookY: 0,
     lookZ: ORBIT_RADIUS,
   },
   // Backoffice - section 4
   4: {
-    x: -GRID_X + SKILLS_X_OFFSET,
+    x: CAM_X_FRONTEND,
     y: -GRID_Y,
     z: ORBIT_RADIUS + SKILL_DETAIL_Z,
-    lookX: -GRID_X + SKILLS_X_OFFSET,
+    lookX: CAM_X_FRONTEND,
     lookY: -GRID_Y,
     lookZ: ORBIT_RADIUS,
   },
 
-  // ===== BACKEND GROUP (sections 5-6) - shifted down by 1.5 =====
+  // ===== BACKEND GROUP (sections 5-6) =====
   // Server - section 5
   5: {
-    x: SKILLS_X_OFFSET,
-    y: GRID_Y * 0.5 - 1.5,
+    x: CAM_X_BACKEND,
+    y: 0,
     z: ORBIT_RADIUS + SKILL_DETAIL_Z,
-    lookX: SKILLS_X_OFFSET,
-    lookY: GRID_Y * 0.5 - 1.5,
+    lookX: CAM_X_BACKEND,
+    lookY: 0,
     lookZ: ORBIT_RADIUS,
   },
   // Database - section 6
   6: {
-    x: SKILLS_X_OFFSET,
-    y: -GRID_Y * 0.5 - 1.5,
+    x: CAM_X_BACKEND,
+    y: -GRID_Y,
     z: ORBIT_RADIUS + SKILL_DETAIL_Z,
-    lookX: SKILLS_X_OFFSET,
-    lookY: -GRID_Y * 0.5 - 1.5,
+    lookX: CAM_X_BACKEND,
+    lookY: -GRID_Y,
     lookZ: ORBIT_RADIUS,
   },
 
   // ===== DEVOPS GROUP (sections 7-9) =====
   // CI/CD - section 7
   7: {
-    x: GRID_X + SKILLS_X_OFFSET,
+    x: CAM_X_DEVOPS,
     y: GRID_Y,
     z: ORBIT_RADIUS + SKILL_DETAIL_Z,
-    lookX: GRID_X + SKILLS_X_OFFSET,
+    lookX: CAM_X_DEVOPS,
     lookY: GRID_Y,
     lookZ: ORBIT_RADIUS,
   },
   // Cloud - section 8
   8: {
-    x: GRID_X + SKILLS_X_OFFSET,
+    x: CAM_X_DEVOPS,
     y: 0,
     z: ORBIT_RADIUS + SKILL_DETAIL_Z,
-    lookX: GRID_X + SKILLS_X_OFFSET,
+    lookX: CAM_X_DEVOPS,
     lookY: 0,
     lookZ: ORBIT_RADIUS,
   },
   // Architecture - section 9
   9: {
-    x: GRID_X + SKILLS_X_OFFSET,
+    x: CAM_X_DEVOPS,
     y: -GRID_Y,
     z: ORBIT_RADIUS + SKILL_DETAIL_Z,
-    lookX: GRID_X + SKILLS_X_OFFSET,
+    lookX: CAM_X_DEVOPS,
     lookY: -GRID_Y,
     lookZ: ORBIT_RADIUS,
   },

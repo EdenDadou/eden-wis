@@ -221,11 +221,11 @@ export function SkillsSection({ section, showCard, targetSection, isFirstCardRea
                 ))}
               </div>
 
-              {/* Next skill */}
+              {/* Next skill - goes to menu (section 1) when at last skill */}
               <motion.button
                 whileHover={{ scale: 1.1, x: 3 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => onNavigateSkill(section < 9 ? section + 1 : 2)}
+                onClick={() => section < 9 ? onNavigateSkill(section + 1) : onBackToSkillsMenu?.()}
                 className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/70 hover:text-cyan-400 hover:border-cyan-400/50 transition-colors"
               >
                 <svg
